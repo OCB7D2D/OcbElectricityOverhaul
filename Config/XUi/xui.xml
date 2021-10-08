@@ -1,0 +1,8 @@
+<configs>
+	<set xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']">
+		<window name="windowPowerSourceStats" />
+		<window name="windowPowerSourceSlots" />
+		<window name="windowBatteryBankDetails" />
+		<window name="windowNonPagingHeader" />
+	</set>
+</configs>

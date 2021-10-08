@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+	<ModInfo>
+		<Name value="ElectricityOverhaul" />
+		<Description value="Electricity done right, connect multiple power sources" />
+		<Website value="https://github.com/OCB7D2D/ElectricityOverhaul" />
+		<Author value="mgreter" />
+		<Version value="0.1" />
+	</ModInfo>
+</xml>

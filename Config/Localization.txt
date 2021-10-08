@@ -1,0 +1,19 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
+goBatterySelfCharge,UI,Menu,x,,Batteries charge Batteries
+goBatterySelfChargeDesc,UI,Menu,x,,Enable batteries to charge downstream batteries.
+goBatteryPowerPerUse,UI,Menu,x,,Battery Watts per Use
+goBatteryPowerPerUseDesc,UI,Menu,x,,Conversion factor for battery uses into watts,
+goMinPowerForCharging,UI,Menu,x,,Min power for charge
+goMinPowerForChargingDesc,UI,Menu,x,,Only charge batteries if excess energy is higher.
+goPowerFormat,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
+goPowerFormats,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
+xuiCharge,UI,Menu,x,,Charge
+xuiSupplied,UI,Menu,x,,Supplied
+xuiCharged,UI,Menu,x,,Charged
+xuiFlow,UI,Menu,x,,Flow
+xuiChargeTooltip,UI,Menu,x,,Charging power going into this battery bank.
+xuiConsumerTooltip,UI,Menu,x,,Grid-wide supply/demand of consumer items.
+xuiChargingTooltip,UI,Menu,x,,Grid-wide charging supply/demand (batteries).
+xuiOutputTooltip,UI,Menu,x,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
+xuiPowerTooltip,UI,Menu,x,,Yellow is for consumers and green for charging.
+xuiGridFlowTooltip,UI,Menu,x,,Overall power flowing through this node.

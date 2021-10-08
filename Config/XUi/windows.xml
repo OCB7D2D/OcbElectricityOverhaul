@@ -1,0 +1,62 @@
+<configs>
+	<!--
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']" name="height">512</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']" name="height">434</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/sprite[@type='sliced']" name="height">397</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect[@name='btnOn']" name="pos">0, -398</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect[@name='btnRefuel']" name="pos">0, -431</setattribute>
+	-->
+	<set xpath="(/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect)[1]/grid[@name='stats']">
+		<panel height="30" width="340" disableautobackground="true" visible="{showfuel}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_gas" />
+			<label depth="1" width="180" pos="30,-2" name="lblFuel" font_size="22" text="{fueltitle|once}: [DECEA3]{fuel}/{maxfuel}[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" visible="false" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" visible="false" />
+			<sprite depth="2" name="sprFillPotential" width="68" pos="136, -9" height="6" type="filled" color="[beige]" fill="{potentialfuelfill}" visible="false" />
+			<sprite depth="2" name="sprFuelFill" width="68" pos="136, -8" height="8" type="filled" color="181,57,57" fill="{fuelfill}" visible="false" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" visible="{IsGenerator}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_max_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblNoise" font_size="22" text="{maxoutputtitle|once}: [DECEA3]{MaxOutput}w[-]" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiOutputTooltip" visible="{NotGenerator}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_max_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblNoise" font_size="22" text="{maxoutputtitle|once}: [DECEA3]{MaxProduction}/{MaxOutput}w[-]" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiPowerTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblPower" font_size="22" text="{powertitle|once}: [DECEA3]{power}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprUsedChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{UsedChargingFill}" />
+			<sprite depth="2" name="sprUsedConsumerFill" width="68" pos="136, -8" height="8" type="filled" color="255,255,0" fill="{UsedConsumerFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" visible="{IsBatteryBank}" tooltip_key="xuiChargeTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_battery" />
+			<label depth="1" width="180" pos="30,-2" name="lblCharging" font_size="22" text="{ChargingTitle|once}: [DECEA3]{ChargingUsed}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{ChargingFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiGridFlowTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<!-- electricity consumption by counloucon from the Noun Project - https://thenounproject.com/term/energy-consumption/2419049/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_flow" />
+			<label depth="1" width="180" pos="30,-2" name="lblPower" font_size="22" text="{FlowTitle|once}: [DECEA3]{Flow}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprLentChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{LentChargingFill}" />
+			<sprite depth="2" name="sprLentConsumerFill" width="68" pos="136, -8" height="8" type="filled" color="255,255,0" fill="{LentConsumerFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip="{LocalConsumerTooltip|once}" tooltip_key="xuiConsumerTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_consumers" />
+			<label depth="1" width="180" pos="30,-2" name="lblGridSupply" font_size="22" text="{LocalSupplyTitle|once}: [DECEA3]{LocalConsumerUsed}/{LocalConsumerDemand}w[-]" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip="LocalChargingTooltip" tooltip_key="xuiChargingTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_charging" />
+			<label depth="1" width="180" pos="30,-2" name="lblGridCharging" font_size="22" text="{LocalChargingTitle|once}: [DECEA3]{LocalChargingUsed}/{LocalChargingDemand}w[-]" />
+		</panel>
+	</set>
+</configs>

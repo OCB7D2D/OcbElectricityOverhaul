@@ -1,0 +1,722 @@
+using DMT;
+using HarmonyLib;
+using UnityEngine;
+using System.Reflection;
+
+using static OCB.ElectricityUtils;
+
+public class OcbElectricityOverhaul
+{
+
+    // Entry class for Harmony patching
+    public class OcbElectricityOverhaul_Init : IHarmony
+    {
+        public void Start()
+        {
+            Debug.Log("Loading OCB Electricity Overhaul Patch: " + GetType().ToString());
+            var harmony = new Harmony(GetType().ToString());
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+    }
+
+    // Patch PowerManager to return a different (our) instance
+    // This is the main hook to get our manager into place
+    [HarmonyPatch(typeof(PowerManager))]
+    [HarmonyPatch("get_Instance")]
+    public class PowerManager_Get_Instance
+    {
+        static bool Prefix()
+        {
+            if (PowerManager.instance == null)
+            {
+                OcbPowerManager instance = new OcbPowerManager();
+                PowerManager.instance = (PowerManager) instance;
+            }
+
+            return true;
+        }
+    }
+
+    // Main overload to allow wire connections between power sources
+    [HarmonyPatch(typeof(TileEntityPowerSource))]
+    [HarmonyPatch("CanHaveParent")]
+    public class TileEntityPowerSource_CanHaveParent
+    {
+        static bool Prefix(TileEntityPowerSource __instance, ref bool __result, IPowered powered)
+        {
+            __result = __instance.PowerItemType == PowerItem.PowerItemTypes.BatteryBank ||
+                       __instance.PowerItemType == PowerItem.PowerItemTypes.SolarPanel ||
+                       __instance.PowerItemType == PowerItem.PowerItemTypes.Generator;
+            return false;
+        }
+    }
+
+    // Main overload to allow wire connections between power sources
+    [HarmonyPatch(typeof(TileEntityPowerSource))]
+    [HarmonyPatch("write")]
+    public class TileEntityPowerSource_write
+    {
+        static void Postfix(PooledBinaryWriter _bw, TileEntity.StreamModeWrite _eStreamMode,
+            PowerItem.PowerItemTypes ___PowerItemType, PowerItem ___PowerItem)
+        {
+            switch (_eStreamMode)
+            {
+                case TileEntity.StreamModeWrite.Persistency:
+                    break;
+                case TileEntity.StreamModeWrite.ToServer:
+                    break;
+                default:
+                    PowerSource powerItem = ___PowerItem as PowerSource;
+                    _bw.Write(powerItem != null);
+                    if (powerItem == null)
+                        break;
+                    // ToDo: check if we need em all (now 180 bytes)
+                    _bw.Write(powerItem.MaxProduction);
+                    _bw.Write(powerItem.ChargingUsed);
+                    _bw.Write(powerItem.ChargingDemand);
+                    _bw.Write(powerItem.ConsumerUsed);
+                    _bw.Write(powerItem.ConsumerDemand);
+                    _bw.Write(powerItem.LentConsumed);
+                    _bw.Write(powerItem.LentCharging);
+                    _bw.Write(powerItem.GridConsumerDemand);
+                    _bw.Write(powerItem.GridChargingDemand);
+                    _bw.Write(powerItem.GridConsumerUsed);
+                    _bw.Write(powerItem.GridChargingUsed);
+                    _bw.Write(powerItem.LentConsumerUsed);
+                    _bw.Write(powerItem.LentChargingUsed);
+                    break;
+            }
+
+        }
+    }
+
+    // Main overload to allow wire connections between power sources
+    [HarmonyPatch(typeof(TileEntityPowerSource))]
+    [HarmonyPatch("read")]
+    public class TileEntityPowerSource_read
+    {
+        static void Postfix(PooledBinaryReader _br, TileEntity.StreamModeRead _eStreamMode,
+            TileEntityPowerSource __instance, PowerItem.PowerItemTypes ___PowerItemType)
+        {
+            switch (_eStreamMode)
+            {
+                case TileEntity.StreamModeRead.Persistency:
+                    break;
+                case TileEntity.StreamModeRead.FromClient:
+                    break;
+                default:
+                    if (!_br.ReadBoolean())
+                        break;
+                    // ToDo: check if we need em all (now 180 bytes)
+                    __instance.ClientData.MaxProduction = _br.ReadUInt16();
+                    __instance.ClientData.ChargingUsed = _br.ReadUInt16();
+                    __instance.ClientData.ChargingDemand = _br.ReadUInt16();
+                    __instance.ClientData.ConsumerUsed = _br.ReadUInt16();
+                    __instance.ClientData.ConsumerDemand = _br.ReadUInt16();
+                    __instance.ClientData.LentConsumed = _br.ReadUInt16();
+                    __instance.ClientData.LentCharging = _br.ReadUInt16();
+                    __instance.ClientData.GridConsumerDemand = _br.ReadUInt16();
+                    __instance.ClientData.GridChargingDemand = _br.ReadUInt16();
+                    __instance.ClientData.GridConsumerUsed = _br.ReadUInt16();
+                    __instance.ClientData.GridChargingUsed = _br.ReadUInt16();
+                    __instance.ClientData.LentConsumerUsed = _br.ReadUInt16();
+                    __instance.ClientData.LentChargingUsed = _br.ReadUInt16();
+                    break;
+            }
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Only consume energy if fully powered
+    [HarmonyPatch(typeof(PowerItem))]
+    [HarmonyPatch("HandlePowerReceived")]
+    public class PowerItem_HandlePowerReceived
+    {
+        static bool Prefix(PowerItem __instance, ref ushort power)
+        {
+            ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
+            bool newPowered = (int)num == (int)__instance.RequiredPower;
+            if (newPowered != __instance.isPowered)
+            {
+                __instance.isPowered = newPowered;
+                __instance.IsPoweredChanged(newPowered);
+                if (__instance.TileEntity != null)
+                    __instance.TileEntity.SetModified();
+            }
+
+            power -= num;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Only consume energy if fully powered
+    [HarmonyPatch(typeof(PowerBatteryBank))]
+    [HarmonyPatch("HandlePowerReceived")]
+    public class PowerBatteryBank_HandlePowerReceived
+    {
+        static bool Prefix(PowerItem __instance, ref ushort power)
+        {
+            ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
+            bool newPowered = (int)num == (int)__instance.RequiredPower;
+            if (newPowered != __instance.isPowered)
+            {
+                __instance.isPowered = newPowered;
+                __instance.IsPoweredChanged(newPowered);
+                if (__instance.TileEntity != null)
+                    __instance.TileEntity.SetModified();
+            }
+
+            power -= num;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Only consume energy if fully powered
+    [HarmonyPatch(typeof(PowerTrigger))]
+    [HarmonyPatch("HandlePowerReceived")]
+    public class PowerTrigger_HandlePowerReceived
+    {
+        static bool Prefix(PowerTrigger __instance, ref ushort power)
+        {
+            ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
+            __instance.isPowered = (int)num == (int)__instance.RequiredPower;
+            power -= num;
+            if (power <= (ushort)0)
+                return false;
+            __instance.CheckForActiveChange();
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Only consume energy if fully powered
+    [HarmonyPatch(typeof(PowerTimerRelay))]
+    [HarmonyPatch("HandlePowerReceived")]
+    public class PowerTimerRelay_HandlePowerReceived
+    {
+        static bool Prefix(PowerTimerRelay __instance, ref ushort power)
+        {
+            ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
+            bool newPowered = (int)num == (int)__instance.RequiredPower;
+            __instance.isPowered = newPowered;
+            power -= num;
+            __instance.CheckForActiveChange();
+            // Fix weird vanilla implementation "bug"
+            __instance.isActive = __instance.isTriggered;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Only consume energy if fully powered
+    [HarmonyPatch(typeof(PowerConsumerToggle))]
+    [HarmonyPatch("HandlePowerReceived")]
+    public class PowerConsumerToggle_HandlePowerReceived
+    {
+        static bool Prefix(PowerConsumerToggle __instance, ref ushort power)
+        {
+            ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
+            bool newPowered = (int)num == (int)__instance.RequiredPower;
+            if (newPowered != __instance.isPowered)
+            {
+                __instance.isPowered = newPowered;
+                __instance.IsPoweredChanged(newPowered);
+                if (__instance.TileEntity != null)
+                    __instance.TileEntity.SetModified();
+            }
+
+            power -= __instance.isToggled ? num : (ushort)0;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Doesn't obey `PowerChildren` flag!?
+    [HarmonyPatch(typeof(PowerTimerRelay))]
+    [HarmonyPatch("HandlePowerUpdate")]
+    public class PowerTimerRelay_HandlePowerUpdate
+    {
+        static bool Prefix(PowerTimerRelay __instance, bool parentIsOn)
+        {
+
+            if (__instance.TileEntity != null)
+            {
+                ((TileEntityPoweredTrigger)__instance.TileEntity).Activate(
+                    __instance.isPowered & parentIsOn, __instance.isTriggered);
+                __instance.TileEntity.SetModified();
+            }
+
+            __instance.hasChangesLocal = true;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Doesn't obey `PowerChildren` flag!?
+    [HarmonyPatch(typeof(PowerTrigger))]
+    [HarmonyPatch("HandlePowerUpdate")]
+    public class PowerTrigger_HandlePowerUpdate
+    {
+        static bool Prefix(PowerTrigger __instance, bool parentIsOn)
+        {
+
+            if (__instance.TileEntity != null)
+            {
+                ((TileEntityPoweredTrigger)__instance.TileEntity).Activate(
+                    __instance.isPowered & parentIsOn, __instance.isTriggered);
+                __instance.TileEntity.SetModified();
+            }
+
+            __instance.hasChangesLocal = true;
+            __instance.HandleSingleUseDisable();
+
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Obeys to `PowerChildren` flag!!
+    [HarmonyPatch(typeof(PowerConsumerToggle))]
+    [HarmonyPatch("HandlePowerUpdate")]
+    public class PowerConsumerToggle_HandlePowerUpdate
+    {
+        static bool Prefix(PowerConsumerToggle __instance, bool isOn)
+        {
+            bool activated = __instance.isPowered & isOn && __instance.isToggled;
+            if (__instance.TileEntity != null)
+            {
+                __instance.TileEntity.Activate(activated);
+                if (activated && __instance.lastActivate != activated)
+                    __instance.TileEntity.ActivateOnce();
+            }
+            __instance.lastActivate = activated;
+            return false;
+        }
+    }
+
+    // Copied from original dll
+    // Removed dispatching to children
+    // Obeys to `PowerChildren` flag!!
+    [HarmonyPatch(typeof(PowerConsumer))]
+    [HarmonyPatch("HandlePowerUpdate")]
+    public class PowerConsumer_HandlePowerUpdate
+    {
+        static bool Prefix(PowerConsumerToggle __instance, bool isOn)
+        {
+            bool activated = __instance.isPowered & isOn;
+            if (__instance.TileEntity != null)
+            {
+                __instance.TileEntity.Activate(activated);
+                if (activated && __instance.lastActivate != activated)
+                    __instance.TileEntity.ActivateOnce();
+                __instance.TileEntity.SetModified();
+            }
+            __instance.lastActivate = activated;
+            return false;
+        }
+    }
+
+    // Only consumers obey this flag!?
+    [HarmonyPatch(typeof(PowerItem))]
+    [HarmonyPatch("PowerChildren")]
+    public class PowerConsumer_PowerChildren
+    {
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerBatteryBank))]
+    [HarmonyPatch("AddPowerToBatteries")]
+    public class PowerBatteryBank_AddPowerToBatteries
+    {
+        static bool Prefix(PowerBatteryBank __instance, int power)
+        {
+            AddPowerToBatteries(__instance, power);
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerBatteryBank))]
+    [HarmonyPatch("TickPowerGeneration")]
+    public class PowerBatteryBank_TickPowerGeneration
+    {
+        static bool Prefix(PowerBatteryBank __instance)
+        {
+            TickBatteryBankPowerGeneration(__instance);
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerBatteryBank))]
+    [HarmonyPatch("get_IsPowered")]
+    public class PowerBatteryBank_IsPowered
+    {
+        static bool Prefix(ref bool __result, bool ___isPowered, bool ___isOn)
+        {
+            __result = ___isPowered;
+            return false;
+        }
+    }
+
+    public static ushort GetLentConsumerUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.LentConsumerUsed : (instance.PowerItem as PowerSource).LentConsumerUsed;
+    }
+
+    public static ushort GetLentChargingUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.LentChargingUsed : (instance.PowerItem as PowerSource).LentChargingUsed;
+    }
+
+    public static ushort GetMaxOutput(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.MaxOutput : (instance.PowerItem as PowerSource).MaxOutput;
+    }
+
+    public static ushort GetMaxProduction(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.MaxProduction : (instance.PowerItem as PowerSource).MaxProduction;
+    }
+
+    public static ushort getBattery1Left(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.MaxProduction : (instance.PowerItem as PowerSource).MaxProduction;
+    }
+
+    public static ushort GetLentConsumed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.LentConsumed : (instance.PowerItem as PowerSource).LentConsumed;
+    }
+
+    public static ushort GetLentCharging(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.LentCharging : (instance.PowerItem as PowerSource).LentCharging;
+    }
+
+    public static ushort GetConsumerDemand(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.ConsumerDemand : (instance.PowerItem as PowerSource).ConsumerDemand;
+    }
+
+    public static ushort GetChargingDemand(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.ChargingDemand : (instance.PowerItem as PowerSource).ChargingDemand;
+    }
+
+    public static ushort GetConsumerUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.ConsumerUsed : (instance.PowerItem as PowerSource).ConsumerUsed;
+    }
+
+    public static ushort GetChargingUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.ChargingUsed : (instance.PowerItem as PowerSource).ChargingUsed;
+    }
+
+    public static ushort GetGridConsumerDemand(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.GridConsumerDemand : (instance.PowerItem as PowerSource).GridConsumerDemand;
+    }
+
+    public static ushort GetGridChargingDemand(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.GridChargingDemand : (instance.PowerItem as PowerSource).GridChargingDemand;
+    }
+
+    public static ushort GetGridConsumerUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.GridConsumerUsed : (instance.PowerItem as PowerSource).GridConsumerUsed;
+    }
+
+    public static ushort GetGridChargingUsed(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            instance.ClientData.GridChargingUsed : (instance.PowerItem as PowerSource).GridChargingUsed;
+    }
+
+    public static ushort getBatteryLeft(TileEntityPowerSource instance, int index)
+    {
+        if (!SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer) return (ushort)0;
+        PowerSource source = instance.PowerItem as PowerSource;
+        if (source.Stacks[index].IsEmpty()) return (ushort)0;
+        return (ushort)(source.Stacks[index].itemValue.MaxUseTimes
+            - source.Stacks[index].itemValue.UseTimes);
+    }
+
+    public static ushort GetLocalConsumerUsed(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetConsumerUsed(instance) + GetGridConsumerUsed(instance));
+    }
+    public static ushort GetLocalConsumerDemand(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetConsumerDemand(instance) + GetGridConsumerDemand(instance));
+    }
+    public static ushort GetLocalChargingUsed(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetChargingUsed(instance) + GetGridChargingUsed(instance));
+    }
+    public static ushort GetLocalChargingDemand(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetChargingDemand(instance) + GetGridChargingDemand(instance));
+    }
+
+    public static string GetPercent(XUiC_PowerSourceStats __instance, int amount, int off)
+    {
+        return off == 0 ? "0" : __instance.maxoutputFormatter.Format((ushort)(100f * (float)amount / (float)off));
+    }
+
+    public static string GetFill(XUiC_PowerSourceStats __instance, int amount, int off)
+    {
+        return off == 0 ? "0" : __instance.powerFillFormatter.Format((float)amount / (float)off);
+    }
+
+    [HarmonyPatch(typeof(XUiC_PowerSourceStats))]
+    [HarmonyPatch("GetBindingValue")]
+    public class XUiC_PowerSourceStats_GetBindingValue
+    {
+        static void Postfix(XUiC_PowerSourceStats __instance, TileEntityPowerSource ___tileEntity, ref string value, BindingItem binding, ref bool __result)
+        {
+            switch (binding.FieldName)
+            {
+
+                // Only available for local debugging
+                // Doesn't transfer info from server to client
+                case "batteryLeftA":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 0));
+                    __result = true;
+                    break;
+                case "batteryLeftB":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 1));
+                    __result = true;
+                    break;
+                case "batteryLeftC":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 2));
+                    __result = true;
+                    break;
+                case "batteryLeftD":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 3));
+                    __result = true;
+                    break;
+                case "batteryLeftE":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 4));
+                    __result = true;
+                    break;
+                case "batteryLeftF":
+                    value = __instance.powerSource == null ? "n/a"
+                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 5));
+                    __result = true;
+                    break;
+
+                // Grid values (information only)
+                // ToDo: really needed (overhead)
+                // ToDo: maybe only for single-player
+                case "LentConsumed": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLentConsumed(___tileEntity));
+                    __result = true;
+                    break;
+                case "LentCharging": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLentCharging(___tileEntity));
+                    __result = true;
+                    break;
+                case "ConsumerDemand": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetConsumerDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "ChargingDemand": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "ConsumerUsed": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetConsumerUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "ChargingUsed": // battery only
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridConsumerDemand": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetGridConsumerDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridChargingDemand": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetGridChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridConsumerUsed": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetGridConsumerUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridChargingUsed": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetGridChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "LocalConsumerDemand": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalConsumerDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "LocalChargingDemand": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "LocalConsumerUsed": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalConsumerUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "LocalChargingUsed": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+
+                case "ChargingTitle":
+                    value = Localization.Get("xuiCharge");
+                    __result = true;
+                    break;
+                case "LocalSupplyTitle":
+                    value = Localization.Get("xuiSupplied");
+                    __result = true;
+                    break;
+                case "LocalChargingTitle":
+                    value = Localization.Get("xuiCharged");
+                    __result = true;
+                    break;
+                case "FlowTitle":
+                    value = Localization.Get("xuiFlow");
+                    __result = true;
+                    break;
+                    
+
+                case "PowerTooltip":
+                    value = Localization.Get("xuiPowerTooltip");
+                    __result = true;
+                    break;
+                case "OutputTooltip":
+                    value = Localization.Get("xuiOutputTooltip");
+                    __result = true;
+                    break;
+                case "ChargingTooltip":
+                    value = Localization.Get("xuiChargeTooltip");
+                    __result = true;
+                    break;
+                case "LocalConsumerTooltip":
+                    value = Localization.Get("xuiConsumerTooltip");
+                    __result = true;
+                    break;
+                case "LocalChargingTooltip":
+                    value = Localization.Get("xuiChargingTooltip");
+                    __result = true;
+                    break;
+
+                case "UsedConsumerFill": // used
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetLentConsumed(___tileEntity), GetMaxProduction(___tileEntity));
+                    __result = true;
+                    break;
+                case "UsedChargingFill": // used
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetLentConsumed(___tileEntity) + GetLentCharging(___tileEntity), GetMaxProduction(___tileEntity));
+                    __result = true;
+                    break;
+
+
+                case "LentConsumerFill": // used
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetLentConsumerUsed(___tileEntity), GetLentConsumerUsed(___tileEntity) + GetLentChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+                case "LentChargingFill": // used
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetLentConsumerUsed(___tileEntity) + GetLentChargingUsed(___tileEntity), GetLentConsumerUsed(___tileEntity) + GetLentChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+
+                case "ChargingFill": // battery only
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetChargingUsed(___tileEntity), GetChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridConsumerFill": // unused
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetGridConsumerUsed(___tileEntity), GetGridConsumerDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "GridChargingFill": // unused
+                    value = ___tileEntity == null ? "0" :
+                        GetFill(__instance, GetGridChargingUsed(___tileEntity), GetGridChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+
+                // Overload to return MaxProduction instead of MaxOutput
+                // Reports actual capacity for BatteryBank if some cells are empty
+                case "MaxProduction":
+                    value = ___tileEntity == null ? "n/a" :
+                        __instance.maxoutputFormatter.Format(GetMaxProduction(___tileEntity));
+                    __result = true;
+                    break;
+                case "MaxOutput":
+                    value = ___tileEntity == null ? "n/a" :
+                        __instance.maxoutputFormatter.Format(GetMaxOutput(___tileEntity));
+                    __result = true;
+                    break;
+                case "Flow":
+                    value = ___tileEntity == null ? "n/a" :
+                        __instance.maxoutputFormatter.Format((ushort)(GetLentConsumerUsed(___tileEntity) + GetLentChargingUsed(___tileEntity)));
+                    __result = true;
+                    break;
+
+                // Conditional for generator
+                case "NotGenerator":
+                    value = ___tileEntity == null ? "true" :
+                        (___tileEntity.PowerItemType != PowerItem.PowerItemTypes.Generator).ToString();
+                    __result = true;
+                    break;
+                // Conditional for generator
+                case "IsGenerator":
+                    value = ___tileEntity == null ? "false" :
+                        (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.Generator).ToString();
+                    __result = true;
+                    break;
+                // Conditional for battery banks
+                case "IsBatteryBank":
+                    value = ___tileEntity == null ? "false" :
+                        (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.BatteryBank).ToString();
+                    __result = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+}
