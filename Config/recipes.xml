@@ -1,0 +1,17 @@
+<configs>
+	<append xpath="/recipes">
+
+		<recipe name="solarCell" count="1"
+				tags="perkAdvancedEngineering"
+				craft_area="workbench" material_based="false"
+				craft_time="240">
+			<ingredient name="resourceForgedSteel" count="12"/>
+			<ingredient name="resourceBrokenGlass" count="200"/>
+			<ingredient name="resourceElectricParts" count="24"/>
+			<ingredient name="resourceMechanicalParts" count="6"/>
+			<ingredient name="resourceScrapLead" count="96"/>
+		</recipe>
+
+	</append>
+
+</configs>
