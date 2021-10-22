@@ -19,16 +19,21 @@ namespace OCB
         // Coefficient to exchange fuel into watts
         public static int fuelPowerPerUse = 750;
 
+        public static int powerPerPanel = 30;
+        public static int powerPerEngine = 50;
+        public static int powerPerBattery = 50;
+        public static int chargePerBattery = 35;
+
         // Get discharge power by battery quality
         static public ushort GetDischargeByQuality(int quality)
         {
-            return (ushort)((double)50 * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
+            return (ushort)((double)powerPerBattery * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
         }
 
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(int quality)
         {
-            return (ushort)((double)35 * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
+            return (ushort)((double)chargePerBattery * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
         }
 
         // Check if given `source` has a parent power source
@@ -148,13 +153,11 @@ namespace OCB
         static public void TickBatteryDieselPowerGeneration(PowerGenerator generator)
         {
             // Check if buffer has enough energy to fullfil max power
-            if (generator.CurrentPower >= generator.MaxPower) return;
-            Log.Out("Gen Max " + (ushort)generator.MaxPower + " Prod" + generator.MaxProduction + " > now " + generator.CurrentPower);
-            float neededToMax = generator.MaxProduction - generator.CurrentPower;
-            Log.Out("Generator needs more power " + neededToMax + " => current: " + generator.CurrentPower + " fact: " + fuelPowerPerUse);
+            if (generator.CurrentPower >= generator.MaxProduction) return;
+            ushort neededToMax = (ushort)(generator.MaxProduction - generator.CurrentPower);
             ushort consume = (ushort)Mathf.Ceil(neededToMax / fuelPowerPerUse);
+            consume = (ushort)Mathf.Min(consume, generator.CurrentFuel);
             generator.CurrentPower += (ushort)(consume * fuelPowerPerUse);
-            Log.Out("  Consume fuel " + consume + " > now " + generator.CurrentPower);
             generator.CurrentFuel -= consume;
         }
 

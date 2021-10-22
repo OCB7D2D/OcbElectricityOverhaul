@@ -37,6 +37,10 @@ public class OcbPowerManager : PowerManager
         batteryPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.BatteryPowerPerUse);
         minPowerForCharging = GamePrefs.GetInt(EnumGamePrefs.MinPowerForCharging);
         fuelPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.FuelPowerPerUse);
+        powerPerPanel = GamePrefs.GetInt(EnumGamePrefs.PowerPerPanel);
+        powerPerEngine = GamePrefs.GetInt(EnumGamePrefs.PowerPerEngine);
+        powerPerBattery = GamePrefs.GetInt(EnumGamePrefs.PowerPerBattery);
+        chargePerBattery = GamePrefs.GetInt(EnumGamePrefs.ChargePerBattery);
 
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" + isBatteryChargingBattery + "/" +
@@ -146,6 +150,10 @@ public class OcbPowerManager : PowerManager
         // Code is coped from vanilla game dll
         if (source is PowerSolarPanel solar)
         {
+            source.MaxPower = 0;
+            source.MaxOutput = 0;
+            source.MaxProduction = 0;
+            source.RequiredPower = 0;
             if (source.IsOn)
             {
                 if ((double) Time.time > (double) solar.lightUpdateTime)
@@ -157,9 +165,17 @@ public class OcbPowerManager : PowerManager
                     solar.CheckLightLevel();
                 }
             }
-            if (!solar.HasLight)
+            for (int index = source.Stacks.Length - 1; index >= 0; --index)
             {
-                source.MaxProduction = 0;
+                if (!source.Stacks[index].IsEmpty())
+                {
+                    if (source.IsOn && solar.HasLight)
+                    {
+                        source.MaxProduction += (ushort)powerPerPanel;
+                    }
+                    source.MaxOutput += (ushort)powerPerPanel;
+                    source.MaxPower += (ushort)powerPerPanel;
+                }
             }
         }
 
@@ -181,6 +197,7 @@ public class OcbPowerManager : PowerManager
         // ToDo: find out how caching could work with this!
         if (source is PowerBatteryBank bank)
         {
+            source.MaxPower = 0;
             source.MaxOutput = 0;
             source.MaxProduction = 0;
             source.RequiredPower = 0;
@@ -205,12 +222,32 @@ public class OcbPowerManager : PowerManager
                     }
                     // Production if all batteries are loaded
                     source.MaxOutput += discharge;
+                    source.MaxPower += discharge;
                 }
             }
             // Power needed to charge batteries not fully loaded
             source.RequiredPower = bank.ChargingDemand;
         }
-
+        else if (source is PowerGenerator generator)
+        {
+            source.MaxPower = 0;
+            source.MaxOutput = 0;
+            source.MaxProduction = 0;
+            source.RequiredPower = 0;
+            for (int index = source.Stacks.Length - 1; index >= 0; --index)
+            {
+                if (!source.Stacks[index].IsEmpty())
+                {
+                    if (source.IsOn)
+                    {
+                        source.MaxProduction += (ushort)powerPerEngine;
+                    }
+                    source.MaxOutput += (ushort)powerPerEngine;
+                    source.MaxPower += (ushort)powerPerEngine;
+                }
+            }
+        }
+    
         // Code directly copied from decompiled dll
         if (source.ShouldAutoTurnOff())
         {
@@ -514,18 +551,18 @@ public class OcbPowerManager : PowerManager
             }
             // Enable powered state if battery bank
             // is on and some charging is happening
-            root.isPowered = root.ChargingUsed > 0 ||
-                             root.ChargingDemand == 0;
+            //root.isPowered = root.ChargingUsed > 0 ||
+            //                 root.ChargingDemand == 0;
         }
         else {
             // Update power state for all other source
             // We don't account for power down the grid?
             // Any other thing we would like to indicate?
-            root.isPowered = root.ConsumerUsed > 0 ||
-                             root.ConsumerUsed > 0;
+            //root.isPowered = root.ConsumerUsed > 0 ||
+            //                 root.ConsumerUsed > 0;
         }
         // Always obey isOn flag (otherwise can't be powered)
-        root.isPowered = root.isPowered && root.isOn;
+        // root.isPowered = root.isPowered || root.isOn;
 
 
         // Now distribute power statistics up the chain

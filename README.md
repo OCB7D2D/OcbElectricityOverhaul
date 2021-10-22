@@ -16,7 +16,7 @@ are connected in line. Also preserves pass-through trigger groups.
 <p>
     <img src="Screens/game-stats-generator.jpg" alt="Blocks shown in-game" align="left" height="400"/>
     <img src="Screens/game-stats-battery-bank.jpg" alt="Loot through Bars" align="left" height="400"/>
-    <img src="Screens/game-options.jpg" alt="Loot through Bars" align="left" height="200"/>
+    <img src="Screens/game-options.jpg" alt="Loot through Bars" align="left" height="280"/>
     <br clear="left"/>
 </p>
 

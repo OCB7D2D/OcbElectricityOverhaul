@@ -72,7 +72,7 @@ public class ElectricityOverhaulPatch : IPatcherMod
         MakeTypePublic(module.Types.First(d => d.Name == "PowerBatteryBank"));
         MakeTypePublic(module.Types.First(d => d.Name == "PowerSolarPanel"));
         MakeTypePublic(module.Types.First(d => d.Name == "XUiC_PowerSourceStats"));
-        //MakeTypePublic(module.Types.First(d => d.Name == "TileEntityPowered"));
+        MakeTypePublic(module.Types.First(d => d.Name == "TileEntityPowered"));
         //MakeTypePublic(module.Types.First(d => d.Name == "TileEntityPowerSource"));
 
         return true;

@@ -370,15 +370,21 @@ public class OcbElectricityOverhaul
         }
     }
 
-    [HarmonyPatch(typeof(PowerBatteryBank))]
-    [HarmonyPatch("get_IsPowered")]
-    public class PowerBatteryBank_IsPowered
+    // [HarmonyPatch(typeof(PowerBatteryBank))]
+    // [HarmonyPatch("get_IsPowered")]
+    // public class PowerBatteryBank_IsPowered
+    // {
+    //     static bool Prefix(ref bool __result, bool ___isPowered, bool ___isOn)
+    //     {
+    //         __result = ___isPowered;
+    //         return false;
+    //     }
+    // }
+
+    public static ushort GetCurrentPower(TileEntityPowerSource instance)
     {
-        static bool Prefix(ref bool __result, bool ___isPowered, bool ___isOn)
-        {
-            __result = ___isPowered;
-            return false;
-        }
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            (ushort)0 : (instance.PowerItem as PowerSource).MaxPower;
     }
 
     public static ushort GetLentConsumerUsed(TileEntityPowerSource instance)

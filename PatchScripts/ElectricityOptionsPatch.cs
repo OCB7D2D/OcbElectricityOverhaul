@@ -10,39 +10,68 @@ public class ElectricityOptionsPatch : IPatcherMod
     public void PatchEnumGamePrefs(ModuleDefinition module)
     {
 
+        int enumLast = (int)EnumGamePrefs.Last - 1;
+
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
         enumType.Fields.Add(new FieldDefinition("BatterySelfCharge", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = 199 });
+            { Constant = ++enumLast });
         enumType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = 200 });
+            { Constant = ++enumLast });
         enumType.Fields.Add(new FieldDefinition("MinPowerForCharging", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = 201 });
+            { Constant = ++enumLast });
         enumType.Fields.Add(new FieldDefinition("FuelPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = 202 });
+            { Constant = ++enumLast });
+        enumType.Fields.Add(new FieldDefinition("PowerPerPanel", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = ++enumLast });
+        enumType.Fields.Add(new FieldDefinition("PowerPerEngine", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = ++enumLast });
+        enumType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = ++enumLast });
+        enumType.Fields.Add(new FieldDefinition("ChargePerBattery", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = ++enumLast });
+
+        int infoBoolLast = (int)GameInfoBool.TwitchBloodMoonAllowed;
 
         // Add new fields to GameInfoBool enum
         var infoBoolType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoBool"));
         infoBoolType.Fields.Add(new FieldDefinition("BatterySelfCharge", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoBoolType)
-            { Constant = 14 });
+            { Constant = ++infoBoolLast });
+
+        int infoIntLast = (int)GameInfoInt.BedrollExpiryTime;
 
         // Add new fields to GameInfoInt enum
         var infoIntType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoInt"));
         infoIntType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
-            { Constant = 43 });
+            { Constant = ++infoIntLast });
         infoIntType.Fields.Add(new FieldDefinition("MinPowerForCharging", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
-            { Constant = 44 });
+            { Constant = ++infoIntLast });
         infoIntType.Fields.Add(new FieldDefinition("FuelPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
-            { Constant = 45 });
-
+            { Constant = ++infoIntLast });
+        infoIntType.Fields.Add(new FieldDefinition("PowerPerPanel", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+            { Constant = ++infoIntLast });
+        infoIntType.Fields.Add(new FieldDefinition("PowerPerEngine", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+            { Constant = ++infoIntLast });
+        infoIntType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+            { Constant = ++infoIntLast });
+        infoIntType.Fields.Add(new FieldDefinition("ChargePerBattery", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+            { Constant = ++infoIntLast });
     }
 
     public bool Patch(ModuleDefinition module)
