@@ -127,7 +127,7 @@ namespace OCB
 
                     if (neededToMax <= usesLeftOver * batteryPowerPerUse)
                     {
-                        bank.Stacks[index].itemValue.UseTimes += neededToMax / batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += neededToMax / (float)batteryPowerPerUse;
                         bank.CurrentPower += (ushort)neededToMax;
                         // break; // Don't break in order to drain all batteries, this means we add
                         // more power than needed to the `CurrentPower` buffer, which means the initial
@@ -141,7 +141,7 @@ namespace OCB
                     else
                     {
                         // If battery can only sustain the required demand partially, take what is left.
-                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / (float)batteryPowerPerUse;
                         bank.CurrentPower += (ushort)usesLeftOver;
 
                     }
@@ -155,7 +155,7 @@ namespace OCB
             // Check if buffer has enough energy to fullfil max power
             if (generator.CurrentPower >= generator.MaxProduction) return;
             ushort neededToMax = (ushort)(generator.MaxProduction - generator.CurrentPower);
-            ushort consume = (ushort)Mathf.Ceil(neededToMax / fuelPowerPerUse);
+            ushort consume = (ushort)Mathf.Ceil((float)neededToMax / (float)fuelPowerPerUse);
             consume = (ushort)Mathf.Min(consume, generator.CurrentFuel);
             generator.CurrentPower += (ushort)(consume * fuelPowerPerUse);
             generator.CurrentFuel -= consume;
@@ -186,7 +186,7 @@ namespace OCB
                     // Get demand of local battery or what is left
                     ushort demand = (ushort)Mathf.Min(GetChargeByQuality(
                         bank.Stacks[index].itemValue.Quality), power);
-                    float demandUses = demand / batteryPowerPerUse;
+                    float demandUses = (ushort)Mathf.Ceil((float)demand / (float)batteryPowerPerUse);
                     // Check if current battery can take the full charge load
                     if (bank.Stacks[index].itemValue.UseTimes >= demandUses)
                     {
