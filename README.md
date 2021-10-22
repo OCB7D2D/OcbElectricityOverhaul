@@ -86,6 +86,19 @@ This Mod should work with dedicated servers, although the new algorithm
 may lead to higher CPU utilization, specially if a lot of players build
 a lot of power sources. Please open an issue here if you run into problems.
 
+### Server config xml
+
+```xml
+<property name="BatterySelfCharge" value="false" />
+<property name="BatteryPowerPerUse" value="25" />
+<property name="MinPowerForCharging" value="20" />
+<property name="FuelPowerPerUse" value="750" />
+<property name="PowerPerPanel" value="30" />
+<property name="PowerPerEngine" value="50" />
+<property name="PowerPerBattery" value="50" />
+<property name="ChargePerBattery" value="35" />
+```
+
 ## Power distribution logic
 
 Distribution of power always starts at a root power source, one that
