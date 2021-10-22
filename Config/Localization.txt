@@ -8,11 +8,11 @@ goMinPowerForChargingDesc,UI,Menu,x,,Only charge batteries if excess energy is h
 goFuelPowerPerUse,UI,Menu,x,,Fuel Watts per Use
 goFuelPowerPerUseDesc,UI,Menu,x,,Conversion factor for fuel uses into watts,
 goPowerPerPanel,UI,Menu,x,,Watts per solar panel
-goPowerPerPanelDesc,UI,Menu,x,,Amount of power a single solar panel generates.
+goPowerPerPanelDesc,UI,Menu,x,,Amount of power a single solar panel generates (depends on the tier quality).
 goPowerPerEngine,UI,Menu,x,,Watts per diesel engine
 goPowerPerEngineDesc,UI,Menu,x,,Amount of power a single diesel engine generates.
 goPowerPerBattery,UI,Menu,x,,Watts per battery
-goPowerPerBatteryDesc,UI,Menu,x,,Amount of power a single battery generates (depends on the quality).
+goPowerPerBatteryDesc,UI,Menu,x,,Amount of power a single battery generates (depends on the tier quality).
 goChargePerBattery,UI,Menu,x,,Battery charge capacity
 goChargePerBatteryDesc,UI,Menu,x,,Maximum amount of power a single battery can be charged with (depends on the quality).
 goPowerFormat,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}

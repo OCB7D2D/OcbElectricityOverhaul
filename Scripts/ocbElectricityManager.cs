@@ -171,12 +171,14 @@ public class OcbPowerManager : PowerManager
             {
                 if (!source.Stacks[index].IsEmpty())
                 {
+                    ItemStack slot = source.Stacks[index];
+                    ushort cellPower = GetCellPowerByQuality(slot.itemValue.Quality);
                     if (source.IsOn && solar.HasLight)
                     {
-                        source.MaxProduction += (ushort)powerPerPanel;
+                        source.MaxProduction += cellPower;
                     }
-                    source.MaxOutput += (ushort)powerPerPanel;
-                    source.MaxPower += (ushort)powerPerPanel;
+                    source.MaxOutput += cellPower;
+                    source.MaxPower += cellPower;
                 }
             }
         }
@@ -207,19 +209,19 @@ public class OcbPowerManager : PowerManager
             {
                 if (!source.Stacks[index].IsEmpty())
                 {
-                    ItemStack stack = source.Stacks[index];
-                    ushort discharge = GetDischargeByQuality(stack.itemValue.Quality);
+                    ItemStack slot = source.Stacks[index];
+                    ushort discharge = GetDischargeByQuality(slot.itemValue.Quality);
                     if (source.IsOn)
                     {
-                        if (stack.itemValue.UseTimes < stack.itemValue.MaxUseTimes)
+                        if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
                         {
                             // ToDo: should we cap at what is actually available?
                             source.MaxProduction += discharge;
                         }
-                        if (stack.itemValue.UseTimes > 0)
+                        if (slot.itemValue.UseTimes > 0)
                         {
                             // ToDo: should we cap at what is actually needed?
-                            bank.ChargingDemand += GetChargeByQuality(stack.itemValue.Quality);
+                            bank.ChargingDemand += GetChargeByQuality(slot.itemValue.Quality);
                         }
                     }
                     // Production if all batteries are loaded

@@ -35,6 +35,12 @@ namespace OCB
         public static int powerPerBattery = PowerPerBatteryDefault;
         public static int chargePerBattery = ChargePerBatteryDefault;
 
+        // Get solar cell power by quality
+        static public ushort GetCellPowerByQuality(int quality)
+        {
+            return (ushort)((double)powerPerPanel * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
+        }
+
         // Get discharge power by battery quality
         static public ushort GetDischargeByQuality(int quality)
         {
