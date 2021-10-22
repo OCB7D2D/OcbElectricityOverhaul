@@ -236,6 +236,7 @@ public class OcbPowerManager : PowerManager
             source.MaxOutput = 0;
             source.MaxProduction = 0;
             source.RequiredPower = 0;
+            generator.MaxFuel = GeneratorMaxFuelDefault;
             for (int index = source.Stacks.Length - 1; index >= 0; --index)
             {
                 if (!source.Stacks[index].IsEmpty())

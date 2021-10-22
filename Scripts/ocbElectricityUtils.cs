@@ -6,23 +6,34 @@ namespace OCB
     public static class ElectricityUtils
     {
 
+        // Default values for configurable options
+        public const bool BatterySelfChargeDefault = false;
+        public const int BatteryPowerPerUseDefault = 25;
+        public const int MinPowerForChargingDefault = 20;
+        public const int FuelPowerPerUseDefault = 750;
+        public const int PowerPerPanelDefault = 30;
+        public const int PowerPerEngineDefault = 50;
+        public const int PowerPerBatteryDefault = 50;
+        public const int ChargePerBatteryDefault = 35;
+        public const int GeneratorMaxFuelDefault = 5000;
+
         // Should batteries charge other batteries?
-        public static bool isBatteryChargingBattery = false;
+        public static bool isBatteryChargingBattery = BatterySelfChargeDefault;
 
         // Coefficient to exchange battery uses and watts
-        public static int batteryPowerPerUse = 10;
+        public static int batteryPowerPerUse = BatteryPowerPerUseDefault;
 
         // Minumum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
-        public static int minPowerForCharging = 20;
+        public static int minPowerForCharging = MinPowerForChargingDefault;
 
         // Coefficient to exchange fuel into watts
-        public static int fuelPowerPerUse = 750;
+        public static int fuelPowerPerUse = FuelPowerPerUseDefault;
 
-        public static int powerPerPanel = 30;
-        public static int powerPerEngine = 50;
-        public static int powerPerBattery = 50;
-        public static int chargePerBattery = 35;
+        public static int powerPerPanel = PowerPerPanelDefault;
+        public static int powerPerEngine = PowerPerEngineDefault;
+        public static int powerPerBattery = PowerPerBatteryDefault;
+        public static int chargePerBattery = ChargePerBatteryDefault;
 
         // Get discharge power by battery quality
         static public ushort GetDischargeByQuality(int quality)
