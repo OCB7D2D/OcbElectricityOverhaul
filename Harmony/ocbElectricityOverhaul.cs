@@ -359,6 +359,17 @@ public class OcbElectricityOverhaul
         }
     }
 
+    [HarmonyPatch(typeof(PowerGenerator))]
+    [HarmonyPatch("TickPowerGeneration")]
+    public class Powergenerator_TickPowerGeneration
+    {
+        static bool Prefix(PowerGenerator __instance)
+        {
+            TickBatteryDieselPowerGeneration(__instance);
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(PowerBatteryBank))]
     [HarmonyPatch("get_IsPowered")]
     public class PowerBatteryBank_IsPowered

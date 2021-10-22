@@ -5,6 +5,8 @@ goBatteryPowerPerUse,UI,Menu,x,,Battery Watts per Use
 goBatteryPowerPerUseDesc,UI,Menu,x,,Conversion factor for battery uses into watts,
 goMinPowerForCharging,UI,Menu,x,,Min power for charge
 goMinPowerForChargingDesc,UI,Menu,x,,Only charge batteries if excess energy is higher.
+goFuelPowerPerUse,UI,Menu,x,,Fuel Watts per Use
+goFuelPowerPerUseDesc,UI,Menu,x,,Conversion factor for fuel uses into watts,
 goPowerFormat,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
 goPowerFormats,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
 xuiCharge,UI,Menu,x,,Charge

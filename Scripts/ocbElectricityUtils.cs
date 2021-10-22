@@ -16,6 +16,9 @@ namespace OCB
         // This avoids too much charge/discharge ping-pong
         public static int minPowerForCharging = 20;
 
+        // Coefficient to exchange fuel into watts
+        public static int fuelPowerPerUse = 750;
+
         // Get discharge power by battery quality
         static public ushort GetDischargeByQuality(int quality)
         {
@@ -104,7 +107,7 @@ namespace OCB
             // CurrentPower acts as a internal buffer, where excess energy is stored.
             if (bank.CurrentPower < bank.MaxPower)
             {
-                float neededToMax = (bank.MaxPower - bank.CurrentPower);
+                float neededToMax = bank.MaxPower - bank.CurrentPower;
                 for (int index = 0; index < bank.Stacks.Length; ++index)
                 {
                     // Skip over empty battery slots
@@ -117,7 +120,7 @@ namespace OCB
                     float usesLeftOver = bank.Stacks[index].itemValue.MaxUseTimes
                                          - (int)bank.Stacks[index].itemValue.UseTimes;
 
-                    if (neededToMax <= usesLeftOver)
+                    if (neededToMax <= usesLeftOver * batteryPowerPerUse)
                     {
                         bank.Stacks[index].itemValue.UseTimes += neededToMax / batteryPowerPerUse;
                         bank.CurrentPower += (ushort)neededToMax;
@@ -139,6 +142,20 @@ namespace OCB
                     }
                 }
             }
+        }
+
+        // Mostly copied from original dll to insert our configurable conversion factor
+        static public void TickBatteryDieselPowerGeneration(PowerGenerator generator)
+        {
+            // Check if buffer has enough energy to fullfil max power
+            if (generator.CurrentPower >= generator.MaxPower) return;
+            Log.Out("Gen Max " + (ushort)generator.MaxPower + " Prod" + generator.MaxProduction + " > now " + generator.CurrentPower);
+            float neededToMax = generator.MaxProduction - generator.CurrentPower;
+            Log.Out("Generator needs more power " + neededToMax + " => current: " + generator.CurrentPower + " fact: " + fuelPowerPerUse);
+            ushort consume = (ushort)Mathf.Ceil(neededToMax / fuelPowerPerUse);
+            generator.CurrentPower += (ushort)(consume * fuelPowerPerUse);
+            Log.Out("  Consume fuel " + consume + " > now " + generator.CurrentPower);
+            generator.CurrentFuel -= consume;
         }
 
         // We get some amount of power that can be put into our batteries.

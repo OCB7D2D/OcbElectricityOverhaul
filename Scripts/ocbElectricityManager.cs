@@ -36,6 +36,7 @@ public class OcbPowerManager : PowerManager
         isBatteryChargingBattery = GamePrefs.GetBool(EnumGamePrefs.BatterySelfCharge);
         batteryPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.BatteryPowerPerUse);
         minPowerForCharging = GamePrefs.GetInt(EnumGamePrefs.MinPowerForCharging);
+        fuelPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.FuelPowerPerUse);
 
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" + isBatteryChargingBattery + "/" +

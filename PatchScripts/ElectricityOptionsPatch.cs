@@ -21,6 +21,9 @@ public class ElectricityOptionsPatch : IPatcherMod
         enumType.Fields.Add(new FieldDefinition("MinPowerForCharging", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = 201 });
+        enumType.Fields.Add(new FieldDefinition("FuelPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = 202 });
 
         // Add new fields to GameInfoBool enum
         var infoBoolType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoBool"));
@@ -36,12 +39,10 @@ public class ElectricityOptionsPatch : IPatcherMod
         infoIntType.Fields.Add(new FieldDefinition("MinPowerForCharging", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
             { Constant = 44 });
+        infoIntType.Fields.Add(new FieldDefinition("FuelPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+            { Constant = 45 });
 
-        var type = MakeTypePublic(module.Types.First(d => d.Name == "XUiC_OptionsControls"));
-        TypeReference comboBoxBoolTypeRef = module.ImportReference(typeof(XUiC_ComboBoxBool));
-        type.Fields.Add(new FieldDefinition("comboBatterySelfCharge", FieldAttributes.Public, comboBoxBoolTypeRef));
-        type.Fields.Add(new FieldDefinition("comboBatteryPowerPerUse", FieldAttributes.Public, comboBoxBoolTypeRef));
-        type.Fields.Add(new FieldDefinition("comboMinPowerForCharging", FieldAttributes.Public, comboBoxBoolTypeRef));
     }
 
     public bool Patch(ModuleDefinition module)

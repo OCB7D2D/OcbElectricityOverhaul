@@ -35,19 +35,22 @@ public class OcbElectricityOption
             }
 
             // Otherwise add three new items
-            Array.Resize(ref __instance.propertyList, size + 3);
+            Array.Resize(ref __instance.propertyList, size + 4);
             __instance.propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatterySelfCharge,
                 true, GamePrefs.EnumType.Bool, (bool)false, (object)null, (object)null);
             __instance.propertyList[size + 1] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatteryPowerPerUse,
                 true, GamePrefs.EnumType.Int, (int)10, (object)null, (object)null);
             __instance.propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging,
                 true, GamePrefs.EnumType.Int, (int)20, (object)null, (object)null);
+            __instance.propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse,
+                true, GamePrefs.EnumType.Int, (int)20, (object)null, (object)null);
 
             size = __instance.propertyValues.Length;
-            Array.Resize(ref __instance.propertyValues, size + 3);
+            Array.Resize(ref __instance.propertyValues, size + 4);
             __instance.propertyValues[size + 0] = (bool) false;
             __instance.propertyValues[size + 1] = (int) 10;
             __instance.propertyValues[size + 2] = (int) 20;
+            __instance.propertyValues[size + 3] = (int) 750;
         }
     }
 
@@ -66,10 +69,11 @@ public class OcbElectricityOption
                 if (pref.GamePref == EnumGamePrefs.MinPowerForCharging) return;
             }
             // Otherwise add three new keys
-            Array.Resize(ref __result, size + 3);
+            Array.Resize(ref __result, size + 4);
             __result[size + 0] = new GameMode.ModeGamePref(EnumGamePrefs.BatterySelfCharge, GamePrefs.EnumType.Bool, (bool) false);
             __result[size + 1] = new GameMode.ModeGamePref(EnumGamePrefs.BatteryPowerPerUse, GamePrefs.EnumType.Int, (int) 10);
             __result[size + 2] = new GameMode.ModeGamePref(EnumGamePrefs.MinPowerForCharging, GamePrefs.EnumType.Int, (int) 20);
+            __result[size + 3] = new GameMode.ModeGamePref(EnumGamePrefs.FuelPowerPerUse, GamePrefs.EnumType.Int, (int) 750);
         }
     }
 
