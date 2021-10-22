@@ -16,6 +16,9 @@ public class OcbPowerManager : PowerManager
     // the tree via `ProcessPowerSource`.
     public Stack<PowerSource> lenders;
 
+    // Global light for solar panels
+    float globalLight = 1f;
+
     // Constructor
     public OcbPowerManager() : base()
     {
@@ -63,6 +66,7 @@ public class OcbPowerManager : PowerManager
         if (GameManager.Instance.World.Players == null) return;
         if (GameManager.Instance.World.Players.Count == 0) return;
 
+        this.globalLight = 0f;
         var startTime = Environment.TickCount;
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -81,6 +85,19 @@ public class OcbPowerManager : PowerManager
                 base.updateTime -= Time.deltaTime;
                 if ((double) this.updateTime <= 0.0)
                 {
+
+                    // Calculate light levels once
+                    var world = GameManager.Instance.World;
+                    // Partially copied from `IsDark`
+                    float time = (float) (world.worldTime % 24000UL) / 1000f;
+                    if ((double) time > (double) world.DawnHour && (double) time < (double) world.DuskHour)
+                    {
+                        // Give a more natural sunrise and sunset effect
+                        float span = (world.DuskHour - world.DawnHour) / 2f;
+                        float halfTime = (world.DuskHour + world.DawnHour) / 2f;
+                        float distance = span - Mathf.Abs(time - halfTime);
+                        this.globalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
+                    }
 
                     // Re-generate all power source first to enable full capacity
                     for (int index = 0; index < this.PowerSources.Count; ++index)
@@ -175,7 +192,7 @@ public class OcbPowerManager : PowerManager
                     ushort cellPower = GetCellPowerByQuality(slot.itemValue.Quality);
                     if (source.IsOn && solar.HasLight)
                     {
-                        source.MaxProduction += cellPower;
+                        source.MaxProduction += (ushort)Mathf.Ceil(cellPower * globalLight);
                     }
                     source.MaxOutput += cellPower;
                     source.MaxPower += cellPower;
