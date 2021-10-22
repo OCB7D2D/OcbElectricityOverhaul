@@ -493,9 +493,9 @@ public class OcbPowerManager : PowerManager
         // Any left-over energy can be used to charge batteries.
         // The (configurable) limit to start charging batteries ensures
         // that we don't get too much ping-pong charging/discharging.
-        if (lendable >= minPowerForCharging && root.IsOn)
+        if (root is PowerBatteryBank bank)
         {
-            if (root is PowerBatteryBank bank)
+            if (lendable >= minPowerForCharging && root.IsOn)
             {
                 ushort consumed = 0;
                 int input = lendable;
@@ -511,14 +511,21 @@ public class OcbPowerManager : PowerManager
                 }
                 root.ChargingUsed = consumed;
             }
+            // Enable powered state if battery bank
+            // is on and some charging is happening
+            root.isPowered = root.ChargingUsed > 0 ||
+                             root.ChargingDemand == 0;
         }
+        else {
+            // Update power state for all other source
+            // We don't account for power down the grid?
+            // Any other thing we would like to indicate?
+            root.isPowered = root.ConsumerUsed > 0 ||
+                             root.ConsumerUsed > 0;
+        }
+        // Always obey isOn flag (otherwise can't be powered)
+        root.isPowered = root.isPowered && root.isOn;
 
-        // Update power state for all source
-        // We don't account for power down the grid
-        // ToDo: factor in `LentConsumerUsed`?
-        root.isPowered = root.isOn ||
-                         root.ConsumerUsed > 0 ||
-                         root.ConsumerUsed > 0;
 
         // Now distribute power statistics up the chain
         // Note: this is only for statistics (remove?)

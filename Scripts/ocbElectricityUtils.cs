@@ -71,23 +71,23 @@ namespace OCB
                         SubActive = SubActive ||
                                     upstream.IsActive;
                         parent = upstream.Parent;
+                        // Abort at next power source
+                        if (parent is PowerSource)
+                        {
+                            return isActive && SubActive;
+                        }
                     }
 
                     isActive = isActive && SubActive;
-
-                    if (parent is PowerSource)
-                    {
-                        return isActive;
-                    }
                 }
-                else if (parent is PowerSource)
-                {
-                    return isActive;
-                }
-
                 // Skip over other parents
                 if (parent != null)
                     parent = parent.Parent;
+                // Abort at next power source
+                if (parent is PowerSource)
+                {
+                    return isActive;
+                }
             }
             return isActive;
         }
