@@ -1,0 +1,3 @@
+<configs>
+	<append xpath="/progression/perks/perk[@name='perkAdvancedEngineering']/effect_group/passive_effect[@name='RecipeTagUnlocked' and @value='1' and @level='2,5']/@tags">,solarCell</append>
+</configs>

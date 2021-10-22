@@ -2,14 +2,24 @@
 	<append xpath="/recipes">
 
 		<recipe name="solarCell" count="1"
-				tags="perkAdvancedEngineering"
+				tags="perkAdvancedEngineering,learnable"
 				craft_area="workbench" material_based="false"
 				craft_time="240">
-			<ingredient name="resourceForgedSteel" count="12"/>
+			<ingredient name="resourceAcid" count="1"/>
 			<ingredient name="resourceBrokenGlass" count="200"/>
+			<ingredient name="resourceScrapLead" count="200"/>
 			<ingredient name="resourceElectricParts" count="24"/>
 			<ingredient name="resourceMechanicalParts" count="6"/>
-			<ingredient name="resourceScrapLead" count="96"/>
+		</recipe>
+
+		<recipe name="resourceBrokenGlass" count="10"
+				tags="perkAdvancedEngineering"
+				craft_tool="toolForgeCrucible"
+				craft_area="forge" material_based="true"
+				craft_time="20">
+			<ingredient name="unit_glass" count="200"/>
+			<ingredient name="unit_stone" count="10"/>
+			<ingredient name="unit_clay" count="20"/>
 		</recipe>
 
 	</append>
