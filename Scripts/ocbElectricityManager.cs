@@ -45,6 +45,8 @@ public class OcbPowerManager : PowerManager
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" + isBatteryChargingBattery + "/" +
                 batteryPowerPerUse + "/" + minPowerForCharging + ")");
+        Log.Out("  Factors " + fuelPowerPerUse + "/" + powerPerPanel + "/" +
+            powerPerEngine + "/" + powerPerBattery + "/" + chargePerBattery);
     }
 
     // Main function called by game manager per tick

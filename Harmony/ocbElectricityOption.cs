@@ -43,7 +43,7 @@ public class OcbElectricityOption
             __instance.propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging,
                 true, GamePrefs.EnumType.Int, (int)20, (object)null, (object)null);
             __instance.propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse,
-                true, GamePrefs.EnumType.Int, (int)20, (object)null, (object)null);
+                true, GamePrefs.EnumType.Int, (int)750, (object)null, (object)null);
 
             __instance.propertyList[size + 4] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerPanel,
                 true, GamePrefs.EnumType.Int, (int)30, (object)null, (object)null);
