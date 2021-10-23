@@ -24,6 +24,7 @@ are connected in line. Also preserves pass-through trigger groups.
 
 - https://github.com/OCB7D2D/ElectricityBugfixes (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
+- https://github.com/OCB7D2D/ElectricitySolarRecipes (optional)
 - https://github.com/OCB7D2D/ElectricityNoWires (optional)
 
 ## Important Notes
