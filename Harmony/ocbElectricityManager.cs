@@ -324,7 +324,6 @@ public class OcbPowerManager : PowerManager
     {
         if (used == 0) return;
         var enumerator = lenders.GetEnumerator();
-        int i = 0;
         while (enumerator.MoveNext())
         {
             PowerSource lender = enumerator.Current;
@@ -512,6 +511,7 @@ public class OcbPowerManager : PowerManager
                         // ToDo: could probably be optimized (low hanging fruit)
                         if (!IsTriggerActive(child.Children[i]))
                         {
+                            HandleDisconnect(child.Children[i]);
                             // child.Children[i].HandleDisconnect();
                             continue;
                         }
@@ -521,8 +521,14 @@ public class OcbPowerManager : PowerManager
                     children.Enqueue(child.Children[i]);
                 }
 
-                // Important to be called for e.g. triggers
-                child.HandlePowerUpdate(used > 0);
+                if (child.WasPowered != child.isPowered) {
+                    child.hasChangesLocal = true;
+                    child.WasPowered = child.isPowered;
+                    // child.IsPoweredChanged(child.isPowered);
+                }
+                if (child.hasChangesLocal)
+                    child.HandlePowerUpdate(used > 0);
+                child.hasChangesLocal = false;
             }
         }
 
@@ -606,6 +612,19 @@ public class OcbPowerManager : PowerManager
         root.hasChangesLocal = false;
     }
 
+
+    public void HandleDisconnect(PowerItem child)
+    {
+        if (child.WasPowered != child.isPowered) {
+            child.WasPowered = child.isPowered;
+            child.hasChangesLocal = true;
+        }
+        if (child.hasChangesLocal)
+            child.HandlePowerUpdate(false);
+        child.hasChangesLocal = false;
+        for (int index = 0; index < child.Children.Count; ++index)
+          HandleDisconnect(child.Children[index]);
+    }
 
     public void FinalizePowerSource(PowerSource source)
     {

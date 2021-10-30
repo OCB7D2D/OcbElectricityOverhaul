@@ -65,7 +65,7 @@ public class OcbElectricityOverhaul
                     break;
                 case TileEntity.StreamModeWrite.ToServer:
                     break;
-                default:
+                default: // ToClient
                     PowerSource powerItem = ___PowerItem as PowerSource;
                     _bw.Write(powerItem != null);
                     if (powerItem == null)
@@ -104,7 +104,7 @@ public class OcbElectricityOverhaul
                     break;
                 case TileEntity.StreamModeRead.FromClient:
                     break;
-                default:
+                default: // FromServer
                     if (!_br.ReadBoolean())
                         break;
                     // ToDo: check if we need em all (now 180 bytes)

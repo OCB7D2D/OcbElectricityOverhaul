@@ -16,6 +16,13 @@ public class ElectricityOverhaulPatch : IPatcherMod
         SetMethodToVirtual(type.Methods.First(d => d.Name == "SavePowerManager"));
     }
 
+    public void PatchPowerItem(ModuleDefinition module)
+    {
+        var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerItem"));
+        TypeReference boolTypeRef = module.ImportReference(typeof(bool));
+        type.Fields.Add(new FieldDefinition("WasPowered", FieldAttributes.Public, boolTypeRef));
+    }
+
     public void PatchPowerSource(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
@@ -60,8 +67,9 @@ public class ElectricityOverhaulPatch : IPatcherMod
     {
         Console.WriteLine("Applying OCB Electricity Overhaul Patch");
 
-        PatchPowerManager(module);
+        PatchPowerItem(module);
         PatchPowerSource(module);
+        PatchPowerManager(module);
         PatchClientPowerData(module);
 
         MakeTypePublic(module.Types.First(d => d.Name == "PowerItem"));
