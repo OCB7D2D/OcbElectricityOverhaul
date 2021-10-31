@@ -189,6 +189,13 @@ public class OcbElectricityOverhaul
             if (power <= (ushort)0)
                 return false;
             __instance.CheckForActiveChange();
+            for (int index = 0; index < __instance.Children.Count; ++index)
+            {
+                if (__instance.Children[index] is PowerTrigger child)
+                {
+                    __instance.HandleParentTriggering(child);
+                }
+            }
             return false;
         }
     }
@@ -328,8 +335,19 @@ public class OcbElectricityOverhaul
 
     // Only consumers obey this flag!?
     [HarmonyPatch(typeof(PowerItem))]
+    [HarmonyPatch("HandleDisconnect")]
+    public class PowerItem_HandleDisconnect
+    {
+        static void Postfix(PowerItem __instance)
+        {
+            __instance.WasPowered = false;
+        }
+    }
+
+    // Only consumers obey this flag!?
+    [HarmonyPatch(typeof(PowerItem))]
     [HarmonyPatch("PowerChildren")]
-    public class PowerConsumer_PowerChildren
+    public class PowerItem_PowerChildren
     {
         static void Postfix(ref bool __result)
         {

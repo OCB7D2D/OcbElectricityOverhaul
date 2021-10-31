@@ -99,6 +99,10 @@ public class OcbPowerManager : PowerManager
                         this.globalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
                     }
 
+                    // Reset all parent triggers
+                    for (int index = 0; index < this.PowerTriggers.Count; ++index)
+                        this.PowerTriggers[index].SetTriggeredByParent(false);
+
                     // Re-generate all power source first to enable full capacity
                     for (int index = 0; index < this.PowerSources.Count; ++index)
                     {
@@ -117,6 +121,7 @@ public class OcbPowerManager : PowerManager
                     // This triggers e.g. motions sensors with given delay
                     for (int index = 0; index < this.PowerTriggers.Count; ++index)
                         this.PowerTriggers[index].CachedUpdateCall();
+
                     // Doesn't do much anymore since caching is not enabled yet
                     for (int index = 0; index < this.PowerSources.Count; ++index)
                         FinalizePowerSource(this.PowerSources[index]);
@@ -511,8 +516,6 @@ public class OcbPowerManager : PowerManager
                         // ToDo: could probably be optimized (low hanging fruit)
                         if (!IsTriggerActive(child.Children[i]))
                         {
-                            HandleDisconnect(child.Children[i]);
-                            // child.Children[i].HandleDisconnect();
                             continue;
                         }
                     }
@@ -522,12 +525,10 @@ public class OcbPowerManager : PowerManager
                 }
 
                 if (child.WasPowered != child.isPowered) {
-                    child.hasChangesLocal = true;
                     child.WasPowered = child.isPowered;
-                    // child.IsPoweredChanged(child.isPowered);
-                }
-                if (child.hasChangesLocal)
                     child.HandlePowerUpdate(used > 0);
+                }
+
                 child.hasChangesLocal = false;
             }
         }
@@ -612,19 +613,6 @@ public class OcbPowerManager : PowerManager
         root.hasChangesLocal = false;
     }
 
-
-    public void HandleDisconnect(PowerItem child)
-    {
-        if (child.WasPowered != child.isPowered) {
-            child.WasPowered = child.isPowered;
-            child.hasChangesLocal = true;
-        }
-        if (child.hasChangesLocal)
-            child.HandlePowerUpdate(false);
-        child.hasChangesLocal = false;
-        for (int index = 0; index < child.Children.Count; ++index)
-          HandleDisconnect(child.Children[index]);
-    }
 
     public void FinalizePowerSource(PowerSource source)
     {
