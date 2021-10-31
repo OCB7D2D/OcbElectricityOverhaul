@@ -100,8 +100,8 @@ public class OcbPowerManager : PowerManager
                     }
 
                     // Reset all parent triggers
-                    for (int index = 0; index < this.PowerTriggers.Count; ++index)
-                        this.PowerTriggers[index].SetTriggeredByParent(false);
+                    // for (int index = 0; index < this.PowerTriggers.Count; ++index)
+                    //     this.PowerTriggers[index].SetTriggeredByParent(false);
 
                     // Re-generate all power source first to enable full capacity
                     for (int index = 0; index < this.PowerSources.Count; ++index)

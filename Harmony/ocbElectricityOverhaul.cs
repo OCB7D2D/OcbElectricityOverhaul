@@ -409,7 +409,6 @@ public class OcbElectricityOverhaul
     {
         static bool Prefix(PowerTrigger __instance)
         {
-            Log.Out("Ov PowerTrigger_HandleDisconnectChildren");
             // Make sure no parent is triggered
             if (__instance.Parent != null) {
                 if (__instance.Parent is PowerTrigger upstream) {

@@ -127,8 +127,8 @@ in between to break up the trigger group.
 
 ## Power distribution edge cases
 
-Certain setups can expose "undefined behavior" if the required power
-is less then the available power. Consider the following example:
+Certain setups can expose "undefined behavior" if the available power
+is less then the required power. Consider the following example:
 
 ```
 SolarPanel A -> Diesel Generator B (full) -> Consumers B
