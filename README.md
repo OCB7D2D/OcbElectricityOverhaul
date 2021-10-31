@@ -22,7 +22,7 @@ are connected in line. Also preserves pass-through trigger groups.
 
 ## Additional recommended DMT mods
 
-- https://github.com/OCB7D2D/ElectricityBugfixes (recommended)
+- https://github.com/OCB7D2D/ElectricityWorkarounds (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
 - https://github.com/OCB7D2D/ElectricitySolarRecipes (optional)
 - https://github.com/OCB7D2D/ElectricityNoWires (optional)
@@ -43,9 +43,9 @@ when the update call takes longer than 40ms.
 
 ### Installation via DMT
 
-You either need [DMT][1] to build your own custom game dll. It is also
+You will need [DMT][1] to build your own custom game dll. It is also
 the most versatile and safe method, since compatibility is easily
-guaranteed as long as everything compile. You can also combine other
+guaranteed as long as everything compiles. You can also combine other
 DMT mods (as long as they don't touch the base game power system).
 
 ### Manual Installation

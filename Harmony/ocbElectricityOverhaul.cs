@@ -399,6 +399,48 @@ public class OcbElectricityOverhaul
     //     }
     // }
 
+
+    // Don't forcefully remove children if one trigger goes inactive
+    // Some child might be another trigger, forming a trigger group,
+    // thus if one sub-triggers is active, children stay connected.
+    [HarmonyPatch(typeof(PowerTrigger))]
+    [HarmonyPatch("HandleDisconnectChildren")]
+    public class PowerTrigger_HandleDisconnectChildrenOverhaul
+    {
+        static bool Prefix(PowerTrigger __instance)
+        {
+            Log.Out("Ov PowerTrigger_HandleDisconnectChildren");
+            // Make sure no parent is triggered
+            if (__instance.Parent != null) {
+                if (__instance.Parent is PowerTrigger upstream) {
+                    if (upstream.IsActive) {
+                        return false;
+                    }
+                }
+            }
+            for (int index = 0; index < __instance.Children.Count; ++index)
+            {
+                // If child is another trigger, only disconnect if not active
+                if (__instance.Children[index] is PowerTrigger trigger)
+                {
+                    trigger.SetTriggeredByParent(__instance.IsActive);
+                    if (trigger.IsActive) {
+                        continue;
+                    }
+                    trigger.HandleDisconnectChildren();
+                }
+                else {
+                    __instance.Children[index].HandleDisconnect();
+                }
+            }
+            // Disable power for this instance?
+            // Get better results without this?
+            // __instance.HandlePowerUpdate(false);
+            // Fully replace implementation
+            return false;
+        }
+    }
+    
     public static ushort GetCurrentPower(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
