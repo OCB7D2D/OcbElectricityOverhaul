@@ -277,6 +277,7 @@ public class OcbElectricityOverhaul
         {
             ushort num = __instance.RequiredPower <= power ? __instance.RequiredPower : (ushort)0;
             bool newPowered = (int)num == (int)__instance.RequiredPower;
+            if (__instance.IsToggled == false) newPowered = false;
             if (newPowered != __instance.isPowered)
             {
                 __instance.isPowered = newPowered;
