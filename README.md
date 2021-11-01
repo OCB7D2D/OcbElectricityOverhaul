@@ -60,12 +60,11 @@ If you messed something up, you can always reinstall the game via steam:
 
 http://www.ocbnet.ch/OCB7D2D/ElectricityOverhaul/
 
-In the end you must copy four files into the `Data/Managed` folder:
+In the end you must copy three files into the `Data/Managed` folder:
 
 - `0Harmony.dll`
 - `Assembly-CSharp.dll`
 - `DMT.dll`
-- `Mods.dll`
 
 The `Assembly-CSharp.dll` must match your game installation. For
 single-player use `sp-*` files, for dedicated server use `dedi-*`.
