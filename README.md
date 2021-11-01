@@ -5,6 +5,8 @@ to each other. Still every power item can only have one parent
 connection, but can lend power from upstream if multiple sources
 are connected in line. Also preserves pass-through trigger groups.
 
+https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
+
 ## Main features
 
 - Power sources can be connected like every other power item
@@ -90,7 +92,7 @@ a lot of power sources. Please open an issue here if you run into problems.
 ### Server config xml
 
 ```xml
-<property name="BatterySelfCharge" value="false" />
+<property name="LoadVanillaMap" value="false" />
 <property name="BatteryPowerPerUse" value="25" />
 <property name="MinPowerForCharging" value="20" />
 <property name="FuelPowerPerUse" value="750" />
@@ -99,6 +101,16 @@ a lot of power sources. Please open an issue here if you run into problems.
 <property name="PowerPerBattery" value="50" />
 <property name="ChargePerBattery" value="35" />
 ```
+
+## Vanilla Map Loading
+
+There is an option to load vanilla maps. If you set this option, we will
+assume that additional settings for power sources are not in the save file
+yet and skip trying to read them from the save files. The values will be
+initialized with the default settings. And once the save files are written
+again, these options will then be included ("upgraded" so to speak). So make
+sure you only enable this option exactly once, otherwise you may loose your
+save files. Probably a good time to make a backup!
 
 ## Power distribution logic
 
@@ -109,8 +121,7 @@ that power source. Those will then try to take their required power
 from all connected upstream power sources in the following order:
 
 - Closest solar power panel
-- Closest diesel generator
-- Closest battery bank
+- Closest generator or battery bank
 
 Note that this logic exposes a few quirks when the required power exceeds
 the power available. This could of course be further optimized, but it's
@@ -163,9 +174,10 @@ is charged with 10W (2 ticks 10 Watts are charged, 1 tick 20 Watts are consumed)
 It doesn't seem that the underlying blocks (e.g. blade trap) would handle this
 cleanly, as in my testing this seemed to enable some kind of "power hack".
 
-There is a new option under "controls" where you can enable/disable the
-charging of batteries from batteries. Default is to only charge batteries
-from diesel generators or solar panels (self-charge defaults to `false`).
+Battery banks have additional "Charging" in-game options, where you can set
+from which power source a specific bank should take power for charging. This
+allows to have diesel generators as true backups only in the night, while
+batteries are only charged during the day via solar panels.
 
 ## Implementation details (devs only)
 

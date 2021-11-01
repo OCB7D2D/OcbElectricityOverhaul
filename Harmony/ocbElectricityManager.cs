@@ -36,7 +36,7 @@ public class OcbPowerManager : PowerManager
 
         // Update configuration once when loaded from game preferences
         // Shouldn't change during runtime (unsure if this is the right spot?)
-        isBatteryChargingBattery = GamePrefs.GetBool(EnumGamePrefs.BatterySelfCharge);
+        isLoadVanillaMap = GamePrefs.GetBool(EnumGamePrefs.LoadVanillaMap);
         batteryPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.BatteryPowerPerUse);
         minPowerForCharging = GamePrefs.GetInt(EnumGamePrefs.MinPowerForCharging);
         fuelPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.FuelPowerPerUse);
@@ -46,7 +46,7 @@ public class OcbPowerManager : PowerManager
         chargePerBattery = GamePrefs.GetInt(EnumGamePrefs.ChargePerBattery);
 
         // Give one debug message for now (just to be sure we are running)
-        Log.Out("Loaded OCB PowerManager (" + isBatteryChargingBattery + "/" +
+        Log.Out("Loaded OCB PowerManager (" + isLoadVanillaMap + "/" +
                 batteryPowerPerUse + "/" + minPowerForCharging + ")");
         Log.Out("  Factors " + fuelPowerPerUse + "/" + powerPerPanel + "/" +
             powerPerEngine + "/" + powerPerBattery + "/" + chargePerBattery);
@@ -274,7 +274,7 @@ public class OcbPowerManager : PowerManager
                 }
             }
         }
-    
+
         // Code directly copied from decompiled dll
         if (source.ShouldAutoTurnOff())
         {
@@ -285,7 +285,7 @@ public class OcbPowerManager : PowerManager
     }
 
     // Borrow as much power from `lender` as possible to fulfill `distribute` requirement
-    public void BorrowPowerFromSource(PowerSource lender, ref ushort distribute, bool isBattery = false)
+    public void BorrowPowerFromSource(PowerSource lender, ref ushort distribute, PowerBatteryBank battery = null)
     {
         if (distribute <= 0) return;
         int lenderPower = Mathf.Min(lender.MaxProduction, lender.CurrentPower);
@@ -295,7 +295,7 @@ public class OcbPowerManager : PowerManager
         if (lenderLeftOver >= distribute)
         {
             lender.LastPowerUsed += distribute;
-            if (isBattery)
+            if (battery != null)
             {
                 lender.LentCharging += distribute;
             }
@@ -309,7 +309,7 @@ public class OcbPowerManager : PowerManager
         else
         {
             lender.LastPowerUsed += lenderLeftOver;
-            if (isBattery)
+            if (battery != null)
             {
                 lender.LentCharging += lenderLeftOver;
             }
@@ -325,7 +325,7 @@ public class OcbPowerManager : PowerManager
     // energy is actually flowing through any given node. For that
     // we register our energy use on every parent power source,
     // until we reach the target that provided us that energy.
-    public void AccountPowerUse(PowerSource target, ushort used, bool isBattery = false)
+    public void AccountPowerUse(PowerSource target, ushort used, PowerBatteryBank battery = null)
     {
         if (used == 0) return;
         var enumerator = lenders.GetEnumerator();
@@ -333,7 +333,7 @@ public class OcbPowerManager : PowerManager
         {
             PowerSource lender = enumerator.Current;
             // Distinguish power consumption
-            if (isBattery)
+            if (battery != null)
             {
                 lender.LentChargingUsed += used;
             }
@@ -351,7 +351,7 @@ public class OcbPowerManager : PowerManager
     // but doesn't seem to be any bottleneck.
     // Also a bit much code-repetation for my liking.
     // But do we really gain much by optimizing this?
-    public ushort BorrowPower(ref ushort distribute, bool isBattery = false)
+    public ushort BorrowPower(ref ushort distribute, PowerBatteryBank battery = null)
     {
         ushort used = 0;
         ushort before = distribute;
@@ -363,9 +363,11 @@ public class OcbPowerManager : PowerManager
             PowerSource lender = enumerator.Current;
             if (!lender.isOn) continue;
             if (!(lender is PowerSolarPanel)) continue;
+			if (battery != null && !battery.ChargeFromSolar)
+				continue;
             ushort distributing = distribute;
-            BorrowPowerFromSource(lender, ref distribute, isBattery);
-            AccountPowerUse(lender, (ushort)(distributing - distribute), isBattery);
+            BorrowPowerFromSource(lender, ref distribute, battery);
+            AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
             if (distribute == 0) break;
             i++;
         }
@@ -376,30 +378,23 @@ public class OcbPowerManager : PowerManager
         {
             PowerSource lender = enumerator.Current;
             if (!lender.isOn) continue;
-            if (!(lender is PowerGenerator)) continue;
+
+            if (lender is PowerBatteryBank) {
+                if (battery != null && !battery.ChargeFromBattery)
+                    continue;
+            }
+            else if (lender is PowerGenerator) {
+                if (battery != null && !battery.ChargeFromGenerator)
+                    continue;
+            }
+            else {
+                continue;
+            }
             ushort distributing = distribute;
-            BorrowPowerFromSource(lender, ref distribute, isBattery);
-            AccountPowerUse(lender, (ushort)(distributing - distribute), isBattery);
+            BorrowPowerFromSource(lender, ref distribute, battery);
+            AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
             if (distribute == 0) break;
             i++;
-        }
-
-        // Batteries charge Batteries?
-        if (isBatteryChargingBattery || !isBattery)
-        {
-            enumerator = lenders.GetEnumerator();
-            i = 0;
-            while (enumerator.MoveNext())
-            {
-                PowerSource lender = enumerator.Current;
-                if (!lender.isOn) continue;
-                if (!(lender is PowerBatteryBank)) continue;
-                ushort distributing = distribute;
-                BorrowPowerFromSource(lender, ref distribute, isBattery);
-                AccountPowerUse(lender, (ushort)(distributing - distribute), isBattery);
-                if (distribute == 0) break;
-                i++;
-            }
         }
         // Return how much power we used
         return (ushort)(before - distribute);
@@ -501,7 +496,7 @@ public class OcbPowerManager : PowerManager
                 child.HandlePowerReceived(ref power);
                 ushort distribute = (ushort)((uint)num - (uint)power);
                 // Distribute consumption to all possible lenders
-                ushort used = BorrowPower(ref distribute, false);
+                ushort used = BorrowPower(ref distribute, null);
                 // Accounting for used power
                 lendable -= used;
                 // Account for consumed power
@@ -573,7 +568,7 @@ public class OcbPowerManager : PowerManager
                 ushort used = bank.LastInputAmount;
                 if (used > 0)
                 {
-                    consumed = BorrowPower(ref used, true);
+                    consumed = BorrowPower(ref used, bank);
                     lendable -= consumed;
                 }
                 root.ChargingUsed = consumed;

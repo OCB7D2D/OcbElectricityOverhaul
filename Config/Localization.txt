@@ -1,6 +1,6 @@
 Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
-goBatterySelfCharge,UI,Menu,x,,Batteries charge Batteries
-goBatterySelfChargeDesc,UI,Menu,x,,Enable batteries to charge downstream batteries.
+goLoadVanillaMap,UI,Menu,x,,Load vanilla map
+goLoadVanillaMapDesc,UI,Menu,x,,"WARNING: Load existing map without Power Overhaul Mod, as we normally persist a few additional options. When loading a vanilla map, we initialize those fields with default values. Only enable this option once or you may destroy your save files. Make a backup! You've been warned!"
 goBatteryPowerPerUse,UI,Menu,x,,Battery Watts per Use
 goBatteryPowerPerUseDesc,UI,Menu,x,,Conversion factor for battery uses into watts,
 goMinPowerForCharging,UI,Menu,x,,Min power for charge
@@ -27,3 +27,4 @@ xuiChargingTooltip,UI,Menu,x,,Grid-wide charging supply/demand (batteries).
 xuiOutputTooltip,UI,Menu,x,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
 xuiPowerTooltip,UI,Menu,x,,Yellow is for consumers and green for charging.
 xuiGridFlowTooltip,UI,Menu,x,,Overall power flowing through this node.
+xuiChargeFrom,UI,Menu,x,,Charging

@@ -1,4 +1,5 @@
 using DMT;
+using System.IO;
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
@@ -51,22 +52,55 @@ public class OcbElectricityOverhaul
         }
     }
 
+    [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch("write")]
+    public class PowerSource_write
+    {
+        static void Postfix(PowerSource __instance, BinaryWriter _bw)
+        {
+            _bw.Write(__instance.ChargeFromSolar);
+            _bw.Write(__instance.ChargeFromGenerator);
+            _bw.Write(__instance.ChargeFromBattery);
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch("read")]
+    public class PowerSource_read
+    {
+        static void Postfix(PowerSource __instance, BinaryReader _br)
+        {
+            if (GamePrefs.GetBool(EnumGamePrefs.LoadVanillaMap)) {
+                __instance.ChargeFromSolar = true;
+                __instance.ChargeFromGenerator = true;
+                __instance.ChargeFromBattery = false;
+                return;
+            }
+            __instance.ChargeFromSolar = _br.ReadBoolean();
+            __instance.ChargeFromGenerator = _br.ReadBoolean();
+            __instance.ChargeFromBattery = _br.ReadBoolean();
+        }
+    }
+
     // Main overload to allow wire connections between power sources
     [HarmonyPatch(typeof(TileEntityPowerSource))]
     [HarmonyPatch("write")]
     public class TileEntityPowerSource_write
     {
         static void Postfix(PooledBinaryWriter _bw, TileEntity.StreamModeWrite _eStreamMode,
-            PowerItem.PowerItemTypes ___PowerItemType, PowerItem ___PowerItem)
+            TileEntityPowerSource __instance, PowerItem.PowerItemTypes ___PowerItemType, PowerItem ___PowerItem)
         {
+            PowerSource powerItem = ___PowerItem as PowerSource;
             switch (_eStreamMode)
             {
                 case TileEntity.StreamModeWrite.Persistency:
                     break;
                 case TileEntity.StreamModeWrite.ToServer:
+                    _bw.Write(__instance.ClientData.ChargeFromSolar);
+                    _bw.Write(__instance.ClientData.ChargeFromGenerator);
+                    _bw.Write(__instance.ClientData.ChargeFromBattery);
                     break;
                 default: // ToClient
-                    PowerSource powerItem = ___PowerItem as PowerSource;
                     _bw.Write(powerItem != null);
                     if (powerItem == null)
                         break;
@@ -84,9 +118,11 @@ public class OcbElectricityOverhaul
                     _bw.Write(powerItem.GridChargingUsed);
                     _bw.Write(powerItem.LentConsumerUsed);
                     _bw.Write(powerItem.LentChargingUsed);
+                    _bw.Write(powerItem.ChargeFromSolar);
+                    _bw.Write(powerItem.ChargeFromGenerator);
+                    _bw.Write(powerItem.ChargeFromBattery);
                     break;
             }
-
         }
     }
 
@@ -103,6 +139,13 @@ public class OcbElectricityOverhaul
                 case TileEntity.StreamModeRead.Persistency:
                     break;
                 case TileEntity.StreamModeRead.FromClient:
+                    __instance.ClientData.ChargeFromSolar = _br.ReadBoolean();
+                    __instance.ClientData.ChargeFromGenerator = _br.ReadBoolean();
+                    __instance.ClientData.ChargeFromBattery = _br.ReadBoolean();
+                    PowerSource powerItem = __instance.PowerItem as PowerSource;
+                    powerItem.ChargeFromSolar = __instance.ClientData.ChargeFromSolar;
+                    powerItem.ChargeFromGenerator = __instance.ClientData.ChargeFromGenerator;
+                    powerItem.ChargeFromBattery = __instance.ClientData.ChargeFromBattery;
                     break;
                 default: // FromServer
                     if (!_br.ReadBoolean())
@@ -121,6 +164,9 @@ public class OcbElectricityOverhaul
                     __instance.ClientData.GridChargingUsed = _br.ReadUInt16();
                     __instance.ClientData.LentConsumerUsed = _br.ReadUInt16();
                     __instance.ClientData.LentChargingUsed = _br.ReadUInt16();
+                    __instance.ClientData.ChargeFromSolar = _br.ReadBoolean();
+                    __instance.ClientData.ChargeFromGenerator = _br.ReadBoolean();
+                    __instance.ClientData.ChargeFromBattery = _br.ReadBoolean();
                     break;
             }
         }

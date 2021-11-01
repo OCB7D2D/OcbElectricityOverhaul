@@ -27,6 +27,7 @@ public class ElectricityOverhaulPatch : IPatcherMod
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
+        TypeReference boolTypeRef = module.ImportReference(typeof(bool));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentCharging", FieldAttributes.Public, ushortTypeRef));
@@ -40,6 +41,10 @@ public class ElectricityOverhaulPatch : IPatcherMod
         type.Fields.Add(new FieldDefinition("GridChargingUsed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumerUsed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentChargingUsed", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromSolar", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromGenerator", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
+
     }
 
     public void PatchClientPowerData(ModuleDefinition module)
@@ -48,6 +53,7 @@ public class ElectricityOverhaulPatch : IPatcherMod
             module.Types.First(d => d.Name == "TileEntityPowerSource")
                 .NestedTypes.First(d => d.Name == "ClientPowerData"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
+        TypeReference boolTypeRef = module.ImportReference(typeof(bool));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentCharging", FieldAttributes.Public, ushortTypeRef));
@@ -61,6 +67,9 @@ public class ElectricityOverhaulPatch : IPatcherMod
         type.Fields.Add(new FieldDefinition("GridChargingUsed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumerUsed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentChargingUsed", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromSolar", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromGenerator", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
     }
 
     public bool Patch(ModuleDefinition module)

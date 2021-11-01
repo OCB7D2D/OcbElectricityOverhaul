@@ -2,9 +2,9 @@
 <xml>
 	<ModInfo>
 		<Name value="ElectricityOverhaul" />
-		<Description value="Electricity done right, connect multiple power sources" />
+		<Description value="Electricity done right, connect multiple power sources to form a grid" />
 		<Website value="https://github.com/OCB7D2D/ElectricityOverhaul" />
 		<Author value="mgreter" />
-		<Version value="0.1.2" />
+		<Version value="0.2.0" />
 	</ModInfo>
 </xml>

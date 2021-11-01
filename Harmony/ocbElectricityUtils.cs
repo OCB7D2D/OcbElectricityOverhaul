@@ -7,7 +7,7 @@ namespace OCB
     {
 
         // Default values for configurable options
-        public const bool BatterySelfChargeDefault = false;
+        public const bool LoadVanillaMapDefault = false;
         public const int BatteryPowerPerUseDefault = 25;
         public const int MinPowerForChargingDefault = 20;
         public const int FuelPowerPerUseDefault = 750;
@@ -17,8 +17,8 @@ namespace OCB
         public const int ChargePerBatteryDefault = 35;
         public const int GeneratorMaxFuelDefault = 5000;
 
-        // Should batteries charge other batteries?
-        public static bool isBatteryChargingBattery = BatterySelfChargeDefault;
+        // Should we try to load a vanilla map (initialize with defaults)
+        public static bool isLoadVanillaMap = LoadVanillaMapDefault;
 
         // Coefficient to exchange battery uses and watts
         public static int batteryPowerPerUse = BatteryPowerPerUseDefault;

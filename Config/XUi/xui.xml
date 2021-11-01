@@ -1,8 +1,11 @@
 <configs>
+
+	<setattribute xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']" name="controller">XUiC_OcbPowerSourceWindowGroup, Harmony-ElectricityOverhaul</setattribute>
+
 	<set xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']">
 		<window name="windowPowerSourceStats" />
 		<window name="windowPowerSourceSlots" />
-		<window name="windowBatteryBankDetails" />
+		<window name="windowOcbPowerSourceStats" />
 		<window name="windowNonPagingHeader" />
 	</set>
 </configs>

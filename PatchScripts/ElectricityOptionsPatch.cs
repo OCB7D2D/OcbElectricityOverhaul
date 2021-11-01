@@ -14,7 +14,7 @@ public class ElectricityOptionsPatch : IPatcherMod
 
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
-        enumType.Fields.Add(new FieldDefinition("BatterySelfCharge", FieldAttributes.Static | FieldAttributes.Literal
+        enumType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = ++enumLast });
         enumType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
@@ -43,7 +43,7 @@ public class ElectricityOptionsPatch : IPatcherMod
 
         // Add new fields to GameInfoBool enum
         var infoBoolType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoBool"));
-        infoBoolType.Fields.Add(new FieldDefinition("BatterySelfCharge", FieldAttributes.Static | FieldAttributes.Literal
+        infoBoolType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoBoolType)
             { Constant = ++infoBoolLast });
 
