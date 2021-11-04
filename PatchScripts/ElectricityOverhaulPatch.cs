@@ -21,6 +21,19 @@ public class ElectricityOverhaulPatch : IPatcherMod
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerItem"));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
         type.Fields.Add(new FieldDefinition("WasPowered", FieldAttributes.Public, boolTypeRef));
+        SetMethodToPublic(type.Methods.First(d => d.Name == "IsPoweredChanged"), true);
+    }
+
+    public void PatchPowerTrigger(ModuleDefinition module)
+    {
+        var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerTrigger"));
+        SetMethodToPublic(type.Methods.First(d => d.Name == "HandleSingleUseDisable"), true);
+        SetMethodToPublic(type.Methods.First(d => d.Name == "CheckForActiveChange"), true);
+    }
+
+    public void PatchPowerConsumer(ModuleDefinition module)
+    {
+        var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerConsumer"));
     }
 
     public void PatchPowerSource(ModuleDefinition module)
@@ -44,7 +57,8 @@ public class ElectricityOverhaulPatch : IPatcherMod
         type.Fields.Add(new FieldDefinition("ChargeFromSolar", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromGenerator", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
-
+        SetMethodToPublic(type.Methods.First(d => d.Name == "TickPowerGeneration"), true);
+        SetMethodToPublic(type.Methods.First(d => d.Name == "ShouldAutoTurnOff"), true);
     }
 
     public void PatchClientPowerData(ModuleDefinition module)
@@ -77,14 +91,12 @@ public class ElectricityOverhaulPatch : IPatcherMod
         Console.WriteLine("Applying OCB Electricity Overhaul Patch");
 
         PatchPowerItem(module);
+        PatchPowerTrigger(module);
+        PatchPowerConsumer(module);
         PatchPowerSource(module);
         PatchPowerManager(module);
         PatchClientPowerData(module);
 
-        MakeTypePublic(module.Types.First(d => d.Name == "PowerItem"));
-        MakeTypePublic(module.Types.First(d => d.Name == "PowerTrigger"));
-        //MakeTypePublic(module.Types.First(d => d.Name == "PowerTimerRelay"));
-        MakeTypePublic(module.Types.First(d => d.Name == "PowerConsumer"));
         MakeTypePublic(module.Types.First(d => d.Name == "PowerConsumerToggle"));
         MakeTypePublic(module.Types.First(d => d.Name == "PowerBatteryBank"));
         MakeTypePublic(module.Types.First(d => d.Name == "PowerSolarPanel"));
@@ -131,11 +143,17 @@ public class ElectricityOverhaulPatch : IPatcherMod
         field.IsPublic = true;
 
     }
-    private void SetMethodToPublic(MethodDefinition field)
+    private void SetMethodToPublic(MethodDefinition field, bool force = false)
     {
-        field.IsFamily = false;
-        field.IsPrivate = false;
-        field.IsPublic = true;
-
+        // Leave protected virtual methods alone to avoid
+        // issues with others inheriting from it, as it gives
+        // a compile error when protection level mismatches.
+        // Unsure if this changes anything on runtime though?
+        if (!field.IsFamily || !field.IsVirtual || force) {
+            field.IsFamily = false;
+            field.IsPrivate = false;
+            field.IsPublic = true;
+        }
     }
+
 }

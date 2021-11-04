@@ -26,7 +26,8 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
 
 - https://github.com/OCB7D2D/ElectricityWorkarounds (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
-- https://github.com/OCB7D2D/ElectricitySolarRecipes (optional)
+- https://github.com/OCB7D2D/ElectricitySolarRecipes (recommended)
+- https://github.com/OCB7D2D/ElectricityLamps (recommended)
 - https://github.com/OCB7D2D/ElectricityNoWires (optional)
 
 ## Important Notes
