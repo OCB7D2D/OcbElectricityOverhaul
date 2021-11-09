@@ -5,6 +5,6 @@
 		<Description value="Electricity done right, connect multiple power sources to form a grid" />
 		<Website value="https://github.com/OCB7D2D/ElectricityOverhaul" />
 		<Author value="ocbMaurice" />
-		<Version value="0.3.0" />
+		<Version value="0.3.0" compat="A19"/>
 	</ModInfo>
 </xml>
