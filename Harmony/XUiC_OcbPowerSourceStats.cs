@@ -1,4 +1,3 @@
-using DMT;
 using Audio;
 using System;
 using HarmonyLib;
@@ -93,25 +92,25 @@ public class XUiC_OcbPowerSourceStats : XUiController
         this.turnOn = Localization.Get("xuiTurnOn");
     }
 
-    private void btnToggleSolarCharge_OnHover(XUiController _sender, OnHoverEventArgs _e)
+    private void btnToggleSolarCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleSolarChargeHovered = _e.IsOver;
+        this.btnToggleSolarChargeHovered = _isOver;
         this.RefreshBindings();
     }
 
-    private void btnToggleGeneratorCharge_OnHover(XUiController _sender, OnHoverEventArgs _e)
+    private void btnToggleGeneratorCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleGeneratorChargeHovered = _e.IsOver;
+        this.btnToggleGeneratorChargeHovered = _isOver;
         this.RefreshBindings();
     }
 
-    private void btnToggleBatteryCharge_OnHover(XUiController _sender, OnHoverEventArgs _e)
+    private void btnToggleBatteryCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleBatteryChargeHovered = _e.IsOver;
+        this.btnToggleBatteryChargeHovered = _isOver;
         this.RefreshBindings();
     }
 
-    private void btnToggleSolarCharge_OnPress(XUiController _sender, EventArgs _e)
+    private void btnToggleSolarCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromSolar, ref lblToggleSolarCharge, ref sprToggleSolarCharge);
         if (this.Owner == null) return;
@@ -132,7 +131,7 @@ public class XUiC_OcbPowerSourceStats : XUiController
         }
     }
 
-    private void btnToggleGeneratorCharge_OnPress(XUiController _sender, EventArgs _e)
+    private void btnToggleGeneratorCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromGenerator, ref lblToggleGeneratorCharge, ref sprToggleGeneratorCharge);
         if (this.Owner == null) return;
@@ -153,7 +152,7 @@ public class XUiC_OcbPowerSourceStats : XUiController
         }
     }
 
-    private void btnToggleBatteryCharge_OnPress(XUiController _sender, EventArgs _e)
+    private void btnToggleBatteryCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromBattery, ref lblToggleBatteryCharge, ref sprToggleBatteryCharge);
         if (this.Owner == null) return;

@@ -1,13 +1,14 @@
 using Mono.Cecil;
-using SDX.Compiler;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
-// SDX "compile" time patch to alter dll (EAC incompatible)
-public class ElectricityOverhaulPatch : IPatcherMod
+public class ElectricityOverhaulPatch
 {
 
-    public void PatchPowerManager(ModuleDefinition module)
+    public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };
+
+    public static void PatchPowerManager(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
         SetMethodToVirtual(type.Methods.First(d => d.Name == ".ctor"));
@@ -16,7 +17,7 @@ public class ElectricityOverhaulPatch : IPatcherMod
         SetMethodToVirtual(type.Methods.First(d => d.Name == "SavePowerManager"));
     }
 
-    public void PatchPowerItem(ModuleDefinition module)
+    public static void PatchPowerItem(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerItem"));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
@@ -24,19 +25,19 @@ public class ElectricityOverhaulPatch : IPatcherMod
         SetMethodToPublic(type.Methods.First(d => d.Name == "IsPoweredChanged"), true);
     }
 
-    public void PatchPowerTrigger(ModuleDefinition module)
+    public static void PatchPowerTrigger(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerTrigger"));
         SetMethodToPublic(type.Methods.First(d => d.Name == "HandleSingleUseDisable"), true);
         SetMethodToPublic(type.Methods.First(d => d.Name == "CheckForActiveChange"), true);
     }
 
-    public void PatchPowerConsumer(ModuleDefinition module)
+    public static void PatchPowerConsumer(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerConsumer"));
     }
 
-    public void PatchPowerSource(ModuleDefinition module)
+    public static void PatchPowerSource(ModuleDefinition module)
     {
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
@@ -61,7 +62,7 @@ public class ElectricityOverhaulPatch : IPatcherMod
         SetMethodToPublic(type.Methods.First(d => d.Name == "ShouldAutoTurnOff"), true);
     }
 
-    public void PatchClientPowerData(ModuleDefinition module)
+    public static void PatchClientPowerData(ModuleDefinition module)
     {
         TypeDefinition type = MakeTypePublic(
             module.Types.First(d => d.Name == "TileEntityPowerSource")
@@ -86,9 +87,11 @@ public class ElectricityOverhaulPatch : IPatcherMod
         type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
     }
 
-    public bool Patch(ModuleDefinition module)
+    public static void Patch(AssemblyDefinition assembly)
     {
         Console.WriteLine("Applying OCB Electricity Overhaul Patch");
+
+        ModuleDefinition module = assembly.MainModule;
 
         PatchPowerItem(module);
         PatchPowerTrigger(module);
@@ -104,25 +107,24 @@ public class ElectricityOverhaulPatch : IPatcherMod
         MakeTypePublic(module.Types.First(d => d.Name == "TileEntityPowered"));
         //MakeTypePublic(module.Types.First(d => d.Name == "TileEntityPowerSource"));
 
-        return true;
     }
 
     // Called after the patching process and after scripts are compiled.
     // Used to link references between both assemblies
     // Return true if successful
-    public bool Link(ModuleDefinition gameModule, ModuleDefinition modModule)
+    public static bool Link(ModuleDefinition gameModule, ModuleDefinition modModule)
     {
         return true;
     }
 
 
     // Helper functions to allow us to access and change variables that are otherwise unavailable.
-    private void SetMethodToVirtual(MethodDefinition method)
+    private static void SetMethodToVirtual(MethodDefinition method)
     {
         method.IsVirtual = true;
     }
 
-    private TypeDefinition MakeTypePublic(TypeDefinition type)
+    private static TypeDefinition MakeTypePublic(TypeDefinition type)
     {
         foreach (var myField in type.Fields)
         {
@@ -136,14 +138,14 @@ public class ElectricityOverhaulPatch : IPatcherMod
         return type;
     }
 
-    private void SetFieldToPublic(FieldDefinition field)
+    private static void SetFieldToPublic(FieldDefinition field)
     {
         field.IsFamily = false;
         field.IsPrivate = false;
         field.IsPublic = true;
 
     }
-    private void SetMethodToPublic(MethodDefinition field, bool force = false)
+    private static void SetMethodToPublic(MethodDefinition field, bool force = false)
     {
         // Leave protected virtual methods alone to avoid
         // issues with others inheriting from it, as it gives

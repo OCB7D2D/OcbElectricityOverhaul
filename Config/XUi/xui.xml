@@ -1,6 +1,6 @@
 <configs>
 
-	<setattribute xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']" name="controller">XUiC_OcbPowerSourceWindowGroup, Harmony-ElectricityOverhaul</setattribute>
+	<setattribute xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']" name="controller">XUiC_OcbPowerSourceWindowGroup, ElectricityOverhaul</setattribute>
 
 	<set xpath="/xui/ruleset[@name='default']/window_group[@name='powersource']">
 		<window name="windowPowerSourceStats" />

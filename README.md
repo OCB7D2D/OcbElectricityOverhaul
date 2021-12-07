@@ -22,7 +22,9 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
     <br clear="left"/>
 </p>
 
-## Additional recommended DMT mods
+## Additional recommended mods
+
+Note: not all have been ported to A20 yet!
 
 - https://github.com/OCB7D2D/ElectricityWorkarounds (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
@@ -44,38 +46,9 @@ So far I hope the thing will scale well enough already, but that needs
 more testing. For that I included a check that will emit a warning
 when the update call takes longer than 40ms.
 
-### Installation via DMT
+### Installation requires A20BepInExPreloader
 
-You will need [DMT][1] to build your own custom game dll. It is also
-the most versatile and safe method, since compatibility is easily
-guaranteed as long as everything compiles. You can also combine other
-DMT mods (as long as they don't touch the base game power system).
-
-### Manual Installation
-
-Alternatively you will need the patched dlls for your exact game version.
-I will try to provide them whenever possible via my personal webserver.
-These files go into the `7DaysToDie_Data/Managed` folder (make backups!).
-If you messed something up, you can always reinstall the game via steam:
-`7 Days to Die -> Properties -> Local files -> Verify integrity`.
-
-http://www.ocbnet.ch/OCB7D2D/ElectricityOverhaul/
-
-In the end you must copy three files into the `Data/Managed` folder:
-
-- `0Harmony.dll`
-- `Assembly-CSharp.dll`
-- `DMT.dll`
-
-The `Assembly-CSharp.dll` must match your game installation. For
-single-player use `sp-*` files, for dedicated server use `dedi-*`.
-Single-player has it's files in `7DaysToDie_Data`, while dedicated
-servers use `7DaysToDieServer_Data`. If you're specific game version
-isn't available you're out of luck and need to use DMT instead.
-
-Once you have installed these files you need to copy the Mods you want
-to use into the `Mods` folder of your game (you may need to create it).
-Basically go into the `Mods` folder and clone the git repos you want.
+- https://github.com/OCB7D2D/A20BepInExPreloader
 
 ### Semantic versioning
 

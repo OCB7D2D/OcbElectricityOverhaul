@@ -61,7 +61,7 @@
 	</set>
 
 	<append xpath="/windows">
-		<window name="windowOcbPowerSourceStats" width="228" height="312" panel="Left" controller="OcbPowerSourceStats, Harmony-ElectricityOverhaul" >
+		<window name="windowOcbPowerSourceStats" width="228" height="312" panel="Left" controller="OcbPowerSourceStats, ElectricityOverhaul" >
 			<panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
 				<sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5" sprite="ui_game_symbol_resource"/>
 				<label style="header.name" text="CHARGE" text_key="xuiChargeFrom" />

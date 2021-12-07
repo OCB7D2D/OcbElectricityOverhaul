@@ -1,4 +1,3 @@
-using DMT;
 using System;
 using HarmonyLib;
 using UnityEngine;
@@ -9,15 +8,18 @@ using static OCB.ElectricityUtils;
 public class OcbElectricityOption
 {
 
-    // Entry class for Harmony patching
-    public class OcbElectricityOverhaul_Init : IHarmony
+    // Entry class for A20 patching
+    public void InitMod(Mod mod)
     {
-        public void Start()
-        {
-            Debug.Log("Loading OCB Electricity Option Patch: " + GetType().ToString());
-            var harmony = new Harmony(GetType().ToString());
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
+        Log.Out("Loading OCB Electricity Option Patch: " + GetType().ToString());
+        var harmony = new Harmony(GetType().ToString());
+        harmony.PatchAll(Assembly.GetExecutingAssembly());
+        ModEvents.GameAwake.RegisterHandler(GameUpdateHandler);
+    }
+
+    public static void GameUpdateHandler()
+    {
+        GamePrefs.m_Instance.initPropertyDecl();
     }
 
     [HarmonyPatch(typeof(GamePrefs))]
@@ -93,7 +95,5 @@ public class OcbElectricityOption
             __result[size + 7] = new GameMode.ModeGamePref(EnumGamePrefs.ChargePerBattery, GamePrefs.EnumType.Int, (int) ChargePerBatteryDefault);
         }
     }
-
-    
 
 }

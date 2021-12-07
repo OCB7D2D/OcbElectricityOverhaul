@@ -1,4 +1,4 @@
-using DMT;
+using System;
 using System.IO;
 using HarmonyLib;
 using UnityEngine;
@@ -6,18 +6,17 @@ using System.Reflection;
 
 using static OCB.ElectricityUtils;
 
-public class OcbElectricityOverhaul
+public class OcbElectricityOverhaul : IModApi
 {
 
-    // Entry class for Harmony patching
-    public class OcbElectricityOverhaul_Init : IHarmony
+    // Entry class for A20 patching
+    public void InitMod(Mod mod)
     {
-        public void Start()
-        {
-            Debug.Log("Loading OCB Electricity Overhaul Patch: " + GetType().ToString());
-            var harmony = new Harmony(GetType().ToString());
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
+        Debug.Log("Loading OCB Electricity Overhaul Patch: " + GetType().ToString());
+        var harmony = new Harmony(GetType().ToString());
+        harmony.PatchAll(Assembly.GetExecutingAssembly());
+        var instance = new OcbElectricityOption();
+        instance.InitMod(mod);
     }
 
     // Patch PowerManager to return a different (our) instance
@@ -623,9 +622,9 @@ public class OcbElectricityOverhaul
     [HarmonyPatch("GetBindingValue")]
     public class XUiC_PowerSourceStats_GetBindingValue
     {
-        static void Postfix(XUiC_PowerSourceStats __instance, TileEntityPowerSource ___tileEntity, ref string value, BindingItem binding, ref bool __result)
+        static void Postfix(XUiC_PowerSourceStats __instance, TileEntityPowerSource ___tileEntity, ref string value, string bindingName, ref bool __result)
         {
-            switch (binding.FieldName)
+            switch (bindingName)
             {
 
                 // Only available for local debugging
