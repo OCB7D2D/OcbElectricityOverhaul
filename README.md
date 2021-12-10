@@ -50,6 +50,16 @@ when the update call takes longer than 40ms.
 
 - https://github.com/OCB7D2D/A20BepInExPreloader
 
+The required files are also included directly in this repository and if you
+load the mod for the very first time, it will try to install the necessary
+files for you. Unfortunately this will lead to a broken initial UI. Simply
+restart the game once and the mod should start loading correctly. Check
+the console (F1) to see if BepInEx was correctly detected or not.
+
+Make ABSOLUTELY sure that you copy this Mod into your `Mods` folder with
+the name `ElectricityOverhaul`, as otherwise the required source files
+that are required to be installed will not be found.
+
 ### Semantic versioning
 
 We try to use semi/major/minor versioning, while major version increments
@@ -191,6 +201,17 @@ quite easily. I didn't analyze the original code completely, but I believe they 
 take quite a few shortcuts to ensure reliable and scalable performance. Which I don't
 think is a bad decision at all, but sometimes people are willing to spend a few more
 CPU cycles to get a better experience. Let's see how good this already scales :)
+
+## Changelog
+
+### Version 0.7.1
+
+- Add auto-install for BepInEx requirement (needs manual restart on first load)
+- Move game settings for power to own tab to avoid UI overflow
+
+### Version 0.7.0
+
+- Refactor for A20 compatibility
 
 ## Compatibility
 
