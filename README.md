@@ -7,6 +7,8 @@ are connected in line. Also preserves pass-through trigger groups.
 
 https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
 
+<img src="Screens/in-game.jpg" alt="Blocks shown in-game" height="400" />
+
 ## Main features
 
 - Power sources can be connected like every other power item
