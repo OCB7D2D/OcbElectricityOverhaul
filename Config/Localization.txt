@@ -17,6 +17,7 @@ goChargePerBattery,UI,Menu,x,,Battery charge capacity
 goChargePerBatteryDesc,UI,Menu,x,,Maximum amount of power a single battery can be charged with (depends on the quality).
 goPowerFormat,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
 goPowerFormats,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
+xuiGameSettingsPower,UI,Menu,x,,Power
 xuiCharge,UI,Menu,x,,Charge
 xuiSupplied,UI,Menu,x,,Supplied
 xuiCharged,UI,Menu,x,,Charged
