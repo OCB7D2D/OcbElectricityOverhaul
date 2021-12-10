@@ -71,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Harmony\ocbElectricityManager.cs" />
-    <Compile Include="Harmony\ocbElectricityOption.cs" />
     <Compile Include="Harmony\ocbElectricityOverhaul.cs" />
     <Compile Include="Harmony\ocbElectricityUtils.cs" />
     <Compile Include="Harmony\XUiC_OcbPowerSourceStats.cs" />

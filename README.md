@@ -206,6 +206,11 @@ CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ### Version 0.7.1
 
+- Fix issue with Harmony patches across two classes (move into one)
+  Registered Harmony Hooks were called twice with this broken approach
+
+### Version 0.7.1
+
 - Add auto-install for BepInEx requirement (needs manual restart on first load)
 - Move game settings for power to own tab to avoid UI overflow
 
