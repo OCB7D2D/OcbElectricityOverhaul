@@ -16,6 +16,8 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
 - Prioritize renewable energy before using gasoline
 - Additional grid demand/supply and charge statistics
 - Batteries are all charged/discharged when in a bank
+- Solar power gradually fades in and out at dawn and dusk
+- Decide from which upstream power types to charge batteries
 
 <p>
     <img src="Screens/game-stats-generator.jpg" alt="Blocks shown in-game" align="left" height="400"/>
@@ -36,6 +38,9 @@ Note: not all have been ported to A20 yet!
 
 ## Important Notes
 
+- Not Easy Anti-Cheat compatible, so you need to turn EAC off!
+- probably incompatible with anything else touching electricity!
+
 This Mod hasn't yet been tested much in the wild and bugs are to be
 expected. Some might even not be fixable due to the nature of the
 grid distribution. The simple change this mod allows, makes the whole
@@ -54,13 +59,13 @@ when the update call takes longer than 40ms.
 
 The required files are also included directly in this repository and if you
 load the mod for the very first time, it will try to install the necessary
-files for you. Unfortunately this will lead to a broken initial UI. Simply
-restart the game once and the mod should start loading correctly. Check
-the console (F1) to see if BepInEx was correctly detected or not.
+files for you. Unfortunately this will lead to a broken initial Game-Menu.
+Simply restart the game once and the mod should start loading correctly.
+Check the console (F1) to see if BepInEx was correctly detected or not.
 
-Make ABSOLUTELY sure that you copy this Mod into your `Mods` folder with
-the name `ElectricityOverhaul`, as otherwise the required source files
-that are required to be installed will not be found.
+Alternatively you can also manually install (or uninstall) them manually.
+For convenience I added two batch files you can use to achieve that.
+Check the mod folder (once installed) and you should find them there.
 
 ### Semantic versioning
 
@@ -206,9 +211,14 @@ CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ## Changelog
 
-### Version 0.7.1
+### Version 0.7.3
 
-- Fix issue with Harmony patches across two classes (move into one)
+- Improve BepInEx installation (now mod-name agnostic)
+- Added install/uninstall batch files for manual use
+
+### Version 0.7.2
+
+- Fix issue with Harmony patches across two classes (move into one)  
   Registered Harmony Hooks were called twice with this broken approach
 
 ### Version 0.7.1
