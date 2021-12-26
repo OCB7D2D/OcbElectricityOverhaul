@@ -1,174 +1,184 @@
-using Audio;
-using System;
-using HarmonyLib;
 using UnityEngine;
-using System.Reflection;
 
 public class XUiC_OcbPowerSourceStats : XUiController
 {
 
-  public XUiC_OcbPowerSourceWindowGroup	 Owner { get; set; }
+    public XUiC_OcbPowerSourceWindowGroup Owner { get; set; }
 
-  private Color32 onColor = new Color32((byte) 250, byte.MaxValue, (byte) 163, byte.MaxValue);
+    private Color32 onColor = new Color32((byte)250, byte.MaxValue, (byte)163, byte.MaxValue);
 
-  private Color32 offColor = (Color32) Color.white;
+    private Color32 offColor = (Color32)Color.white;
 
-  private XUiController btnToggleSolarCharge;
+    private XUiController btnToggleSolarCharge;
 
-  private XUiV_Button btnToggleSolarChargeBG;
+    private XUiV_Button btnToggleSolarChargeBG;
 
-  private XUiV_Label lblToggleSolarCharge;
+    private XUiV_Label lblToggleSolarCharge;
 
-  private XUiV_Sprite sprToggleSolarCharge;
+    private XUiV_Sprite sprToggleSolarCharge;
 
-  private bool chargeFromSolar;
+    private bool chargeFromSolar;
 
-  private bool btnToggleSolarChargeHovered;
+    private bool btnToggleSolarChargeHovered;
 
-  private XUiController btnToggleGeneratorCharge;
+    private XUiController btnToggleGeneratorCharge;
 
-  private XUiV_Button btnToggleGeneratorChargeBG;
+    private XUiV_Button btnToggleGeneratorChargeBG;
 
-  private XUiV_Label lblToggleGeneratorCharge;
+    private XUiV_Label lblToggleGeneratorCharge;
 
-  private XUiV_Sprite sprToggleGeneratorCharge;
+    private XUiV_Sprite sprToggleGeneratorCharge;
 
-  private bool chargeFromGenerator;
+    private bool chargeFromGenerator;
 
-  private bool btnToggleGeneratorChargeHovered;
+    private bool btnToggleGeneratorChargeHovered;
 
-  private XUiController btnToggleBatteryCharge;
+    private XUiController btnToggleBatteryCharge;
 
-  private XUiV_Button btnToggleBatteryChargeBG;
+    private XUiV_Button btnToggleBatteryChargeBG;
 
-  private XUiV_Label lblToggleBatteryCharge;
+    private XUiV_Label lblToggleBatteryCharge;
 
-  private XUiV_Sprite sprToggleBatteryCharge;
+    private XUiV_Sprite sprToggleBatteryCharge;
 
-  private bool chargeFromBattery;
+    private bool chargeFromBattery;
 
-  private bool btnToggleBatteryChargeHovered;
+    private bool btnToggleBatteryChargeHovered;
 
+    private string turnOff;
 
-  private string turnOff;
-
-  private string turnOn;
+    private string turnOn;
 
     public override void Init()
     {
         base.Init();
 
-        this.btnToggleSolarChargeHovered = false;
-        this.btnToggleSolarCharge = this.GetChildById("btnToggleSolarCharge");
-        this.btnToggleSolarChargeBG = (XUiV_Button) this.btnToggleSolarCharge.GetChildById("clickable").ViewComponent;
-        this.btnToggleSolarChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(this.btnToggleSolarCharge_OnPress);
-        this.btnToggleSolarChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(this.btnToggleSolarCharge_OnHover);
-        XUiController childById1 = this.GetChildById("lblToggleSolarCharge");
-        if (childById1 != null) this.lblToggleSolarCharge = (XUiV_Label) childById1.ViewComponent;
-        XUiController childById2 = this.GetChildById("sprToggleSolarCharge");
-        if (childById2 != null) this.sprToggleSolarCharge = (XUiV_Sprite) childById2.ViewComponent;
+        btnToggleSolarChargeHovered = false;
+        btnToggleSolarCharge = GetChildById("btnToggleSolarCharge");
+        btnToggleSolarChargeBG = (XUiV_Button)btnToggleSolarCharge.GetChildById("clickable").ViewComponent;
+        btnToggleSolarChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(BtnToggleSolarCharge_OnPress);
+        btnToggleSolarChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(BtnToggleSolarCharge_OnHover);
+        XUiController childById1 = GetChildById("lblToggleSolarCharge");
+        if (childById1 != null) lblToggleSolarCharge = (XUiV_Label)childById1.ViewComponent;
+        XUiController childById2 = GetChildById("sprToggleSolarCharge");
+        if (childById2 != null) sprToggleSolarCharge = (XUiV_Sprite)childById2.ViewComponent;
 
-        this.btnToggleGeneratorChargeHovered = false;
-        this.btnToggleGeneratorCharge = this.GetChildById("btnToggleGeneratorCharge");
-        this.btnToggleGeneratorChargeBG = (XUiV_Button) this.btnToggleGeneratorCharge.GetChildById("clickable").ViewComponent;
-        this.btnToggleGeneratorChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(this.btnToggleGeneratorCharge_OnPress);
-        this.btnToggleGeneratorChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(this.btnToggleGeneratorCharge_OnHover);
-        XUiController childById3 = this.GetChildById("lblToggleGeneratorCharge");
-        if (childById3 != null) this.lblToggleGeneratorCharge = (XUiV_Label) childById3.ViewComponent;
-        XUiController childById4 = this.GetChildById("sprToggleGeneratorCharge");
-        if (childById4 != null) this.sprToggleGeneratorCharge = (XUiV_Sprite) childById4.ViewComponent;
+        btnToggleGeneratorChargeHovered = false;
+        btnToggleGeneratorCharge = GetChildById("btnToggleGeneratorCharge");
+        btnToggleGeneratorChargeBG = (XUiV_Button)btnToggleGeneratorCharge.GetChildById("clickable").ViewComponent;
+        btnToggleGeneratorChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(BtnToggleGeneratorCharge_OnPress);
+        btnToggleGeneratorChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(BtnToggleGeneratorCharge_OnHover);
+        XUiController childById3 = GetChildById("lblToggleGeneratorCharge");
+        if (childById3 != null) lblToggleGeneratorCharge = (XUiV_Label)childById3.ViewComponent;
+        XUiController childById4 = GetChildById("sprToggleGeneratorCharge");
+        if (childById4 != null) sprToggleGeneratorCharge = (XUiV_Sprite)childById4.ViewComponent;
 
-        this.btnToggleBatteryChargeHovered = false;
-        this.btnToggleBatteryCharge = this.GetChildById("btnToggleBatteryCharge");
-        this.btnToggleBatteryChargeBG = (XUiV_Button) this.btnToggleBatteryCharge.GetChildById("clickable").ViewComponent;
-        this.btnToggleBatteryChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(this.btnToggleBatteryCharge_OnPress);
-        this.btnToggleBatteryChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(this.btnToggleBatteryCharge_OnHover);
-        XUiController childById5 = this.GetChildById("lblToggleBatteryCharge");
-        if (childById5 != null) this.lblToggleBatteryCharge = (XUiV_Label) childById5.ViewComponent;
-        XUiController childById6 = this.GetChildById("sprToggleBatteryCharge");
-        if (childById6 != null) this.sprToggleBatteryCharge = (XUiV_Sprite) childById6.ViewComponent;
+        btnToggleBatteryChargeHovered = false;
+        btnToggleBatteryCharge = GetChildById("btnToggleBatteryCharge");
+        btnToggleBatteryChargeBG = (XUiV_Button)btnToggleBatteryCharge.GetChildById("clickable").ViewComponent;
+        btnToggleBatteryChargeBG.Controller.OnPress += new XUiEvent_OnPressEventHandler(BtnToggleBatteryCharge_OnPress);
+        btnToggleBatteryChargeBG.Controller.OnHover += new XUiEvent_OnHoverEventHandler(BtnToggleBatteryCharge_OnHover);
+        XUiController childById5 = GetChildById("lblToggleBatteryCharge");
+        if (childById5 != null) lblToggleBatteryCharge = (XUiV_Label)childById5.ViewComponent;
+        XUiController childById6 = GetChildById("sprToggleBatteryCharge");
+        if (childById6 != null) sprToggleBatteryCharge = (XUiV_Sprite)childById6.ViewComponent;
 
-        this.turnOff = Localization.Get("xuiTurnOff");
-        this.turnOn = Localization.Get("xuiTurnOn");
+        turnOff = Localization.Get("xuiTurnOff");
+        turnOn = Localization.Get("xuiTurnOn");
     }
 
-    private void btnToggleSolarCharge_OnHover(XUiController _sender, bool _isOver)
+    private void BtnToggleSolarCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleSolarChargeHovered = _isOver;
-        this.RefreshBindings();
+        btnToggleSolarChargeHovered = _isOver;
+        RefreshBindings();
     }
 
-    private void btnToggleGeneratorCharge_OnHover(XUiController _sender, bool _isOver)
+    private void BtnToggleGeneratorCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleGeneratorChargeHovered = _isOver;
-        this.RefreshBindings();
+        btnToggleGeneratorChargeHovered = _isOver;
+        RefreshBindings();
     }
 
-    private void btnToggleBatteryCharge_OnHover(XUiController _sender, bool _isOver)
+    private void BtnToggleBatteryCharge_OnHover(XUiController _sender, bool _isOver)
     {
-        this.btnToggleBatteryChargeHovered = _isOver;
-        this.RefreshBindings();
+        btnToggleBatteryChargeHovered = _isOver;
+        RefreshBindings();
     }
 
-    private void btnToggleSolarCharge_OnPress(XUiController _sender, int _mouseButton)
+    private void BtnToggleSolarCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromSolar, ref lblToggleSolarCharge, ref sprToggleSolarCharge);
-        if (this.Owner == null) return;
-        if (this.Owner.TileEntity != null && this.Owner.TileEntity.PowerItem != null) {
-            if (this.Owner.TileEntity.PowerItem is PowerSource source) {
-                if (source.ChargeFromSolar != chargeFromSolar) {
+        if (Owner == null) return;
+        if (Owner.TileEntity != null && Owner.TileEntity.PowerItem != null)
+        {
+            if (Owner.TileEntity.PowerItem is PowerSource source)
+            {
+                if (source.ChargeFromSolar != chargeFromSolar)
+                {
                     source.ChargeFromSolar = chargeFromSolar;
-                    this.Owner.TileEntity.SetModified();
+                    Owner.TileEntity.SetModified();
                 }
             }
         }
-        else if (this.Owner.TileEntity != null && this.Owner.TileEntity.ClientData != null) {
-            var source = this.Owner.TileEntity.ClientData;
-            if (source.ChargeFromSolar != chargeFromSolar) {
+        else if (Owner.TileEntity != null && Owner.TileEntity.ClientData != null)
+        {
+            var source = Owner.TileEntity.ClientData;
+            if (source.ChargeFromSolar != chargeFromSolar)
+            {
                 source.ChargeFromSolar = chargeFromSolar;
-                this.Owner.TileEntity.SetModified();
+                Owner.TileEntity.SetModified();
             }
         }
     }
 
-    private void btnToggleGeneratorCharge_OnPress(XUiController _sender, int _mouseButton)
+    private void BtnToggleGeneratorCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromGenerator, ref lblToggleGeneratorCharge, ref sprToggleGeneratorCharge);
-        if (this.Owner == null) return;
-        if (this.Owner.TileEntity != null && this.Owner.TileEntity.PowerItem != null) {
-            if (this.Owner.TileEntity.PowerItem is PowerSource source) {
-                if (source.ChargeFromGenerator != chargeFromGenerator) {
+        if (Owner == null) return;
+        if (Owner.TileEntity != null && Owner.TileEntity.PowerItem != null)
+        {
+            if (Owner.TileEntity.PowerItem is PowerSource source)
+            {
+                if (source.ChargeFromGenerator != chargeFromGenerator)
+                {
                     source.ChargeFromGenerator = chargeFromGenerator;
-                    this.Owner.TileEntity.SetModified();
+                    Owner.TileEntity.SetModified();
                 }
             }
         }
-        else if (this.Owner.TileEntity != null && this.Owner.TileEntity.ClientData != null) {
-            var source = this.Owner.TileEntity.ClientData;
-            if (source.ChargeFromGenerator != chargeFromGenerator) {
+        else if (Owner.TileEntity != null && Owner.TileEntity.ClientData != null)
+        {
+            var source = Owner.TileEntity.ClientData;
+            if (source.ChargeFromGenerator != chargeFromGenerator)
+            {
                 source.ChargeFromGenerator = chargeFromGenerator;
-                this.Owner.TileEntity.SetModified();
+                Owner.TileEntity.SetModified();
             }
         }
     }
 
-    private void btnToggleBatteryCharge_OnPress(XUiController _sender, int _mouseButton)
+    private void BtnToggleBatteryCharge_OnPress(XUiController _sender, int _mouseButton)
     {
         Toggle(ref chargeFromBattery, ref lblToggleBatteryCharge, ref sprToggleBatteryCharge);
-        if (this.Owner == null) return;
-        if (this.Owner.TileEntity != null && this.Owner.TileEntity.PowerItem != null) {
-            if (this.Owner.TileEntity.PowerItem is PowerSource source) {
-                if (source.ChargeFromBattery != chargeFromBattery) {
+        if (Owner == null) return;
+        if (Owner.TileEntity != null && Owner.TileEntity.PowerItem != null)
+        {
+            if (Owner.TileEntity.PowerItem is PowerSource source)
+            {
+                if (source.ChargeFromBattery != chargeFromBattery)
+                {
                     source.ChargeFromBattery = chargeFromBattery;
-                    this.Owner.TileEntity.SetModified();
+                    Owner.TileEntity.SetModified();
                 }
             }
         }
-        else if (this.Owner.TileEntity != null && this.Owner.TileEntity.ClientData != null) {
-            var source = this.Owner.TileEntity.ClientData;
-            if (source.ChargeFromBattery != chargeFromBattery) {
+        else if (Owner.TileEntity != null && Owner.TileEntity.ClientData != null)
+        {
+            var source = Owner.TileEntity.ClientData;
+            if (source.ChargeFromBattery != chargeFromBattery)
+            {
                 source.ChargeFromBattery = chargeFromBattery;
-                this.Owner.TileEntity.SetModified();
+                Owner.TileEntity.SetModified();
             }
         }
     }
@@ -180,20 +190,26 @@ public class XUiC_OcbPowerSourceStats : XUiController
 
     private void Update(bool flag, XUiV_Label label, XUiV_Sprite sprite)
     {
-        if (label != null) {
-            if (flag) {
-                label.Text = this.turnOff;
+        if (label != null)
+        {
+            if (flag)
+            {
+                label.Text = turnOff;
             }
-            else {
-                label.Text = this.turnOn;
+            else
+            {
+                label.Text = turnOn;
             }
         }
-        if (sprite != null) {
-            if (flag) {
-                sprite.Color = (Color) this.onColor;
+        if (sprite != null)
+        {
+            if (flag)
+            {
+                sprite.Color = onColor;
             }
-            else {
-                sprite.Color = (Color) this.offColor;
+            else
+            {
+                sprite.Color = offColor;
             }
         }
     }
@@ -202,21 +218,25 @@ public class XUiC_OcbPowerSourceStats : XUiController
     {
         base.OnOpen();
 
-        if (this.Owner.TileEntity.PowerItemType != PowerItem.PowerItemTypes.BatteryBank) {
+        if (Owner.TileEntity.PowerItemType != PowerItem.PowerItemTypes.BatteryBank)
+        {
             viewComponent.IsVisible = false;
             return;
         }
 
         viewComponent.IsVisible = true;
 
-        if (this.Owner != null && this.Owner.TileEntity != null) {
-            if (this.Owner.TileEntity.PowerItem is PowerSource source) {
+        if (Owner != null && Owner.TileEntity != null)
+        {
+            if (Owner.TileEntity.PowerItem is PowerSource source)
+            {
                 chargeFromSolar = source.ChargeFromSolar;
                 chargeFromGenerator = source.ChargeFromGenerator;
                 chargeFromBattery = source.ChargeFromBattery;
             }
-            else if (this.Owner.TileEntity.ClientData != null) {
-                var data = this.Owner.TileEntity.ClientData;
+            else if (Owner.TileEntity.ClientData != null)
+            {
+                var data = Owner.TileEntity.ClientData;
                 chargeFromSolar = data.ChargeFromSolar;
                 chargeFromGenerator = data.ChargeFromGenerator;
                 chargeFromBattery = data.ChargeFromBattery;
