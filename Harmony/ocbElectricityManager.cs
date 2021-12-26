@@ -54,7 +54,7 @@ public class OcbPowerManager : PowerManager
     // Ticks seem to be in a strictly timely manner
     // ToDo: check exactly how tick updates are called
     // I think this implementation would act like crazy if
-    // we are not called regularely (e.g. if deltaTime is
+    // we are not called regularly (e.g. if deltaTime is
     // very big). We only are able to work off 0.16f per
     // call, but at least we are perfectly quantized.
     public override void Update()
@@ -81,14 +81,14 @@ public class OcbPowerManager : PowerManager
                 // If we get called to fast, we skip calculation altogether, if we have
                 // a very big delta, we must run as many time as needed to catch up.
                 base.updateTime -= Time.deltaTime;
-                if ((double) this.updateTime <= 0.0)
+                if ((double)this.updateTime <= 0.0)
                 {
 
                     // Calculate light levels once
                     var world = GameManager.Instance.World;
                     // Partially copied from `IsDark`
-                    float time = (float) (world.worldTime % 24000UL) / 1000f;
-                    if ((double) time > (double) world.DawnHour && (double) time < (double) world.DuskHour)
+                    float time = (float)(world.worldTime % 24000UL) / 1000f;
+                    if ((double)time > (double)world.DawnHour && (double)time < (double)world.DuskHour)
                     {
                         // Give a more natural sunrise and sunset effect
                         float span = (world.DuskHour - world.DawnHour) / 2f;
@@ -141,7 +141,7 @@ public class OcbPowerManager : PowerManager
                 // Suppose this saves data to disk from time to time
                 // Simply copied from original vanilla implementation
                 this.saveTime -= Time.deltaTime;
-                if ((double) this.saveTime <= 0.0 &&
+                if ((double)this.saveTime <= 0.0 &&
                     (this.dataSaveThreadInfo == null || this.dataSaveThreadInfo.HasTerminated()))
                 {
                     // Means every 2 minutes!?
@@ -178,7 +178,7 @@ public class OcbPowerManager : PowerManager
             source.RequiredPower = 0;
             if (source.IsOn)
             {
-                if ((double) Time.time > (double) solar.lightUpdateTime)
+                if ((double)Time.time > (double)solar.lightUpdateTime)
                 {
                     solar.lightUpdateTime = Time.time + 2f;
                     // ToDo: maybe add a bit more elaborate sun-light detection
@@ -347,7 +347,7 @@ public class OcbPowerManager : PowerManager
     // Distribute the `distribute` load to all lenders
     // ToDo: loop and casts seems semi optimal
     // but doesn't seem to be any bottleneck.
-    // Also a bit much code-repetation for my liking.
+    // Also a bit much code-repetition for my liking.
     // But do we really gain much by optimizing this?
     public ushort BorrowPower(ref ushort distribute, PowerBatteryBank battery = null)
     {
@@ -361,8 +361,8 @@ public class OcbPowerManager : PowerManager
             PowerSource lender = enumerator.Current;
             if (!lender.isOn) continue;
             if (!(lender is PowerSolarPanel)) continue;
-			if (battery != null && !battery.ChargeFromSolar)
-				continue;
+            if (battery != null && !battery.ChargeFromSolar)
+                continue;
             ushort distributing = distribute;
             BorrowPowerFromSource(lender, ref distribute, battery);
             AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
@@ -377,15 +377,18 @@ public class OcbPowerManager : PowerManager
             PowerSource lender = enumerator.Current;
             if (!lender.isOn) continue;
 
-            if (lender is PowerBatteryBank) {
+            if (lender is PowerBatteryBank)
+            {
                 if (battery != null && !battery.ChargeFromBattery)
                     continue;
             }
-            else if (lender is PowerGenerator) {
+            else if (lender is PowerGenerator)
+            {
                 if (battery != null && !battery.ChargeFromGenerator)
                     continue;
             }
-            else {
+            else
+            {
                 continue;
             }
             ushort distributing = distribute;
@@ -517,7 +520,8 @@ public class OcbPowerManager : PowerManager
                     children.Enqueue(child.Children[i]);
                 }
 
-                if (child.WasPowered != child.isPowered) {
+                if (child.WasPowered != child.isPowered)
+                {
                     child.WasPowered = child.isPowered;
                     child.HandlePowerUpdate(used > 0);
                 }
@@ -538,54 +542,8 @@ public class OcbPowerManager : PowerManager
         // Remove from stack
         this.lenders.Pop();
 
-        lendable = (ushort)0;
-        // Re-Calculate lendable power from upstream each time
-        // This is the rest power that can go into batteries
-        enumerator = lenders.GetEnumerator(); // No Reset?
-        while (enumerator.MoveNext())
-        {
-            PowerSource lender = enumerator.Current;
-            if (!lender.isOn) continue;
-            int produced = Mathf.Min(lender.MaxProduction, lender.CurrentPower);
-            lendable += produced - lender.LastPowerUsed;
-        }
-
-        // Any left-over energy can be used to charge batteries.
-        // The (configurable) limit to start charging batteries ensures
-        // that we don't get too much ping-pong charging/discharging.
         if (root is PowerBatteryBank bank)
-        {
-            if (lendable >= minPowerForCharging && root.IsOn)
-            {
-                ushort consumed = 0;
-                int input = lendable;
-                // Get demand or what is available
-                ushort demand = (ushort)Mathf.Min(
-                    lendable, bank.ChargingDemand);
-                bank.AddPowerToBatteries(demand);
-                ushort used = bank.LastInputAmount;
-                if (used > 0)
-                {
-                    consumed = BorrowPower(ref used, bank);
-                    lendable -= consumed;
-                }
-                root.ChargingUsed = consumed;
-            }
-            // Enable powered state if battery bank
-            // is on and some charging is happening
-            //root.isPowered = root.ChargingUsed > 0 ||
-            //                 root.ChargingDemand == 0;
-        }
-        else {
-            // Update power state for all other source
-            // We don't account for power down the grid?
-            // Any other thing we would like to indicate?
-            //root.isPowered = root.ConsumerUsed > 0 ||
-            //                 root.ConsumerUsed > 0;
-        }
-        // Always obey isOn flag (otherwise can't be powered)
-        // root.isPowered = root.isPowered || root.isOn;
-
+            DistributeLeftToBank(bank);
 
         // Now distribute power statistics up the chain
         // Note: this is only for statistics (remove?)
@@ -606,6 +564,66 @@ public class OcbPowerManager : PowerManager
         root.hasChangesLocal = false;
     }
 
+    private void DistributeLeftToBank(PowerBatteryBank bank)
+    {
+        if (!bank.IsOn) return;
+
+        int lendableSolar = 0;
+        int lendableBattery = 0;
+        int lendableGenerator = 0;
+
+        // Re-Calculate lendable power from upstream each time
+        // This is the rest power that can go into batteries
+        var enumerator = lenders.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            if (!enumerator.Current.isOn) continue;
+            PowerSource lender = enumerator.Current;
+            int produced = Mathf.Min(lender.MaxProduction, lender.CurrentPower);
+            int powerLeftOver = produced - lender.LastPowerUsed;
+            switch (lender.PowerItemType)
+            {
+                case PowerItem.PowerItemTypes.SolarPanel:
+                    lendableSolar += powerLeftOver;
+                    break;
+                case PowerItem.PowerItemTypes.BatteryBank:
+                    lendableBattery += powerLeftOver;
+                    break;
+                case PowerItem.PowerItemTypes.Generator:
+                    lendableGenerator += powerLeftOver;
+                    break;
+            }
+        }
+
+        int lendable = 0;
+        // Any left-over energy can be used to charge batteries.
+        // The (configurable) limit to start charging batteries ensures
+        // that we don't get too much ping-pong charging/discharging.
+        if (bank.ChargeFromSolar) lendable += lendableSolar;
+        if (bank.ChargeFromBattery) lendable += lendableBattery;
+        if (bank.ChargeFromGenerator) lendable += lendableGenerator;
+
+        bank.ChargingUsed = 0;
+
+        if (lendable >= minPowerForCharging)
+        {
+            // Get demand or what is available
+            ushort demand = (ushort)Mathf.Min(
+                lendable, bank.ChargingDemand);
+            // This updates bank.LastInputAmount
+            bank.AddPowerToBatteries(demand);
+            // Get how much power was added to batteries
+            // Need to distribute this now to power sources
+            ushort charged = bank.LastInputAmount;
+            // Nothing to do if nothing charged
+            if (charged == 0) return;
+            // Try to borrow the power from all sources
+            bank.ChargingUsed = BorrowPower(ref charged, bank);
+            // Check if everything was calculated as expected
+            if (charged != 0) Log.Error("Phantom charging detected");
+        }
+
+    }
 
     public void FinalizePowerSource(PowerSource source)
     {

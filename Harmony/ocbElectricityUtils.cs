@@ -23,7 +23,7 @@ namespace OCB
         // Coefficient to exchange battery uses and watts
         public static int batteryPowerPerUse = BatteryPowerPerUseDefault;
 
-        // Minumum excess power before we start charging batteries
+        // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
         public static int minPowerForCharging = MinPowerForChargingDefault;
 
@@ -144,7 +144,7 @@ namespace OCB
 
                     if (neededToMax <= usesLeftOver * batteryPowerPerUse)
                     {
-                        bank.Stacks[index].itemValue.UseTimes += neededToMax / (float)batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += neededToMax / batteryPowerPerUse;
                         bank.CurrentPower += (ushort)neededToMax;
                         // break; // Don't break in order to drain all batteries, this means we add
                         // more power than needed to the `CurrentPower` buffer, which means the initial
@@ -158,7 +158,7 @@ namespace OCB
                     else
                     {
                         // If battery can only sustain the required demand partially, take what is left.
-                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / (float)batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / batteryPowerPerUse;
                         bank.CurrentPower += (ushort)usesLeftOver;
 
                     }
@@ -169,7 +169,7 @@ namespace OCB
         // Mostly copied from original dll to insert our configurable conversion factor
         static public void TickBatteryDieselPowerGeneration(PowerGenerator generator)
         {
-            // Check if buffer has enough energy to fullfil max power
+            // Check if buffer has enough energy to fulfill max power
             if (generator.CurrentPower >= generator.MaxProduction) return;
             ushort neededToMax = (ushort)(generator.MaxProduction - generator.CurrentPower);
             ushort consume = (ushort)Mathf.Ceil((float)neededToMax / (float)fuelPowerPerUse);
@@ -203,7 +203,7 @@ namespace OCB
                     // Get demand of local battery or what is left
                     ushort demand = (ushort)Mathf.Min(GetChargeByQuality(
                         bank.Stacks[index].itemValue.Quality), power);
-                    float demandUses = (ushort)Mathf.Ceil((float)demand / (float)batteryPowerPerUse);
+                    float demandUses = demand / (float)batteryPowerPerUse;
                     // Check if current battery can take the full charge load
                     if (bank.Stacks[index].itemValue.UseTimes >= demandUses)
                     {
