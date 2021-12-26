@@ -22,28 +22,6 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
-    // Method that tries to install necessary files into the main game folder
-    // If it succeeds, you will need to restart the game to take advantage of it
-    public void TryToInstallBepInEx(Mod mod)
-    {
-        string pwd = Directory.GetCurrentDirectory();
-        Log.Warning("BepInEx not found, trying to install necessary files, restart if successful!");
-        if (!Directory.Exists(pwd + @"\BepInEx")) Directory.CreateDirectory(pwd + @"\BepInEx");
-        if (!Directory.Exists(pwd + @"\BepInEx\core")) Directory.CreateDirectory(pwd + @"\BepInEx\core");
-        if (!Directory.Exists(pwd + @"\BepInEx\config")) Directory.CreateDirectory(pwd + @"\BepInEx\config");
-        if (!Directory.Exists(pwd + @"\BepInEx\patchers")) Directory.CreateDirectory(pwd + @"\BepInEx\patchers");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\winhttp.dll", @"\winhttp.dll");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\doorstop_config.ini", @"\doorstop_config.ini");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\core\BepInEx.dll", @"\BepInEx\core\BepInEx.dll");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\core\BepInEx.xml", @"\BepInEx\core\BepInEx.xml");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\core\BepInEx.Preloader.dll", @"\BepInEx\core\BepInEx.Preloader.dll");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\core\BepInEx.Preloader.xml", @"\BepInEx\core\BepInEx.Preloader.xml");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\core\HarmonyXInterop.dll", @"\BepInEx\core\HarmonyXInterop.dll");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\config\BepInEx.cfg", @"\BepInEx\config\BepInEx.cfg");
-        TryToCopyFile(pwd, @"\Mods\" + mod.FolderName + @"\BepInEx\patchers\BepInEx.MultiFolderLoader.dll", @"\BepInEx\patchers\BepInEx.MultiFolderLoader.dll");
-        Log.Warning("BepInEx installed successfully, please restart the game and this message should go away!");
-    }
-
     // Entry class for A20 patching
     public void InitMod(Mod mod)
     {
@@ -51,7 +29,7 @@ public class OcbElectricityOverhaul : IModApi
 
         // Check if BepInEx was loaded and did its job correctly
         if (AccessTools.Field(typeof(PowerSource), "LentConsumed") == null) {
-            TryToInstallBepInEx(mod);
+            BepInExAutoInstall.TryToInstallBepInEx(mod);
             return;
         }
 
