@@ -9,19 +9,6 @@ using static OCB.ElectricityUtils;
 public class OcbElectricityOverhaul : IModApi
 {
 
-    public void TryToCopyFile(string pwd, string src, string dst)
-    {
-        // Bail out early if file already exists
-        if (File.Exists(pwd + dst)) return;
-        try {
-            File.Copy(pwd + src, pwd + dst);
-        }
-        catch (IOException err) {
-            Log.Warning("Could not copy " + dst);
-            Log.Warning(err.ToString());
-        }
-    }
-
     // Entry class for A20 patching
     public void InitMod(Mod mod)
     {
@@ -42,51 +29,35 @@ public class OcbElectricityOverhaul : IModApi
     {
         GamePrefs.m_Instance.initPropertyDecl();
     }
-
     [HarmonyPatch(typeof(GamePrefs))]
     [HarmonyPatch("initPropertyDecl")]
     public class GamePrefs_initPropertyDecl
     {
-        static void Postfix(GamePrefs __instance)
+        static void Postfix(ref GamePrefs.PropertyDecl[] ___propertyList, ref object[] ___propertyValues)
         {
-            int size = __instance.propertyList.Length;
-            // Only apply once, check for our key
-            for (int i = 0; i < size; i++)
-            {
-                GamePrefs.PropertyDecl pref = __instance.propertyList[i];
-                if (pref.name == EnumGamePrefs.MinPowerForCharging) return;
-            }
+            int size = ___propertyList.Length;
+            Array.Resize(ref ___propertyList, size + 8);
+            Array.Resize(ref ___propertyValues, ___propertyValues.Length + 8);
+            ___propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.LoadVanillaMap, true, GamePrefs.EnumType.Bool, LoadVanillaMapDefault, null, null);
+            ___propertyList[size + 1] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatteryPowerPerUse, true, GamePrefs.EnumType.Int, BatteryPowerPerUseDefault, null, null);
+            ___propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging, true, GamePrefs.EnumType.Int, MinPowerForChargingDefault, null, null);
+            ___propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse, true, GamePrefs.EnumType.Int, FuelPowerPerUseDefault, null, null);
+            ___propertyList[size + 4] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerPanel, true, GamePrefs.EnumType.Int, PowerPerPanelDefault, null, null);
+            ___propertyList[size + 5] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerEngine, true, GamePrefs.EnumType.Int, PowerPerEngineDefault, null, null);
+            ___propertyList[size + 6] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerBattery, true, GamePrefs.EnumType.Int, PowerPerBatteryDefault, null, null);
+            ___propertyList[size + 7] = new GamePrefs.PropertyDecl(EnumGamePrefs.ChargePerBattery, true, GamePrefs.EnumType.Int, ChargePerBatteryDefault, null, null);
+        }
+    }
 
-            // Otherwise add three new items
-            Array.Resize(ref __instance.propertyList, size + 8);
-            __instance.propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.LoadVanillaMap,
-                true, GamePrefs.EnumType.Bool, (bool)LoadVanillaMapDefault, (object)null, (object)null);
-            __instance.propertyList[size + 1] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatteryPowerPerUse,
-                true, GamePrefs.EnumType.Int, (int)BatteryPowerPerUseDefault, (object)null, (object)null);
-            __instance.propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging,
-                true, GamePrefs.EnumType.Int, (int)MinPowerForChargingDefault, (object)null, (object)null);
-            __instance.propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse,
-                true, GamePrefs.EnumType.Int, (int)FuelPowerPerUseDefault, (object)null, (object)null);
-
-            __instance.propertyList[size + 4] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerPanel,
-                true, GamePrefs.EnumType.Int, (int)PowerPerPanelDefault, (object)null, (object)null);
-            __instance.propertyList[size + 5] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerEngine,
-                true, GamePrefs.EnumType.Int, (int)PowerPerEngineDefault, (object)null, (object)null);
-            __instance.propertyList[size + 6] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerBattery,
-                true, GamePrefs.EnumType.Int, (int)PowerPerBatteryDefault, (object)null, (object)null);
-            __instance.propertyList[size + 7] = new GamePrefs.PropertyDecl(EnumGamePrefs.ChargePerBattery,
-                true, GamePrefs.EnumType.Int, (int)ChargePerBatteryDefault, (object)null, (object)null);
-
-            size = __instance.propertyValues.Length;
-            Array.Resize(ref __instance.propertyValues, size + 8);
-            __instance.propertyValues[size + 0] = (bool) LoadVanillaMapDefault;
-            __instance.propertyValues[size + 1] = (int) BatteryPowerPerUseDefault;
-            __instance.propertyValues[size + 2] = (int) MinPowerForChargingDefault;
-            __instance.propertyValues[size + 3] = (int) FuelPowerPerUseDefault;
-            __instance.propertyValues[size + 4] = (int) PowerPerPanelDefault;
-            __instance.propertyValues[size + 5] = (int) PowerPerEngineDefault;
-            __instance.propertyValues[size + 6] = (int) PowerPerBatteryDefault;
-            __instance.propertyValues[size + 7] = (int) ChargePerBatteryDefault;
+    [HarmonyPatch(typeof(EnvironmentAudioManager))]
+    [HarmonyPatch("Start")]
+    public class EnvironmentAudioManager_Start
+    {
+        static void Prefix(EnvironmentAudioManager __instance)
+        {
+            Log.Warning("EnvironmentAudioManager " + __instance);
+            Log.Warning("  " + __instance.gameObject);
+            Log.Warning("  " + __instance.gameObject.name);
         }
     }
 
