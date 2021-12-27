@@ -3,7 +3,7 @@ echo off
 echo Copying doorstop concealed as winhttp.dll
 
 if not exist "..\..\..\winhttp.dll" ( 
-	copy "winhttp.dll" "..\..\..\winhttp.dll"
+	copy "doorstop_win\winhttp.dll" "..\..\..\winhttp.dll"
 )
 if not exist "..\..\..\doorstop_config.ini" ( 
 	copy "doorstop_config.ini" "..\..\..\doorstop_config.ini"

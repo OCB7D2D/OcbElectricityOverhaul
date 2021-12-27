@@ -17,6 +17,8 @@ public class OcbElectricityOverhaul : IModApi
         // Check if BepInEx was loaded and did its job correctly
         if (AccessTools.Field(typeof(PowerSource), "LentConsumed") == null) {
             BepInExAutoInstall.TryToInstallBepInEx(mod);
+            // Log.Error("Required BepInEx patches not found, exiting!");
+            // Application.Quit();
             return;
         }
 

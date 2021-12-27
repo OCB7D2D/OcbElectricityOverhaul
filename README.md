@@ -26,20 +26,24 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
     <br clear="left"/>
 </p>
 
-## Additional recommended mods
+## Additional mods (pick the ones you like)
 
-Note: not all have been ported to A20 yet!
+These mods are all additional mods that have been tested with this mod.
+But the also work on their own. Therefore pick the ones you like and
+install them additionally to the Electricity Overhaul mod.
 
 - https://github.com/OCB7D2D/ElectricityWorkarounds (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
 - https://github.com/OCB7D2D/ElectricitySolarRecipes (recommended)
-- https://github.com/OCB7D2D/ElectricityLamps (recommended)
+- https://github.com/OCB7D2D/ElectricityLamps (optional)
+- https://github.com/OCB7D2D/ElectricityPushButtons (optional)
 - https://github.com/OCB7D2D/ElectricityNoWires (optional)
 
 ## Important Notes
 
-- Not Easy Anti-Cheat compatible, so you need to turn EAC off!
+- Not "Easy Anti-Cheat" compatible, so you need to turn EAC off!
 - probably incompatible with anything else touching electricity!
+- Needs BepInEx to work to patch the main game dll before startup
 
 This Mod hasn't yet been tested much in the wild and bugs are to be
 expected. Some might even not be fixable due to the nature of the
@@ -63,9 +67,25 @@ files for you. Unfortunately this will lead to a broken initial Game-Menu.
 Simply restart the game once and the mod should start loading correctly.
 Check the console (F1) to see if BepInEx was correctly detected or not.
 
-Alternatively you can also manually install (or uninstall) them manually.
+Alternatively you can also manually install (or uninstall) the files.
 For convenience I added two batch files you can use to achieve that.
 Check the mod folder (once installed) and you should find them there.
+
+### Linux support
+
+This is even more experimental and needs a bit of work from the user.
+Unfortunately there is no magic hook for BepInEx to use, you need to
+"tell" the game that it should load additional libraries before the
+game starts. To help you with that dilema, this mod will install a
+startup script that should do the necessary parts. Unfortunately this
+makes the game-launcher obsolete and if you want to change any startup
+options, you'd have to do it in the startup script directly. Also you
+can't start the game from steam launcher directly anymore!
+
+The relevant startup scripts are:
+
+- startmodclient.sh
+- startmodserver.sh
 
 ### Semantic versioning
 
@@ -210,6 +230,13 @@ think is a bad decision at all, but sometimes people are willing to spend a few 
 CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ## Changelog
+
+### Version 0.7.4
+
+- Fixed battery bank charging from specific sources
+- Fixed phantom battery bank charging (rounding error)
+- Fixed issues with menu options (no more error logged)
+- Added unix startup scripts for BepInEx preloader
 
 ### Version 0.7.3
 
