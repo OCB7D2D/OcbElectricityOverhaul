@@ -231,8 +231,9 @@ CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ## Changelog
 
-### Version 0.7.4
+### Version 0.7.5
 
+- Add compatibility for wind power
 - Don't persist vanilla map load setting
 
 ### Version 0.7.4

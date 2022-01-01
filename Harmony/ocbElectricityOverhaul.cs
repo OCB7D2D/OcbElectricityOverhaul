@@ -814,7 +814,6 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
 
-
                 case "PowerTooltip":
                     value = Localization.Get("xuiPowerTooltip");
                     __result = true;

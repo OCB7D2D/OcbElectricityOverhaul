@@ -167,40 +167,48 @@ public class OcbPowerManager : PowerManager
     public void RegeneratePowerSource(PowerSource source)
     {
 
-        source.MaxProduction = source.MaxOutput;
-
         // Code is coped from vanilla game dll
         if (source is PowerSolarPanel solar)
         {
-            source.MaxPower = 0;
-            source.MaxOutput = 0;
-            source.MaxProduction = 0;
             source.RequiredPower = 0;
             if (source.IsOn)
             {
-                if ((double)Time.time > (double)solar.lightUpdateTime)
+                if (Time.time > solar.lightUpdateTime)
                 {
                     solar.lightUpdateTime = Time.time + 2f;
                     // ToDo: maybe add a bit more elaborate sun-light detection
                     // Currently it will simply switch on/off between day/night
                     // HasLight should probably be a float to achieve this
                     solar.CheckLightLevel();
+                    source.MaxProduction = source.MaxOutput;
+                    source.MaxOutput = source.MaxPower;
                 }
             }
-            for (int index = source.Stacks.Length - 1; index >= 0; --index)
+            var props = Block.list[source.BlockID].Properties;
+            if (!props.Values.ContainsKey("IsWindmill"))
             {
-                if (!source.Stacks[index].IsEmpty())
+                source.MaxPower = 0;
+                source.MaxOutput = 0;
+                source.MaxProduction = 0;
+                for (int index = source.Stacks.Length - 1; index >= 0; --index)
                 {
-                    ItemStack slot = source.Stacks[index];
-                    ushort cellPower = GetCellPowerByQuality(slot.itemValue.Quality);
-                    if (source.IsOn && solar.HasLight)
+                    if (!source.Stacks[index].IsEmpty())
                     {
-                        source.MaxProduction += (ushort)Mathf.Ceil(cellPower * globalLight);
+                        ItemStack slot = source.Stacks[index];
+                        ushort cellPower = GetCellPowerByQuality(slot.itemValue.Quality);
+                        if (source.IsOn && solar.HasLight)
+                        {
+                            source.MaxProduction += (ushort)Mathf.Ceil(cellPower * globalLight);
+                        }
+                        source.MaxOutput += cellPower;
+                        source.MaxPower += cellPower;
                     }
-                    source.MaxOutput += cellPower;
-                    source.MaxPower += cellPower;
                 }
             }
+        }
+        else
+        {
+            source.MaxProduction = source.MaxOutput;
         }
 
         if (source.IsOn)
