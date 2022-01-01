@@ -24,13 +24,14 @@ public class OcbElectricityOverhaul : IModApi
 
         var harmony = new Harmony(GetType().ToString());
         harmony.PatchAll(Assembly.GetExecutingAssembly());
-        ModEvents.GameAwake.RegisterHandler(GameUpdateHandler);
+        ModEvents.GameAwake.RegisterHandler(GameAwakeHandler);
     }
 
-    public static void GameUpdateHandler()
+    public static void GameAwakeHandler()
     {
         GamePrefs.m_Instance.initPropertyDecl();
     }
+
     [HarmonyPatch(typeof(GamePrefs))]
     [HarmonyPatch("initPropertyDecl")]
     public class GamePrefs_initPropertyDecl
@@ -40,7 +41,7 @@ public class OcbElectricityOverhaul : IModApi
             int size = ___propertyList.Length;
             Array.Resize(ref ___propertyList, size + 8);
             Array.Resize(ref ___propertyValues, ___propertyValues.Length + 8);
-            ___propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.LoadVanillaMap, true, GamePrefs.EnumType.Bool, LoadVanillaMapDefault, null, null);
+            ___propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.LoadVanillaMap, false, GamePrefs.EnumType.Bool, LoadVanillaMapDefault, null, null);
             ___propertyList[size + 1] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatteryPowerPerUse, true, GamePrefs.EnumType.Int, BatteryPowerPerUseDefault, null, null);
             ___propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging, true, GamePrefs.EnumType.Int, MinPowerForChargingDefault, null, null);
             ___propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse, true, GamePrefs.EnumType.Int, FuelPowerPerUseDefault, null, null);
@@ -245,6 +246,7 @@ public class OcbElectricityOverhaul : IModApi
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(PowerItem))]
     [HarmonyPatch("HandlePowerReceived")]
     public class PowerItem_HandlePowerReceived
@@ -269,6 +271,7 @@ public class OcbElectricityOverhaul : IModApi
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(PowerBatteryBank))]
     [HarmonyPatch("HandlePowerReceived")]
     public class PowerBatteryBank_HandlePowerReceived
@@ -293,6 +296,7 @@ public class OcbElectricityOverhaul : IModApi
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(PowerTrigger))]
     [HarmonyPatch("HandlePowerReceived")]
     public class PowerTrigger_HandlePowerReceived
@@ -319,6 +323,7 @@ public class OcbElectricityOverhaul : IModApi
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(PowerTimerRelay))]
     [HarmonyPatch("HandlePowerReceived")]
     public class PowerTimerRelay_HandlePowerReceived
@@ -339,6 +344,7 @@ public class OcbElectricityOverhaul : IModApi
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(PowerConsumerToggle))]
     [HarmonyPatch("HandlePowerReceived")]
     public class PowerConsumerToggle_HandlePowerReceived

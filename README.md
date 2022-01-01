@@ -233,6 +233,10 @@ CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ### Version 0.7.4
 
+- Don't persist vanilla map load setting
+
+### Version 0.7.4
+
 - Fixed battery bank charging from specific sources
 - Fixed phantom battery bank charging (rounding error)
 - Fixed issues with menu options (no more error logged)
