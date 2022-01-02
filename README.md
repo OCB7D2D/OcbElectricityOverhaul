@@ -231,6 +231,14 @@ CPU cycles to get a better experience. Let's see how good this already scales :)
 
 ## Changelog
 
+### Version 0.8.0
+
+- Fixed some compatibility issues with other mods  
+  We now use `OutputPerStack` as a scaling factor  
+  We no longer hard-code `MaxFuel` for generators
+- Cleaned up and refactored update routine a bit
+- Improved and fixed `EnumGamePrefs` patching
+
 ### Version 0.7.5
 
 - Add compatibility for wind power

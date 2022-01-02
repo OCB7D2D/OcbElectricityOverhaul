@@ -42,6 +42,7 @@ public class ElectricityOverhaulPatch
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
+        type.Fields.Add(new FieldDefinition("StackFilled", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentCharging", FieldAttributes.Public, ushortTypeRef));

@@ -93,5 +93,12 @@
     <Compile Include="Harmony\XUiC_OcbPowerSourceWindowGroup.cs" />
     <Compile Include="Harmony\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\Localization.txt" />
+    <Content Include="Config\XUi\windows.xml" />
+    <Content Include="Config\XUi\xui.xml" />
+    <Content Include="Config\XUi_Menu\windows.xml" />
+    <Content Include="Config\blocks.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

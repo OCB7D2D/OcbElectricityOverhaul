@@ -87,8 +87,8 @@ public class OcbPowerManager : PowerManager
                     // Calculate light levels once
                     var world = GameManager.Instance.World;
                     // Partially copied from `IsDark`
-                    float time = (float)(world.worldTime % 24000UL) / 1000f;
-                    if ((double)time > (double)world.DawnHour && (double)time < (double)world.DuskHour)
+                    float time = (world.worldTime % 24000UL) / 1000f;
+                    if (time > world.DawnHour && time < world.DuskHour)
                     {
                         // Give a more natural sunrise and sunset effect
                         float span = (world.DuskHour - world.DawnHour) / 2f;
@@ -102,27 +102,27 @@ public class OcbPowerManager : PowerManager
                     //     this.PowerTriggers[index].SetTriggeredByParent(false);
 
                     // Re-generate all power source first to enable full capacity
-                    for (int index = 0; index < this.PowerSources.Count; ++index)
+                    for (int index = 0; index < PowerSources.Count; ++index)
                     {
                         // Severe FPS drop only after 100'000 times per tick
-                        RegeneratePowerSource(this.PowerSources[index]);
+                        RegeneratePowerSource(PowerSources[index]);
                     }
                     // Then start to distribute from root power sources down
-                    for (int index = 0; index < this.PowerSources.Count; ++index)
+                    for (int index = 0; index < PowerSources.Count; ++index)
                     {
                         // ToDo: This check could probably be optimized/cached
-                        if (GetParentSources(this.PowerSources[index]) != null) continue;
+                        if (GetParentSources(PowerSources[index]) != null) continue;
                         // Will be called recursively for substream sources
-                        ProcessPowerSource(this.PowerSources[index]);
+                        ProcessPowerSource(PowerSources[index]);
                     }
 
                     // This triggers e.g. motions sensors with given delay
-                    for (int index = 0; index < this.PowerTriggers.Count; ++index)
-                        this.PowerTriggers[index].CachedUpdateCall();
+                    for (int index = 0; index < PowerTriggers.Count; ++index)
+                        PowerTriggers[index].CachedUpdateCall();
 
                     // Doesn't do much anymore since caching is not enabled yet
-                    for (int index = 0; index < this.PowerSources.Count; ++index)
-                        FinalizePowerSource(this.PowerSources[index]);
+                    for (int index = 0; index < PowerSources.Count; ++index)
+                        FinalizePowerSource(PowerSources[index]);
 
                     if (Environment.TickCount - startTime > 40)
                         Log.Warning("PowerManager Tick took " + (Environment.TickCount - startTime) + " ms");
@@ -141,7 +141,7 @@ public class OcbPowerManager : PowerManager
                 // Suppose this saves data to disk from time to time
                 // Simply copied from original vanilla implementation
                 this.saveTime -= Time.deltaTime;
-                if ((double)this.saveTime <= 0.0 &&
+                if (saveTime <= 0.0 &&
                     (this.dataSaveThreadInfo == null || this.dataSaveThreadInfo.HasTerminated()))
                 {
                     // Means every 2 minutes!?
@@ -187,23 +187,25 @@ public class OcbPowerManager : PowerManager
             var props = Block.list[source.BlockID].Properties;
             if (!props.Values.ContainsKey("IsWindmill"))
             {
-                source.MaxPower = 0;
-                source.MaxOutput = 0;
-                source.MaxProduction = 0;
-                for (int index = source.Stacks.Length - 1; index >= 0; --index)
+                float production = 0, capacity = 0;
+                float factor = source.OutputPerStack / 30f;
+                foreach (var slot in source.Stacks)
                 {
-                    if (!source.Stacks[index].IsEmpty())
+                    if (slot.IsEmpty()) continue;
+                    float cellPower = GetCellPowerByQuality(
+                        slot.itemValue.Quality) * factor;
+                    if (source.IsOn && solar.HasLight)
                     {
-                        ItemStack slot = source.Stacks[index];
-                        ushort cellPower = GetCellPowerByQuality(slot.itemValue.Quality);
-                        if (source.IsOn && solar.HasLight)
-                        {
-                            source.MaxProduction += (ushort)Mathf.Ceil(cellPower * globalLight);
-                        }
-                        source.MaxOutput += cellPower;
-                        source.MaxPower += cellPower;
+                        production += cellPower * globalLight;
                     }
+                    capacity += cellPower;
                 }
+                // Round solar power always up
+                capacity = Mathf.Ceil(capacity);
+                production = Mathf.Ceil(production);
+                source.MaxPower = (ushort)capacity;
+                source.MaxOutput = (ushort)capacity;
+                source.MaxProduction = (ushort)production;
             }
         }
         else
@@ -214,77 +216,71 @@ public class OcbPowerManager : PowerManager
         if (source.IsOn)
         {
             // Code directly copied from decompiled dll
-            if ((int)source.CurrentPower < (int)source.MaxPower)
+            if (source.CurrentPower < source.MaxPower)
                 source.TickPowerGeneration();
             // else if ((int)source.CurrentPower > (int)source.MaxPower)
             //     source.CurrentPower = source.MaxPower;
         }
 
-        // We introduce `MaxProduction`, since vanilla code expects `MaxOutput`
-        // not to be zero in order to activate a power source.
-        source.ChargingDemand = (ushort)0;
+        // We introduce `MaxProduction`, since vanilla code expects
+        // `MaxOutput` to not be zero in order to activate power source.
+        source.ChargingDemand = 0;
 
         // BatteryBanks are a bit CPU intensive!
         // Calculate demand and production on each tick
         // ToDo: find out how caching could work with this!
         if (source is PowerBatteryBank bank)
         {
-            source.MaxPower = 0;
-            source.MaxOutput = 0;
-            source.MaxProduction = 0;
-            source.RequiredPower = 0;
-            for (int index = source.Stacks.Length - 1; index >= 0; --index)
+            float capacity = 0, discharging = 0;
+            float factor = source.OutputPerStack / 50f;
+            foreach (var slot in source.Stacks)
             {
-                if (!source.Stacks[index].IsEmpty())
+                if (slot.IsEmpty()) continue;
+                float discharge = GetDischargeByQuality(
+                    slot.itemValue.Quality) * factor;
+                if (source.IsOn)
                 {
-                    ItemStack slot = source.Stacks[index];
-                    ushort discharge = GetDischargeByQuality(slot.itemValue.Quality);
-                    if (source.IsOn)
+                    // Check if battery has some juice left
+                    if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
                     {
-                        if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
-                        {
-                            // ToDo: should we cap at what is actually available?
-                            source.MaxProduction += discharge;
-                        }
-                        if (slot.itemValue.UseTimes > 0)
-                        {
-                            // ToDo: should we cap at what is actually needed?
-                            bank.ChargingDemand += GetChargeByQuality(slot.itemValue.Quality);
-                        }
+                        // ToDo: should we cap at what is actually available?
+                        // source.MaxProduction += discharge;
+                        discharging += discharge;
                     }
-                    // Production if all batteries are loaded
-                    source.MaxOutput += discharge;
-                    source.MaxPower += discharge;
+                    // Check if battery could use some charging
+                    if (slot.itemValue.UseTimes > 0)
+                    {
+                        // ToDo: should we cap at what is actually needed?
+                        bank.ChargingDemand += GetChargeByQuality(slot.itemValue.Quality);
+                    }
                 }
+                // Production if all batteries are loaded
+                capacity += discharge;
             }
+            source.MaxPower = (ushort)capacity;
+            source.MaxOutput = (ushort)capacity;
+            source.MaxProduction = (ushort)discharging;
             // Power needed to charge batteries not fully loaded
             source.RequiredPower = bank.ChargingDemand;
         }
         else if (source is PowerGenerator generator)
         {
-            source.MaxPower = 0;
-            source.MaxOutput = 0;
-            source.MaxProduction = 0;
+            // Calculate the maximum power will all the filled engine slots
+            float factor = source.OutputPerStack / 100f;
+            float power = source.StackFilled * powerPerEngine * factor;
+            // generator.MaxFuel = GeneratorMaxFuelDefault;
             source.RequiredPower = 0;
-            generator.MaxFuel = GeneratorMaxFuelDefault;
-            for (int index = source.Stacks.Length - 1; index >= 0; --index)
-            {
-                if (!source.Stacks[index].IsEmpty())
-                {
-                    if (source.IsOn)
-                    {
-                        source.MaxProduction += (ushort)powerPerEngine;
-                    }
-                    source.MaxOutput += (ushort)powerPerEngine;
-                    source.MaxPower += (ushort)powerPerEngine;
-                }
-            }
+            source.MaxProduction = (ushort)
+                (source.IsOn ? power : 0);
+            source.MaxOutput = (ushort)power;
+            source.MaxPower = (ushort)power;
+
         }
 
         // Code directly copied from decompiled dll
         if (source.ShouldAutoTurnOff())
         {
-            source.CurrentPower = (ushort)0;
+            source.CurrentPower = 0;
             source.IsOn = false;
         }
 

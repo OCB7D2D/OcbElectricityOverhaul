@@ -1,0 +1,5 @@
+﻿<configs>
+
+	<setattribute xpath="/blocks/block[@name='generatorbank']/property[@name='MaxFuel']" name="value">5050</setattribute>
+
+</configs>
