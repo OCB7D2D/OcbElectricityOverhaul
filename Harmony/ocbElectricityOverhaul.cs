@@ -52,18 +52,6 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
-    [HarmonyPatch(typeof(EnvironmentAudioManager))]
-    [HarmonyPatch("Start")]
-    public class EnvironmentAudioManager_Start
-    {
-        static void Prefix(EnvironmentAudioManager __instance)
-        {
-            Log.Warning("EnvironmentAudioManager " + __instance);
-            Log.Warning("  " + __instance.gameObject);
-            Log.Warning("  " + __instance.gameObject.name);
-        }
-    }
-
     [HarmonyPatch(typeof(GameModeSurvival))]
     [HarmonyPatch("GetSupportedGamePrefsInfo")]
     public class GameModeSurvival_GetSupportedGamePrefsInfo
@@ -123,6 +111,37 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
+    private static void PowerSourceUpdateSlots(PowerSource source)
+    {
+        source.StackFilled = 0;
+        foreach (var stack in source.Stacks)
+        {
+            if (stack.IsEmpty()) continue;
+            source.StackFilled += 1;
+        }
+        Log.Out("Stacks filled " + source.StackFilled);
+    }
+
+    [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch("SetSlots")]
+    public class PowerSource_SetSlots
+    {
+        static void Postfix(PowerSource __instance)
+        {
+            PowerSourceUpdateSlots(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch("TryAddItemToSlot")]
+    public class PowerSource_TryAddItemToSlot
+    {
+        static void Postfix(PowerSource __instance)
+        {
+            PowerSourceUpdateSlots(__instance);
+        }
+    }
+
     [HarmonyPatch(typeof(PowerSource))]
     [HarmonyPatch("write")]
     public class PowerSource_write
@@ -150,6 +169,7 @@ public class OcbElectricityOverhaul : IModApi
             __instance.ChargeFromSolar = _br.ReadBoolean();
             __instance.ChargeFromGenerator = _br.ReadBoolean();
             __instance.ChargeFromBattery = _br.ReadBoolean();
+            PowerSourceUpdateSlots(__instance);
         }
     }
 

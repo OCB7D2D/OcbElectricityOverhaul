@@ -13,33 +13,34 @@ public class ElectricityOptionsPatch
 
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
-        int enumLast = enumType.Fields.Count - 3;
+        int enumLast = enumType.Fields.Count - 2;
 
         enumType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("MinPowerForCharging", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("FuelPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("PowerPerPanel", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("PowerPerEngine", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("ChargePerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
-            { Constant = ++enumLast });
+            { Constant = enumLast++ });
 
+        enumType.Fields.FirstOrDefault(item => item.Name == "Last").Constant = enumLast;
 
         // Add new fields to GameInfoBool enum
         var infoBoolType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoBool"));
