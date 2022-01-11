@@ -8,4 +8,5 @@
 		<window name="windowOcbPowerSourceStats" />
 		<window name="windowNonPagingHeader" />
 	</set>
+
 </configs>

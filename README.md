@@ -229,7 +229,31 @@ take quite a few shortcuts to ensure reliable and scalable performance. Which I 
 think is a bad decision at all, but sometimes people are willing to spend a few more
 CPU cycles to get a better experience. Let's see how good this already scales :)
 
+#### Performance improvements in version 0.9.0
+
+Vanilla implementation has a reasonable tick rate (0.16s), but still updates every
+power item on the same tick. This change splits updates for individual grids; that
+are established after wire connections are changed; into different frames. So the
+calculations are more evenly spread across multiple frame in order to get more
+steady fps and to ultimately avoid frame drops.
+
+This doesn't lower CPU usage, but spreads the work out more evenly between different
+frame updates. Benchmarks on a modern CPU (Core i9 9900K) show that a grid with 20
+power sources, 40 triggers and 80 consumers still only uses around 0.3ms to update.
+We shouldn't use more than 16ms to not drop any frames at 60fps, but still have
+around 160ms given the current power tick rate, I'd say there is a lot of room for
+more power items.
+
+I've created a (so far) very simple addon mod that shows a panel with some very
+basic information about all grids (most notably the average update time):
+- https://github.com/OCB7D2D/ElectricityOverhaulAdmin
+
 ## Changelog
+
+### Version 0.9.0
+
+- Optimize CPU utilization and reduce FPS drain  
+  See Chapter "Optimizations and Performance" above
 
 ### Version 0.8.0
 

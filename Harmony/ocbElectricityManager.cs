@@ -12,19 +12,25 @@ public class OcbPowerManager : PowerManager
 
     // Upstream power sources when we go down
     // the tree via `ProcessPowerSource`.
-    public Stack<PowerSource> lenders;
+    public Stack<PowerSource> lenders
+        = new Stack<PowerSource>();
+
+    // Power Sources representing root nodes
+    public readonly List<PowerSource> Grids
+        = new List<PowerSource>();
+
+    // Reuse container on internal function
+    private static readonly Queue<PowerItem> collect
+        = new Queue<PowerItem>();
 
     // Global light for solar panels
     float globalLight = 1f;
 
+    bool IsDirty = true;
+
     // Constructor
     public OcbPowerManager() : base()
     {
-        // Allocate lenders stack where we register
-        // upstream power sources when we go down
-        // the tree via `ProcessPowerSource`.
-        lenders = new Stack<PowerSource>();
-
     }
 
     public override void LoadPowerManager()
@@ -57,16 +63,108 @@ public class OcbPowerManager : PowerManager
     // we are not called regularly (e.g. if deltaTime is
     // very big). We only are able to work off 0.16f per
     // call, but at least we are perfectly quantized.
+
+    public void CollectGridChidren(PowerSource root)
+    {
+        collect.Enqueue(root);
+        while (collect.Count > 0)
+        {
+            PowerItem item = collect.Dequeue();
+            if (item is PowerTrigger trigger)
+            {
+                root.PowerTriggers.Add(trigger);
+            }
+            else if (item is PowerSource source)
+            {
+                root.PowerSources.Add(source);
+            }
+            foreach (var child in item.Children)
+            {
+                collect.Enqueue(child);
+            }
+        }
+    }
+
+    public void ResetGrids()
+    {
+        Grids.Clear();
+        // Reset all power sources and collect root nodes
+        foreach (PowerSource source in PowerSources)
+        {
+            // Reset or create lists to hold (potential) grid children
+            if (source.PowerSources != null) source.PowerSources.Clear();
+            else source.PowerSources = new List<PowerSource>();
+            if (source.PowerTriggers != null) source.PowerTriggers.Clear();
+            else source.PowerTriggers = new List<PowerTrigger>();
+            // Skip all power sources that have parent sources
+            if (GetParentSources(source) != null) continue;
+            // Accumulate all root power sources
+            Grids.Add(source);
+        }
+        // Distribute update times and collect children
+        for(int i = 0; i < Grids.Count; i += 1)
+        {
+            // Update each grid at a different frame
+            Grids[i].UpdateTime = 0.16f / Grids.Count * i;
+            // Collect sources and triggers
+            CollectGridChidren(Grids[i]);
+        }
+    }
+
+    public void UpdateLight()
+    {
+        // Calculate light levels once
+        var world = GameManager.Instance.World;
+        // Partially copied from `IsDark`
+        float time = (world.worldTime % 24000UL) / 1000f;
+        if (time > world.DawnHour && time < world.DuskHour)
+        {
+            // Give a more natural sunrise and sunset effect
+            float span = (world.DuskHour - world.DawnHour) / 2f;
+            float halfTime = (world.DuskHour + world.DawnHour) / 2f;
+            float distance = span - Mathf.Abs(time - halfTime);
+            globalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
+        }
+    }
+
+    public void UpdateGrid(PowerSource root)
+    {
+
+        // Take overhead hit to have some idea about performance
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
+        // Re-generate all power sources first to enable full capacity
+        foreach (PowerSource source in root.PowerSources)
+            RegeneratePowerSource(source);
+        // Distribute from root down
+        ProcessPowerSource(root);
+        // Update triggers and see how they affect groups
+        foreach (PowerTrigger trigger in root.PowerTriggers)
+            trigger.CachedUpdateCall();
+        // Not sure if this does much at all currently
+        foreach (PowerSource source in root.PowerSources)
+            FinalizePowerSource(source);
+
+        watch.Stop();
+        
+        // Once we reach this level, we certainly have an issue!
+        if (watch.Elapsed.TotalMilliseconds > 20) Log.Warning(
+            "PowerManager took " + watch.Elapsed.TotalMilliseconds + " ms");
+
+        // For debugging purposes only (as exposed by electricity overhaul admin mod)
+        // This is a simple approximation and should at least give a well enough
+        // ball-park number to estimate how long the power grid calculations took.
+        // https://github.com/OCB7D2D/ElectricityOverhaulAdmin
+        root.AvgTime = 0.9f * root.AvgTime + 0.1f * (float)watch.Elapsed.TotalMilliseconds;
+
+    }
+
     public override void Update()
     {
 
         if (GameManager.Instance.World == null) return;
         if (GameManager.Instance.World.Players == null) return;
         if (GameManager.Instance.World.Players.Count == 0) return;
-
-        this.globalLight = 0f;
-        var startTime = Environment.TickCount;
-        var watch = System.Diagnostics.Stopwatch.StartNew();
 
         // PowerManager only runs on server instance, for clients the
         // only connection is via TileEntities and their DTO, e.g.
@@ -76,84 +174,49 @@ public class OcbPowerManager : PowerManager
         {
             if (GameManager.Instance.gameStateManager.IsGameStarted())
             {
+
                 // Update absolute delta of our last update call to check if tick
                 // interval is due. We do updates only once per quantized time interval.
                 // If we get called to fast, we skip calculation altogether, if we have
-                // a very big delta, we must run as many time as needed to catch up.
-                base.updateTime -= Time.deltaTime;
-                if ((double)this.updateTime <= 0.0)
+                // a very big delta, we must run as many time as needed to catch up?
+
+                if (IsDirty)
                 {
-
-                    // Calculate light levels once
-                    var world = GameManager.Instance.World;
-                    // Partially copied from `IsDark`
-                    float time = (world.worldTime % 24000UL) / 1000f;
-                    if (time > world.DawnHour && time < world.DuskHour)
-                    {
-                        // Give a more natural sunrise and sunset effect
-                        float span = (world.DuskHour - world.DawnHour) / 2f;
-                        float halfTime = (world.DuskHour + world.DawnHour) / 2f;
-                        float distance = span - Mathf.Abs(time - halfTime);
-                        this.globalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
-                    }
-
-                    // Reset all parent triggers
-                    // for (int index = 0; index < this.PowerTriggers.Count; ++index)
-                    //     this.PowerTriggers[index].SetTriggeredByParent(false);
-
-                    // Re-generate all power source first to enable full capacity
-                    for (int index = 0; index < PowerSources.Count; ++index)
-                    {
-                        // Severe FPS drop only after 100'000 times per tick
-                        RegeneratePowerSource(PowerSources[index]);
-                    }
-                    // Then start to distribute from root power sources down
-                    for (int index = 0; index < PowerSources.Count; ++index)
-                    {
-                        // ToDo: This check could probably be optimized/cached
-                        if (GetParentSources(PowerSources[index]) != null) continue;
-                        // Will be called recursively for substream sources
-                        ProcessPowerSource(PowerSources[index]);
-                    }
-
-                    // This triggers e.g. motions sensors with given delay
-                    for (int index = 0; index < PowerTriggers.Count; ++index)
-                        PowerTriggers[index].CachedUpdateCall();
-
-                    // Doesn't do much anymore since caching is not enabled yet
-                    for (int index = 0; index < PowerSources.Count; ++index)
-                        FinalizePowerSource(PowerSources[index]);
-
-                    if (Environment.TickCount - startTime > 40)
-                        Log.Warning("PowerManager Tick took " + (Environment.TickCount - startTime) + " ms");
-                    watch.Stop(); if (watch.Elapsed.Milliseconds > 40)
-                        Log.Warning("PowerManager Watch took " + watch.Elapsed.Milliseconds + " ms");
-
-                    // Add another tick interval
-                    // Guessing this means every 160ms
-                    // Which is around 6 times per second
-                    // Note: easiest factor to adjust for better performance
-                    // Although it makes the whole grid a bit less responsive
-                    // None the less, even two updates per second seems fair enough
-                    this.updateTime = 0.16f;
+                    ResetGrids();
+                    IsDirty = false;
+                }
+                updateTime -= Time.deltaTime;
+                if (updateTime <= 0.0)
+                {
+                    globalLight = 0f;
+                    UpdateLight();
+                    updateTime = 0.16f;
+                }
+                foreach (PowerSource root in Grids)
+                {
+                    root.UpdateTime -= Time.deltaTime;
+                    if (root.UpdateTime > 0) continue;
+                    while (root.UpdateTime <= 0)
+                        root.UpdateTime += 0.16f;
+                    UpdateGrid(root);
                 }
 
                 // Suppose this saves data to disk from time to time
                 // Simply copied from original vanilla implementation
-                this.saveTime -= Time.deltaTime;
+                saveTime -= Time.deltaTime;
                 if (saveTime <= 0.0 &&
-                    (this.dataSaveThreadInfo == null || this.dataSaveThreadInfo.HasTerminated()))
+                    (dataSaveThreadInfo == null || dataSaveThreadInfo.HasTerminated()))
                 {
                     // Means every 2 minutes!?
-                    this.saveTime = 120f;
-                    this.SavePowerManager();
+                    saveTime = 120f;
+                    SavePowerManager();
                 }
             }
         }
 
         // No idea what this does exactly, copied from vanilla code
-        for (int index = 0; index < this.ClientUpdateList.Count; ++index)
-            this.ClientUpdateList[index].ClientUpdate();
+        for (int index = 0; index < ClientUpdateList.Count; ++index)
+            ClientUpdateList[index].ClientUpdate();
 
     }
 
@@ -263,7 +326,7 @@ public class OcbPowerManager : PowerManager
             // Power needed to charge batteries not fully loaded
             source.RequiredPower = bank.ChargingDemand;
         }
-        else if (source is PowerGenerator generator)
+        else if (source is PowerGenerator)
         {
             // Calculate the maximum power will all the filled engine slots
             float factor = source.OutputPerStack / 100f;
@@ -544,7 +607,7 @@ public class OcbPowerManager : PowerManager
         }
 
         // Remove from stack
-        this.lenders.Pop();
+        lenders.Pop();
 
         if (root is PowerBatteryBank bank)
             DistributeLeftToBank(bank);
@@ -637,6 +700,20 @@ public class OcbPowerManager : PowerManager
         // for (int index = 0; index < source.Children.Count; ++index)
         //     source.Children[index].HandlePowerUpdate(source.IsOn);
         source.hasChangesLocal = false;
+    }
+
+    public override void RemoveParent(PowerItem node)
+    {
+        base.RemoveParent(node);
+        IsDirty = true;
+        // ResetGrids();
+    }
+
+    public override void SetParent(PowerItem child, PowerItem parent)
+    {
+        base.SetParent(child, parent);
+        IsDirty = true;
+        // ResetGrids();
     }
 
 }

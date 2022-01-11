@@ -15,6 +15,10 @@ public class ElectricityOverhaulPatch
         SetMethodToVirtual(type.Methods.First(d => d.Name == "Update"));
         SetMethodToVirtual(type.Methods.First(d => d.Name == "LoadPowerManager"));
         SetMethodToVirtual(type.Methods.First(d => d.Name == "SavePowerManager"));
+        SetMethodToVirtual(type.Methods.First(d => d.Name == "RemovePowerNode"));
+        SetMethodToVirtual(type.Methods.First(d => d.Name == "AddPowerNode"));
+        SetMethodToVirtual(type.Methods.First(d => d.Name == "RemoveParent"));
+        SetMethodToVirtual(type.Methods.First(d => d.Name == "SetParent"));
     }
 
     public static void PatchPowerItem(ModuleDefinition module)
@@ -39,9 +43,15 @@ public class ElectricityOverhaulPatch
 
     public static void PatchPowerSource(ModuleDefinition module)
     {
+        var manager = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
+        TypeReference floatTypeRef = module.ImportReference(typeof(float));
+        FieldReference fieldPowerSources = manager.Fields.First(d => d.Name == "PowerSources");
+		TypeReference powerSourceListTypeRef = module.ImportReference(fieldPowerSources.FieldType);
+        FieldReference fieldPowerTriggers = manager.Fields.First(d => d.Name == "PowerTriggers");
+		TypeReference powerTriggerListTypeRef = module.ImportReference(fieldPowerTriggers.FieldType);
         type.Fields.Add(new FieldDefinition("StackFilled", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
@@ -59,6 +69,10 @@ public class ElectricityOverhaulPatch
         type.Fields.Add(new FieldDefinition("ChargeFromSolar", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromGenerator", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("PowerSources", FieldAttributes.Public, powerSourceListTypeRef));
+        type.Fields.Add(new FieldDefinition("PowerTriggers", FieldAttributes.Public, powerTriggerListTypeRef));
+        type.Fields.Add(new FieldDefinition("UpdateTime", FieldAttributes.Public, floatTypeRef));
+        type.Fields.Add(new FieldDefinition("AvgTime", FieldAttributes.Public, floatTypeRef));
         SetMethodToPublic(type.Methods.First(d => d.Name == "TickPowerGeneration"), true);
         SetMethodToPublic(type.Methods.First(d => d.Name == "ShouldAutoTurnOff"), true);
     }
