@@ -24,59 +24,6 @@ public class OcbElectricityOverhaul : IModApi
 
         var harmony = new Harmony(GetType().ToString());
         harmony.PatchAll(Assembly.GetExecutingAssembly());
-        ModEvents.GameAwake.RegisterHandler(GameAwakeHandler);
-    }
-
-    public static void GameAwakeHandler()
-    {
-        GamePrefs.m_Instance.initPropertyDecl();
-    }
-
-    [HarmonyPatch(typeof(GamePrefs))]
-    [HarmonyPatch("initPropertyDecl")]
-    public class GamePrefs_initPropertyDecl
-    {
-        static void Postfix(ref GamePrefs.PropertyDecl[] ___propertyList, ref object[] ___propertyValues)
-        {
-            int size = ___propertyList.Length;
-            Array.Resize(ref ___propertyList, size + 8);
-            Array.Resize(ref ___propertyValues, ___propertyValues.Length + 8);
-            ___propertyList[size + 0] = new GamePrefs.PropertyDecl(EnumGamePrefs.LoadVanillaMap, false, GamePrefs.EnumType.Bool, LoadVanillaMapDefault, null, null);
-            ___propertyList[size + 1] = new GamePrefs.PropertyDecl(EnumGamePrefs.BatteryPowerPerUse, true, GamePrefs.EnumType.Int, BatteryPowerPerUseDefault, null, null);
-            ___propertyList[size + 2] = new GamePrefs.PropertyDecl(EnumGamePrefs.MinPowerForCharging, true, GamePrefs.EnumType.Int, MinPowerForChargingDefault, null, null);
-            ___propertyList[size + 3] = new GamePrefs.PropertyDecl(EnumGamePrefs.FuelPowerPerUse, true, GamePrefs.EnumType.Int, FuelPowerPerUseDefault, null, null);
-            ___propertyList[size + 4] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerPanel, true, GamePrefs.EnumType.Int, PowerPerPanelDefault, null, null);
-            ___propertyList[size + 5] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerEngine, true, GamePrefs.EnumType.Int, PowerPerEngineDefault, null, null);
-            ___propertyList[size + 6] = new GamePrefs.PropertyDecl(EnumGamePrefs.PowerPerBattery, true, GamePrefs.EnumType.Int, PowerPerBatteryDefault, null, null);
-            ___propertyList[size + 7] = new GamePrefs.PropertyDecl(EnumGamePrefs.ChargePerBattery, true, GamePrefs.EnumType.Int, ChargePerBatteryDefault, null, null);
-        }
-    }
-
-    [HarmonyPatch(typeof(GameModeSurvival))]
-    [HarmonyPatch("GetSupportedGamePrefsInfo")]
-    public class GameModeSurvival_GetSupportedGamePrefsInfo
-    {
-        static void Postfix(GameModeSurvival __instance,
-            ref GameMode.ModeGamePref[] __result)
-        {
-            int size = __result.Length;
-            // Only apply once, check for our key
-            for (int i = 0; i < size; i++)
-            {
-                GameMode.ModeGamePref pref = __result[i];
-                if (pref.GamePref == EnumGamePrefs.MinPowerForCharging) return;
-            }
-            // Otherwise add three new keys
-            Array.Resize(ref __result, size + 8);
-            __result[size + 0] = new GameMode.ModeGamePref(EnumGamePrefs.LoadVanillaMap, GamePrefs.EnumType.Bool, (bool) LoadVanillaMapDefault);
-            __result[size + 1] = new GameMode.ModeGamePref(EnumGamePrefs.BatteryPowerPerUse, GamePrefs.EnumType.Int, (int) BatteryPowerPerUseDefault);
-            __result[size + 2] = new GameMode.ModeGamePref(EnumGamePrefs.MinPowerForCharging, GamePrefs.EnumType.Int, (int) MinPowerForChargingDefault);
-            __result[size + 3] = new GameMode.ModeGamePref(EnumGamePrefs.FuelPowerPerUse, GamePrefs.EnumType.Int, (int) FuelPowerPerUseDefault);
-            __result[size + 4] = new GameMode.ModeGamePref(EnumGamePrefs.PowerPerPanel, GamePrefs.EnumType.Int, (int) PowerPerPanelDefault);
-            __result[size + 5] = new GameMode.ModeGamePref(EnumGamePrefs.PowerPerEngine, GamePrefs.EnumType.Int, (int) PowerPerEngineDefault);
-            __result[size + 6] = new GameMode.ModeGamePref(EnumGamePrefs.PowerPerBattery, GamePrefs.EnumType.Int, (int) PowerPerBatteryDefault);
-            __result[size + 7] = new GameMode.ModeGamePref(EnumGamePrefs.ChargePerBattery, GamePrefs.EnumType.Int, (int) ChargePerBatteryDefault);
-        }
     }
 
     // Patch PowerManager to return a different (our) instance
@@ -89,8 +36,7 @@ public class OcbElectricityOverhaul : IModApi
         {
             if (PowerManager.instance == null)
             {
-                OcbPowerManager instance = new OcbPowerManager();
-                PowerManager.instance = (PowerManager) instance;
+                PowerManager.instance = new OcbPowerManager();
             }
 
             return true;
