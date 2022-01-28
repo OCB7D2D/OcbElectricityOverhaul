@@ -250,6 +250,11 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 0.9.1
+
+- Move GamePrefs patching to BepInEx preloader  
+  Harmony code was too late for server configs
+ 
 ### Version 0.9.0
 
 - Optimize CPU utilization and reduce FPS drain  

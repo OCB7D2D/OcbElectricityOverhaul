@@ -1,4 +1,5 @@
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -75,6 +76,251 @@ public class ElectricityOptionsPatch
             { Constant = ++infoIntLast });
     }
 
+    public const int BatteryPowerPerUseDefault = 25;
+    public const int MinPowerForChargingDefault = 20;
+    public const int FuelPowerPerUseDefault = 750;
+    public const int PowerPerPanelDefault = 30;
+    public const int PowerPerEngineDefault = 50;
+    public const int PowerPerBatteryDefault = 50;
+    public const int ChargePerBatteryDefault = 35;
+
+    public static void PatchGamePrefsProps(ModuleDefinition module)
+    {
+
+        TypeDefinition prefs = module.Types.First(d => d.Name == "GamePrefs");
+        MethodDefinition method = prefs.Methods.First(d => d.Name == "initPropertyDecl");
+        // Get nested `PropertyDecl` sub-class in `GamePrefs` class
+        TypeDefinition elem = prefs.NestedTypes.First(d => d.Name == "PropertyDecl");
+        MethodDefinition ctor = elem.Methods.First(x => x.Name == ".ctor");
+
+        int enums = 210; // ToDo: get this dynamically!?
+        int lst = (int)method.Body.Instructions[7].Operand;
+        ILProcessor worker = method.Body.GetILProcessor();
+        Instruction[] instructions = new Instruction[]
+        {
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // Persistent
+            worker.Create(OpCodes.Ldc_I4_3), // EnumType
+            worker.Create(OpCodes.Ldc_I4_0), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Boolean), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, BatteryPowerPerUseDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, MinPowerForChargingDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, FuelPowerPerUseDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerPanelDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerEngineDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerBatteryDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, ChargePerBatteryDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+        };
+
+        // We are adding 8 new items to this array
+        worker.Replace(method.Body.Instructions[7],
+            worker.Create(OpCodes.Ldc_I4, lst));
+
+        Instruction ins = method.Body.Instructions[
+            method.Body.Instructions.Count - 2];
+
+        foreach (var instruction in instructions)
+            worker.InsertBefore(ins, instruction);
+
+    }
+
+    public static void PatchGameModeSurvival(ModuleDefinition module)
+    {
+
+        TypeDefinition type = module.Types.First(d => d.Name == "GameModeSurvival");
+        MethodDefinition method = type.Methods.First(d => d.Name == "GetSupportedGamePrefsInfo");
+        // Get nested `ModeGamePref` sub-class in `GameMode` class
+        TypeDefinition elem = module.Types.First(d => d.Name == "GameMode")
+            .NestedTypes.First(d => d.Name == "ModeGamePref");
+        MethodDefinition ctor = elem.Methods.First(x => x.Name == ".ctor");
+
+        int enums = 210; // ToDo: get this dynamically!?
+        sbyte lst = (sbyte)method.Body.Instructions[0].Operand;
+        ILProcessor worker = method.Body.GetILProcessor();
+        Instruction[] instructions = new Instruction[]
+        {
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_3), // EnumType
+            worker.Create(OpCodes.Ldc_I4_0), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Boolean), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+            
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, BatteryPowerPerUseDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, MinPowerForChargingDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, FuelPowerPerUseDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerPanelDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerEngineDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, PowerPerBatteryDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, ChargePerBatteryDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+        };
+
+        // We are adding 8 new items to this array
+        worker.Replace(method.Body.Instructions[0],
+            worker.Create(OpCodes.Ldc_I4_S, lst));
+
+        Instruction ins = method.Body.Instructions[
+            method.Body.Instructions.Count - 1];
+
+        foreach (var instruction in instructions)
+            worker.InsertBefore(ins, instruction);
+
+    }
+
+    public static void PatchGamePrefPropValues(ModuleDefinition module)
+    {
+
+        TypeDefinition prefs = module.Types.First(d => d.Name == "GamePrefs");
+        MethodDefinition method = prefs.Methods.First(d => d.Name == ".ctor");
+        // Get nested `PropertyDecl` sub-class in `GamePrefs` class
+        method.Body.Instructions[1].Operand = 8 +
+            (int)method.Body.Instructions[1].Operand;
+
+    }
+
     public static void Patch(AssemblyDefinition assembly)
     {
         Console.WriteLine("Applying OCB Electricity Options Patch");
@@ -82,6 +328,9 @@ public class ElectricityOptionsPatch
         ModuleDefinition module = assembly.MainModule;
 
         PatchEnumGamePrefs(module);
+        PatchGamePrefsProps(module);
+        PatchGameModeSurvival(module);
+        PatchGamePrefPropValues(module);
 
         MakeTypePublic(module.Types.First(d => d.Name == "GamePrefs"));
 
