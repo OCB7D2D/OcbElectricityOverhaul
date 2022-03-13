@@ -9,6 +9,8 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
 
 <img src="Screens/in-game.jpg" alt="Blocks shown in-game" height="400" />
 
+[![GitHub CI Compile Status][3]][2]
+
 ## Main features
 
 - Power sources can be connected like every other power item
@@ -304,3 +306,5 @@ basic information about all grids (most notably the average update time):
 I've developed and tested this Mod against version a19.6b8.
 
 [1]: https://github.com/HAL-NINE-THOUSAND/DMT
+[2]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml
+[3]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml/badge.svg
