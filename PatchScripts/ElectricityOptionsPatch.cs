@@ -14,7 +14,8 @@ public class ElectricityOptionsPatch
 
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
-        int enumLast = enumType.Fields.Count - 2;
+        lastGamePrefEnum = enumType.Fields.Count - 2;
+        int enumLast = lastGamePrefEnum;
 
         enumType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
@@ -84,6 +85,8 @@ public class ElectricityOptionsPatch
     public const int PowerPerBatteryDefault = 50;
     public const int ChargePerBatteryDefault = 35;
 
+    private static int lastGamePrefEnum = 210;
+
     public static void PatchGamePrefsProps(ModuleDefinition module)
     {
 
@@ -93,7 +96,7 @@ public class ElectricityOptionsPatch
         TypeDefinition elem = prefs.NestedTypes.First(d => d.Name == "PropertyDecl");
         MethodDefinition ctor = elem.Methods.First(x => x.Name == ".ctor");
 
-        int enums = 210; // ToDo: get this dynamically!?
+        int enums = lastGamePrefEnum;
         int lst = (int)method.Body.Instructions[7].Operand;
         ILProcessor worker = method.Body.GetILProcessor();
         Instruction[] instructions = new Instruction[]
@@ -219,7 +222,7 @@ public class ElectricityOptionsPatch
             .NestedTypes.First(d => d.Name == "ModeGamePref");
         MethodDefinition ctor = elem.Methods.First(x => x.Name == ".ctor");
 
-        int enums = 210; // ToDo: get this dynamically!?
+        int enums = lastGamePrefEnum;
         sbyte lst = (sbyte)method.Body.Instructions[0].Operand;
         ILProcessor worker = method.Body.GetILProcessor();
         Instruction[] instructions = new Instruction[]

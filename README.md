@@ -252,6 +252,11 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 0.9.2
+
+- Fix EnumGamePrefs patching to be more dynamic  
+  Fixes compatibility with Alpha 20.4 (b38)
+
 ### Version 0.9.1
 
 - Move GamePrefs patching to BepInEx preloader  
