@@ -1,6 +1,9 @@
-name: Electricity Overhaul
+name: OcbElectricityOverhaul
 
 on:
+  create:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
   push:
     branches:
       - master
@@ -9,37 +12,18 @@ on:
 
 jobs:
 
-  windows-msvc:
+  compile:
     runs-on: windows-latest
     name: Windows MSVC build
 
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {build: Release, platform: Win64}
-
     steps:
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
     - name: Check out repository code
       uses: actions/checkout@v2
-    - name: Checkout OCB 7D2D compile helpers
-      uses: actions/checkout@v2
+    - name: Call 7D2D compiler action
+      uses: OCB7D2D/A20BepInExPreloader@master
       with:
-        path: 'OCB7D2DCM'
-        repository: OCB7D2D/A20BepInExPreloader
-        ref: develop
-    - name: Checkout 7D2D A20 dependencies (private repo)
-      uses: actions/checkout@v3
-      with:
-        repository: OCB7D2D/OCB7D2DCI
-        token: ${{ secrets.OCBTOKEN }}
-        path: 7D2DCI
-    - name: Call OCB7D2D module compiler
-      shell: cmd
-      run: |
-        set ROSLYN_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\Roslyn
-        set PATH_7D2D_MANAGED=7D2DCI/A20.3
-        set PATH=%PATH%;OCB7D2DCM/utils
-        00-CompileModule.bat
+        name: "OcbElectricityOverhaul"
+        version: "${{ github.ref_name }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        OCBTOKEN: "${{ secrets.OCBTOKEN }}"
+        release: ${{ github.event_name == 'create' && github.event.ref_type == 'tag' }}

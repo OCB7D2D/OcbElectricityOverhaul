@@ -1,6 +1,9 @@
 @echo off
 
-call CM7D2D ElectricityOverhaul ^
-Harmony\*.cs ^ PatchScripts\*.cs
+SET NAME=ElectricityOverhaul
 
-pause
+call CM7D2D %NAME% Harmony\*.cs PatchScripts\*.cs
+
+SET RV=%ERRORLEVEL%
+if "%CI%"=="" pause
+exit /B %RV%
