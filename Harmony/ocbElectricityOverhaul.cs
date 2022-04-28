@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Reflection;
 
 using static OCB.ElectricityUtils;
+using XMLData.Parsers;
 
 public class OcbElectricityOverhaul : IModApi
 {
@@ -105,7 +106,10 @@ public class OcbElectricityOverhaul : IModApi
     {
         static void Postfix(PowerSource __instance, BinaryReader _br)
         {
-            if (GamePrefs.GetBool(EnumGamePrefs.LoadVanillaMap)) {
+            // We resolve enum dynamically on runtime, since we don't want to
+            // hard-code a specific value into our own runtime. This allows
+            // compatibility even if game dll alters the enum between version.
+            if (GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap"))) {
                 __instance.ChargeFromSolar = true;
                 __instance.ChargeFromGenerator = true;
                 __instance.ChargeFromBattery = false;

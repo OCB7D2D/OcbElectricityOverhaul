@@ -256,6 +256,7 @@ basic information about all grids (most notably the average update time):
 
 - Fix compatibility for Alpha 20.4 (b42)
 - Automated deployment and release packaging
+- Fix backward/forward game dll compatibility
 
 ### Version 0.9.2
 

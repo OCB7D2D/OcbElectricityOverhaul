@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using static OCB.ElectricityUtils;
+using XMLData.Parsers;
 
 public class OcbPowerManager : PowerManager
 {
@@ -40,14 +41,19 @@ public class OcbPowerManager : PowerManager
 
         // Update configuration once when loaded from game preferences
         // Shouldn't change during runtime (unsure if this is the right spot?)
-        isLoadVanillaMap = GamePrefs.GetBool(EnumGamePrefs.LoadVanillaMap);
-        batteryPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.BatteryPowerPerUse);
-        minPowerForCharging = GamePrefs.GetInt(EnumGamePrefs.MinPowerForCharging);
-        fuelPowerPerUse = GamePrefs.GetInt(EnumGamePrefs.FuelPowerPerUse);
-        powerPerPanel = GamePrefs.GetInt(EnumGamePrefs.PowerPerPanel);
-        powerPerEngine = GamePrefs.GetInt(EnumGamePrefs.PowerPerEngine);
-        powerPerBattery = GamePrefs.GetInt(EnumGamePrefs.PowerPerBattery);
-        chargePerBattery = GamePrefs.GetInt(EnumGamePrefs.ChargePerBattery);
+
+        // We resolve enum dynamically on runtime, since we don't want to
+        // hard-code a specific value into our own runtime. This allows
+        // compatibility even if game dll alters the enum between version.
+
+        isLoadVanillaMap = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap"));
+        batteryPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryPowerPerUse"));
+        minPowerForCharging = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("MinPowerForCharging"));
+        fuelPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("FuelPowerPerUse"));
+        powerPerPanel = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerPanel"));
+        powerPerEngine = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerEngine"));
+        powerPerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerBattery"));
+        chargePerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBattery"));
 
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" + isLoadVanillaMap + "/" +
