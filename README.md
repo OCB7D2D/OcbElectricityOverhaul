@@ -252,6 +252,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 0.9.5
+
+- Add support for new mod location (windows)
+
 ### Version 0.9.4
 
 - Fix compatibility for Alpha 20.4 (b42)
