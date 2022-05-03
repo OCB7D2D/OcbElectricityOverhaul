@@ -501,6 +501,9 @@ public class OcbElectricityOverhaul : IModApi
     {
         static bool Prefix(PowerTrigger __instance)
         {
+
+            if (__instance.IsActive) return false;
+
             // Make sure no parent is triggered
             if (__instance.Parent != null) {
                 if (__instance.Parent is PowerTrigger upstream) {
@@ -514,13 +517,13 @@ public class OcbElectricityOverhaul : IModApi
                 // If child is another trigger, only disconnect if not active
                 if (__instance.Children[index] is PowerTrigger trigger)
                 {
-                    trigger.SetTriggeredByParent(__instance.IsActive);
+                    trigger.SetTriggeredByParent(false);
                     if (trigger.IsActive) {
                         continue;
                     }
                     trigger.HandleDisconnectChildren();
                 }
-                else {
+                else if (!(__instance.Children[index] is PowerSource)) {
                     __instance.Children[index].HandleDisconnect();
                 }
             }
@@ -886,4 +889,82 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
+
+    // Patch PowerManager to return a different (our) instance
+    // This is the main hook to get our manager into place
+    [HarmonyPatch(typeof(BlockPowered))]
+    [HarmonyPatch("GetActivationText")]
+    public class BlockPowered_GetActivationText
+    {
+        static void Postfix(
+            WorldBase _world,
+            BlockValue _blockValue,
+            int _clrIdx,
+            Vector3i _blockPos,
+            EntityAlive _entityFocusing,
+            ref string __result)
+        {
+            if (!ConnectionManager.Instance.IsServer) return;
+            if (_world.GetTileEntity(_clrIdx, _blockPos) is TileEntityPoweredTrigger te)
+            {
+                if (te.GetPowerItem() is PowerTrigger trigger)
+                {
+                    __result += string.Format("\nIsActive: {0}\nisActive: {1}\nparentTriggered: {2}\nisTriggered: {3}\nisPowered {4}",
+                        trigger.IsActive, trigger.isActive, trigger.parentTriggered, trigger.isTriggered, trigger.isPowered);
+                }
+            }
+        }
+    }
+
+    // Patch PowerManager to return a different (our) instance
+    // This is the main hook to get our manager into place
+    [HarmonyPatch(typeof(BlockPressurePlate))]
+    [HarmonyPatch("GetActivationText")]
+    public class BlockPressurePlate_GetActivationText
+    {
+        static void Postfix(
+            WorldBase _world,
+            BlockValue _blockValue,
+            int _clrIdx,
+            Vector3i _blockPos,
+            EntityAlive _entityFocusing,
+            ref string __result)
+        {
+            if (!ConnectionManager.Instance.IsServer) return;
+            if (_world.GetTileEntity(_clrIdx, _blockPos) is TileEntityPoweredTrigger te)
+            {
+                if (te.GetPowerItem() is PowerPressurePlate trigger)
+                {
+                    __result += string.Format("\nTrigger: {0} {1} {2} {3} {4}",
+                        trigger.Pressed, trigger.IsActive, trigger.isActive, trigger.isTriggered, trigger.isPowered);
+                }
+            }
+        }
+    }
+
+    // Patch PowerManager to return a different (our) instance
+    // This is the main hook to get our manager into place
+    [HarmonyPatch(typeof(BlockPowerSource))]
+    [HarmonyPatch("GetActivationText")]
+    public class BlockPowerSource_GetActivationText
+    {
+        static void Postfix(
+            WorldBase _world,
+            BlockValue _blockValue,
+            int _clrIdx,
+            Vector3i _blockPos,
+            EntityAlive _entityFocusing,
+            ref string __result)
+        {
+            if (!ConnectionManager.Instance.IsServer) return;
+            if (_world.GetTileEntity(_clrIdx, _blockPos) is TileEntityPowerSource te)
+            {
+                __result += string.Format("\nUsed/Max: {0}/{1}", te.LastOutput, te.MaxOutput);
+                if (te.GetPowerItem() is PowerBatteryBank bank)
+                {
+                    __result += string.Format("\nCharged: {0}/{1}", bank.ChargingUsed, bank.ChargingDemand);
+                }
+            }
+        }
+    }
 }

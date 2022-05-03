@@ -23,10 +23,6 @@ namespace OCB
         // Coefficient to exchange battery uses and watts
         public static int batteryPowerPerUse = BatteryPowerPerUseDefault;
 
-        // Minimum excess power before we start charging batteries
-        // This avoids too much charge/discharge ping-pong
-        public static int minPowerForCharging = MinPowerForChargingDefault;
-
         // Coefficient to exchange fuel into watts
         public static int fuelPowerPerUse = FuelPowerPerUseDefault;
 
@@ -34,6 +30,10 @@ namespace OCB
         public static int powerPerEngine = PowerPerEngineDefault;
         public static int powerPerBattery = PowerPerBatteryDefault;
         public static int chargePerBattery = ChargePerBatteryDefault;
+
+        // Minimum excess power before we start charging batteries
+        // This avoids too much charge/discharge ping-pong
+        public static int minPowerForCharging = MinPowerForChargingDefault;
 
         // Get solar cell power by quality
         static public float GetCellPowerByQuality(int quality)
@@ -59,16 +59,16 @@ namespace OCB
         {
             for (PowerItem parent = source.Parent; parent != null; parent = parent.Parent)
             {
-                if (parent is PowerTrigger trigger)
-                {
-                    bool isActive = false;
-                    while (parent.Parent is PowerTrigger child)
-                    {
-                        isActive = isActive || child.IsActive;
-                        parent = parent.Parent;
-                    }
-                    if (!isActive) return null;
-                }
+                //if (parent is PowerTrigger trigger)
+                //{
+                //    bool isActive = false;
+                //    while (parent.Parent is PowerTrigger child)
+                //    {
+                //        isActive = isActive || child.IsActive;
+                //        parent = parent.Parent;
+                //    }
+                //    if (!isActive) return null;
+                //}
                 if (parent is PowerSource res) return res;
             }
 

@@ -46,6 +46,7 @@ public class ElectricityOverhaulPatch
         var manager = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSource"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
+        TypeReference ulongTypeRef = module.ImportReference(typeof(ulong));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
         TypeReference floatTypeRef = module.ImportReference(typeof(float));
         FieldReference fieldPowerSources = manager.Fields.First(d => d.Name == "PowerSources");
@@ -73,6 +74,7 @@ public class ElectricityOverhaulPatch
         type.Fields.Add(new FieldDefinition("PowerTriggers", FieldAttributes.Public, powerTriggerListTypeRef));
         type.Fields.Add(new FieldDefinition("UpdateTime", FieldAttributes.Public, floatTypeRef));
         type.Fields.Add(new FieldDefinition("AvgTime", FieldAttributes.Public, floatTypeRef));
+        type.Fields.Add(new FieldDefinition("LastTick", FieldAttributes.Public, ulongTypeRef));
         SetMethodToPublic(type.Methods.First(d => d.Name == "TickPowerGeneration"), true);
         SetMethodToPublic(type.Methods.First(d => d.Name == "ShouldAutoTurnOff"), true);
     }
