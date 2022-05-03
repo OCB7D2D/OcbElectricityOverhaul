@@ -1,15 +1,13 @@
 using UnityEngine;
-using System.Reflection;
-
-using System;
 using System.Collections.Generic;
-using System.IO;
 
 using static OCB.ElectricityUtils;
 using XMLData.Parsers;
 
 public class OcbPowerManager : PowerManager
 {
+
+    public float Interval = .16f;
 
     // Upstream power sources when we go down
     // the tree via `ProcessPowerSource`.
@@ -23,6 +21,9 @@ public class OcbPowerManager : PowerManager
     // Reuse container on internal function
     private static readonly Queue<PowerItem> collect
         = new Queue<PowerItem>();
+
+    // Store the current/last timer tick count
+    public ulong Ticks { get; private set; }
 
     // Global light for solar panels
     float globalLight = 1f;
@@ -111,7 +112,7 @@ public class OcbPowerManager : PowerManager
         for(int i = 0; i < Grids.Count; i += 1)
         {
             // Update each grid at a different frame
-            Grids[i].UpdateTime = 0.16f / Grids.Count * i;
+            Grids[i].UpdateTime = Interval / Grids.Count * i;
             // Collect sources and triggers
             CollectGridChidren(Grids[i]);
         }
@@ -138,6 +139,17 @@ public class OcbPowerManager : PowerManager
 
         // Take overhead hit to have some idea about performance
         var watch = System.Diagnostics.Stopwatch.StartNew();
+
+        // Check timers only for power triggers
+        // Makes the whole thing a bit more in sync!?
+        // foreach (PowerTrigger trigger in root.PowerTriggers)
+        // {
+        //     bool changes = trigger.hasChangesLocal;
+        //     // Disables single use checks
+        //     trigger.hasChangesLocal = true;
+        //     trigger.CachedUpdateCall();
+        //     trigger.hasChangesLocal = changes;
+        // }
 
         // Re-generate all power sources first to enable full capacity
         foreach (PowerSource source in root.PowerSources)
@@ -172,6 +184,12 @@ public class OcbPowerManager : PowerManager
         if (GameManager.Instance.World.Players == null) return;
         if (GameManager.Instance.World.Players.Count == 0) return;
 
+        // Do nothing when the game is paused
+        if (Ticks == GameTimer.Instance.ticks) return;
+
+        // Update ticks counter first
+        Ticks = GameTimer.Instance.ticks;
+
         // PowerManager only runs on server instance, for clients the
         // only connection is via TileEntities and their DTO, e.g.
         // `TileEntityPowerSource::ClientPowerData` (this data is synced
@@ -196,14 +214,14 @@ public class OcbPowerManager : PowerManager
                 {
                     globalLight = 0f;
                     UpdateLight();
-                    updateTime = 0.16f;
+                    updateTime = Interval;
                 }
                 foreach (PowerSource root in Grids)
                 {
                     root.UpdateTime -= Time.deltaTime;
                     if (root.UpdateTime > 0) continue;
                     while (root.UpdateTime <= 0)
-                        root.UpdateTime += 0.16f;
+                        root.UpdateTime += Interval;
                     UpdateGrid(root);
                 }
 
@@ -221,6 +239,7 @@ public class OcbPowerManager : PowerManager
         }
 
         // No idea what this does exactly, copied from vanilla code
+        // Note: seems to be only used by `TileEntityPoweredRangedTrap`
         for (int index = 0; index < ClientUpdateList.Count; ++index)
             ClientUpdateList[index].ClientUpdate();
 
@@ -294,6 +313,7 @@ public class OcbPowerManager : PowerManager
         // We introduce `MaxProduction`, since vanilla code expects
         // `MaxOutput` to not be zero in order to activate power source.
         source.ChargingDemand = 0;
+        // source.ChargingUsed = 0;
 
         // BatteryBanks are a bit CPU intensive!
         // Calculate demand and production on each tick
@@ -477,6 +497,10 @@ public class OcbPowerManager : PowerManager
     // Our bread and butter function that drives the whole electricity grid.
     public void ProcessPowerSource(PowerSource root)
     {
+        // Check if this root was already ticked
+        if (root.LastTick >= Ticks) return;
+        // Register us as being ticked
+        root.LastTick = Ticks;
         // Power used from local power source
         root.LastPowerUsed = (ushort)0;
         // Power put into local battery bank
@@ -639,6 +663,7 @@ public class OcbPowerManager : PowerManager
 
     private void DistributeLeftToBank(PowerBatteryBank bank)
     {
+        bank.ChargingUsed = 0;
         if (!bank.IsOn) return;
 
         int lendableSolar = 0;
@@ -676,8 +701,6 @@ public class OcbPowerManager : PowerManager
         if (bank.ChargeFromBattery) lendable += lendableBattery;
         if (bank.ChargeFromGenerator) lendable += lendableGenerator;
 
-        bank.ChargingUsed = 0;
-
         if (lendable >= minPowerForCharging)
         {
             // Get demand or what is available
@@ -700,6 +723,10 @@ public class OcbPowerManager : PowerManager
 
     public void FinalizePowerSource(PowerSource source)
     {
+        // Tick disconnected source
+        // Bails out if already ticked
+        ProcessPowerSource(source);
+        // Following the vanilla code
         if (!source.hasChangesLocal)
             return;
         // This disables e.g. the Motion Sensor trigger if needed

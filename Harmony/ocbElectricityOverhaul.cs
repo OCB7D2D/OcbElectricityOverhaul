@@ -1,7 +1,5 @@
-using System;
 using System.IO;
 using HarmonyLib;
-using UnityEngine;
 using System.Reflection;
 
 using static OCB.ElectricityUtils;
@@ -501,6 +499,9 @@ public class OcbElectricityOverhaul : IModApi
     {
         static bool Prefix(PowerTrigger __instance)
         {
+
+            if (__instance.IsActive) return false;
+
             // Make sure no parent is triggered
             if (__instance.Parent != null) {
                 if (__instance.Parent is PowerTrigger upstream) {
@@ -514,13 +515,13 @@ public class OcbElectricityOverhaul : IModApi
                 // If child is another trigger, only disconnect if not active
                 if (__instance.Children[index] is PowerTrigger trigger)
                 {
-                    trigger.SetTriggeredByParent(__instance.IsActive);
+                    trigger.SetTriggeredByParent(false);
                     if (trigger.IsActive) {
                         continue;
                     }
                     trigger.HandleDisconnectChildren();
                 }
-                else {
+                else if (!(__instance.Children[index] is PowerSource)) {
                     __instance.Children[index].HandleDisconnect();
                 }
             }

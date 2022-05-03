@@ -252,6 +252,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 0.9.6
+
+- Improve support for trigger groups between power sources
+
 ### Version 0.9.5
 
 - Add support for new mod location (windows)
