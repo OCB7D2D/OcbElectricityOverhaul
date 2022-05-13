@@ -197,6 +197,11 @@ namespace OCB
                 {
                     // Check if slot actually holds a battery
                     if (bank.Stacks[index].IsEmpty()) continue;
+                    // Fix battery uses out of range (play safe)
+                    bank.Stacks[index].itemValue.UseTimes =
+                    MathUtils.Max(0, MathUtils.Min(
+                        (int)bank.Stacks[index].itemValue.UseTimes,
+                        bank.Stacks[index].itemValue.MaxUseTimes));
                     // Check if the battery slot can hold any more power
                     if (bank.Stacks[index].itemValue.UseTimes <= 0) continue;
 
