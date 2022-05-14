@@ -58,7 +58,8 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     Log.Out("PowerPerPanel: {0}", ElectricityUtils.powerPerPanel);
                     Log.Out("PowerPerEngine: {0}", ElectricityUtils.powerPerEngine);
                     Log.Out("PowerPerBattery: {0}", ElectricityUtils.powerPerBattery);
-                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBattery);
+                    Log.Out("ChargePerBatteryMin: {0}", ElectricityUtils.chargePerBatteryMin);
+                    Log.Out("ChargePerBatteryMax: {0}", ElectricityUtils.chargePerBatteryMax);
                     Log.Out("MinPowerForCharging: {0}", ElectricityUtils.minPowerForCharging);
                     break;
                 case "stats":
@@ -101,9 +102,13 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     ElectricityUtils.powerPerBattery = int.Parse(_params[1]);
                     Log.Out("PowerPerBattery: {0}", ElectricityUtils.powerPerBattery);
                     break;
-                case "ChargePerBattery":
-                    ElectricityUtils.chargePerBattery = int.Parse(_params[1]);
-                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBattery);
+                case "ChargePerBatteryMin":
+                    ElectricityUtils.chargePerBatteryMin = float.Parse(_params[1]);
+                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBatteryMin);
+                    break;
+                case "ChargePerBatteryMax":
+                    ElectricityUtils.chargePerBatteryMax = float.Parse(_params[1]);
+                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBatteryMax);
                     break;
                 case "MinPowerForCharging":
                     ElectricityUtils.minPowerForCharging = int.Parse(_params[1]);

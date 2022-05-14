@@ -60,7 +60,7 @@ public class OcbElectricityOverhaul : IModApi
     private static void RecalcChargingDemand(PowerBatteryBank bank)
     {
         bank.ChargingDemand = 0;
-        float factor = bank.OutputPerStack / 50f;
+        float factor = bank.OutputPerStack / (float)powerPerBattery;
         foreach (var slot in bank.Stacks)
         {
             if (slot.IsEmpty()) continue;
@@ -76,11 +76,11 @@ public class OcbElectricityOverhaul : IModApi
     {
         source.StackPower = 0;
         float factor = 1f;
-        if (source is PowerSolarPanel) factor = source.OutputPerStack / 30f;
-        else if (source is PowerGenerator) factor = source.OutputPerStack / 100f;
+        if (source is PowerSolarPanel) factor = source.OutputPerStack / (float)powerPerPanel;
+        else if (source is PowerGenerator) factor = source.OutputPerStack / (float)powerPerEngine;
         else if (source is PowerBatteryBank bank)
         {
-            factor = source.OutputPerStack / 50f;
+            factor = source.OutputPerStack / (float)powerPerBattery;
             RecalcChargingDemand(bank);
         }
         foreach (var stack in source.Stacks)
@@ -751,7 +751,7 @@ public class OcbElectricityOverhaul : IModApi
         static float GetValue(string name, TileEntityPowerSource te)
         {
             if (te == null) return -1;
-            if (Single.TryParse(name, out float val)) return val;
+            if (float.TryParse(name, out float val)) return val;
             switch (name)
             {
                 case "MaxOutput": return GetMaxOutput(te);

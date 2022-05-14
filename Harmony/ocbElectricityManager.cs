@@ -54,13 +54,14 @@ public class OcbPowerManager : PowerManager
         powerPerPanel = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerPanel"));
         powerPerEngine = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerEngine"));
         powerPerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerBattery"));
-        chargePerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBattery"));
+        chargePerBatteryMin = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBatteryFactorMin"));
+        chargePerBatteryMax = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBatteryFactorMax"));
 
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" + isLoadVanillaMap + "/" +
                 batteryPowerPerUse + "/" + minPowerForCharging + ")");
-        Log.Out("  Factors " + fuelPowerPerUse + "/" + powerPerPanel + "/" +
-            powerPerEngine + "/" + powerPerBattery + "/" + chargePerBattery);
+        Log.Out("  Factors " + fuelPowerPerUse + "/" + powerPerPanel +
+                "/" + powerPerEngine + "/" + powerPerBattery);
     }
 
     // Main function called by game manager per tick
@@ -280,8 +281,8 @@ public class OcbPowerManager : PowerManager
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {
-                                    solar.StackPower -= (ushort)(source.OutputPerStack / 30f
-                                        * GetEnginePowerByQuality(slot.itemValue));
+                                    solar.StackPower -= (ushort)(source.OutputPerStack *
+                                        GetEnginePowerByQuality(slot.itemValue) / (float)powerPerPanel);
                                 }
                             }
                         }
@@ -338,7 +339,7 @@ public class OcbPowerManager : PowerManager
         if (source is PowerBatteryBank bank)
         {
             ushort capacity = 0, discharging = 0;
-            float factor = source.OutputPerStack / 50f;
+            float factor = source.OutputPerStack / (float)powerPerBattery;
             foreach (var slot in source.Stacks)
             {
                 if (slot.IsEmpty()) continue;
@@ -373,7 +374,7 @@ public class OcbPowerManager : PowerManager
         else if (source is PowerGenerator)
         {
             // Calculate the maximum power will all the filled engine slots
-            float factor = source.OutputPerStack / 100f;
+            float factor = source.OutputPerStack / (float)powerPerEngine;
             float power = source.StackPower * factor;
             source.RequiredPower = 0;
             source.MaxProduction = (ushort)

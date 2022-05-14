@@ -14,9 +14,10 @@ namespace OCB
         public const int MinPowerForChargingDefault = 20;
         public const int FuelPowerPerUseDefault = 750;
         public const int PowerPerPanelDefault = 30;
-        public const int PowerPerEngineDefault = 50;
+        public const int PowerPerEngineDefault = 100;
         public const int PowerPerBatteryDefault = 50;
-        public const int ChargePerBatteryDefault = 35;
+        public const float ChargePerBatteryFactorMin = 0.2f;
+        public const float ChargePerBatteryFactorMax = 1.6f;
 
         // Should we try to load a vanilla map (initialize with defaults)
         public static bool isLoadVanillaMap = LoadVanillaMapDefault;
@@ -30,7 +31,8 @@ namespace OCB
         public static int powerPerPanel = PowerPerPanelDefault;
         public static int powerPerEngine = PowerPerEngineDefault;
         public static int powerPerBattery = PowerPerBatteryDefault;
-        public static int chargePerBattery = ChargePerBatteryDefault;
+        public static float chargePerBatteryMin = ChargePerBatteryFactorMin;
+        public static float chargePerBatteryMax = ChargePerBatteryFactorMax;
 
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
@@ -49,7 +51,7 @@ namespace OCB
                     new FastTags(), false, false, false, false, 1, false);
             }
             // Support for vanilla (just lerping the power for quality)
-            return powerPerPanel * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
+            return powerPerPanel / 30f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
         }
 
         // Get discharge power by battery quality
@@ -62,15 +64,15 @@ namespace OCB
                     new FastTags(), false, false, false, false, 1, false);
             }
             // Support for vanilla (just lerping the power for quality)
-            return powerPerBattery * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
+            return powerPerBattery / 50f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
         }
 
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(ItemValue item)
         {
             float used = item.MaxUseTimes == 0 ? 0f : item.UseTimes / item.MaxUseTimes;
-            return (ushort)(Mathf.SmoothStep(0.2f, 1.6f, used) *
-                GetBatteryPowerByQuality(item));
+            float factor = Mathf.SmoothStep(ChargePerBatteryFactorMin, chargePerBatteryMax, used);
+            return (ushort)(factor * GetBatteryPowerByQuality(item));
         }
 
         static public ushort GetEnginePowerByQuality(ItemValue item)
@@ -82,7 +84,7 @@ namespace OCB
                     new FastTags(), false, false, false, false, 1, false);
             }
             // Support for vanilla (just lerping the power for quality)
-            return (ushort)(powerPerEngine * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
+            return (ushort)(powerPerEngine / 100f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
         }
 
         // Check if given `source` has a parent power source
@@ -91,16 +93,6 @@ namespace OCB
         {
             for (PowerItem parent = source.Parent; parent != null; parent = parent.Parent)
             {
-                //if (parent is PowerTrigger trigger)
-                //{
-                //    bool isActive = false;
-                //    while (parent.Parent is PowerTrigger child)
-                //    {
-                //        isActive = isActive || child.IsActive;
-                //        parent = parent.Parent;
-                //    }
-                //    if (!isActive) return null;
-                //}
                 if (parent is PowerSource res) return res;
             }
 
