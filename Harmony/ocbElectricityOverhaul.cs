@@ -59,11 +59,11 @@ public class OcbElectricityOverhaul : IModApi
 
     private static void PowerSourceUpdateSlots(PowerSource source)
     {
-        source.StackFilled = 0;
+        source.StackPower = 0;
         foreach (var stack in source.Stacks)
         {
             if (stack.IsEmpty()) continue;
-            source.StackFilled += 1;
+            source.StackPower += (ushort)GetEnginePowerByQuality(stack.itemValue);
         }
     }
 
@@ -581,6 +581,12 @@ public class OcbElectricityOverhaul : IModApi
             instance.ClientData.MaxProduction : (instance.PowerItem as PowerSource).MaxProduction;
     }
 
+    public static ushort GetStackPower(TileEntityPowerSource instance)
+    {
+        return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
+            (ushort)0 : (instance.PowerItem as PowerSource).StackPower;
+    }
+    
     public static ushort GetLentConsumed(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
@@ -823,6 +829,10 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
 
+                case "StackPower": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetStackPower(___tileEntity));
+                    __result = true;
+                    break;
                 case "LightLevel": // unused
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLightLevel(___tileEntity));
                     __result = true;

@@ -275,26 +275,18 @@ public class OcbPowerManager : PowerManager
             var props = Block.list[source.BlockID].Properties;
             if (!props.Values.ContainsKey("IsWindmill"))
             {
-                float production = 0, capacity = 0;
+                float production = 0;
                 float factor = source.OutputPerStack / 30f;
                 solar.LightLevel = (ushort)(GlobalLight * ushort.MaxValue);
                 if (!solar.HasLight) solar.LightLevel = (ushort)0;
-                foreach (var slot in source.Stacks)
+                if (source.IsOn && solar.HasLight)
                 {
-                    if (slot.IsEmpty()) continue;
-                    float cellPower = GetCellPowerByQuality(
-                        slot.itemValue) * factor;
-                    if (source.IsOn && solar.HasLight)
-                    {
-                        production += cellPower * GlobalLight;
-                    }
-                    capacity += cellPower;
+                    production = solar.StackPower * GlobalLight;
                 }
                 // Round solar power always up
-                capacity = Mathf.Ceil(capacity);
                 production = Mathf.Ceil(production);
-                source.MaxPower = (ushort)capacity;
-                source.MaxOutput = (ushort)capacity;
+                source.MaxPower = solar.StackPower;
+                source.MaxOutput = solar.StackPower;
                 source.MaxProduction = (ushort)production;
             }
         }
@@ -358,8 +350,7 @@ public class OcbPowerManager : PowerManager
         {
             // Calculate the maximum power will all the filled engine slots
             float factor = source.OutputPerStack / 100f;
-            float power = source.StackFilled * powerPerEngine * factor;
-            // generator.MaxFuel = GeneratorMaxFuelDefault;
+            float power = source.StackPower * factor;
             source.RequiredPower = 0;
             source.MaxProduction = (ushort)
                 (source.IsOn ? power : 0);

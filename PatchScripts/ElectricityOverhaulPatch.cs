@@ -61,7 +61,7 @@ public class ElectricityOverhaulPatch
 		TypeReference powerSourceListTypeRef = module.ImportReference(fieldPowerSources.FieldType);
         FieldReference fieldPowerTriggers = manager.Fields.First(d => d.Name == "PowerTriggers");
 		TypeReference powerTriggerListTypeRef = module.ImportReference(fieldPowerTriggers.FieldType);
-        type.Fields.Add(new FieldDefinition("StackFilled", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("StackPower", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("MaxGridProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
