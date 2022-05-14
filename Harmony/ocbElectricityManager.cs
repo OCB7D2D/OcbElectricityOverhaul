@@ -259,6 +259,35 @@ public class OcbPowerManager : PowerManager
         if (source is PowerSolarPanel solar)
         {
             source.RequiredPower = 0;
+            if (Time.time > solar.wearUpdateTime)
+            {
+                solar.wearUpdateTime = Time.time
+                    + Random.Range(45f, 75f);
+                foreach (var slot in source.Stacks)
+                {
+                    if (slot.IsEmpty()) continue;
+                    // Check if item in slot can degrade
+                    if (slot.itemValue.MaxUseTimes > 0)
+                    {
+                        // Check if item is not yet completely used up
+                        if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
+                        {
+                            // Add more randomness to it
+                            if (Random.Range(0f, 1f) < 0.3)
+                            {
+                                // Slightly damage the item
+                                slot.itemValue.UseTimes += 1;
+                                // Slot has newly reached the max use times
+                                if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
+                                {
+                                    solar.StackPower -= (ushort)(source.OutputPerStack / 30f
+                                        * GetEnginePowerByQuality(slot.itemValue));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if (source.IsOn)
             {
                 if (Time.time > solar.lightUpdateTime)

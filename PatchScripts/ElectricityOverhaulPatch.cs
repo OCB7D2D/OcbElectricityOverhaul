@@ -46,7 +46,9 @@ public class ElectricityOverhaulPatch
         var manager = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSolarPanel"));
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
+        TypeReference floatTypeRef = module.ImportReference(typeof(float));
         type.Fields.Add(new FieldDefinition("LightLevel", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("wearUpdateTime", FieldAttributes.Public, floatTypeRef));
     }
 
     public static void PatchPowerSource(ModuleDefinition module)
