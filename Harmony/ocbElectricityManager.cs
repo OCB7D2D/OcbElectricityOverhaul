@@ -262,7 +262,7 @@ public class OcbPowerManager : PowerManager
             if (Time.time > solar.wearUpdateTime)
             {
                 solar.wearUpdateTime = Time.time
-                    + Random.Range(45f, 75f);
+                    + Random.Range(30f, 45f);
                 foreach (var slot in source.Stacks)
                 {
                     if (slot.IsEmpty()) continue;
@@ -273,7 +273,7 @@ public class OcbPowerManager : PowerManager
                         if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
                         {
                             // Add more randomness to it
-                            if (Random.Range(0f, 1f) < 0.3)
+                            if (Random.Range(0f, 1f) < 0.4)
                             {
                                 // Slightly damage the item
                                 slot.itemValue.UseTimes += 1;
