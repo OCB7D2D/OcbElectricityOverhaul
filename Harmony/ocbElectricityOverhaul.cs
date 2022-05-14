@@ -696,14 +696,14 @@ public class OcbElectricityOverhaul : IModApi
         return (ushort)(GetLocalGridConsumerDemand(instance) + GetLocalGridChargingDemand(instance));
     }
 
-    public static string GetPercent(XUiC_PowerSourceStats __instance, int amount, int off)
+    public static string GetPercent(XUiC_PowerSourceStats __instance, float amount, float off)
     {
-        return off == 0 ? "0" : __instance.maxoutputFormatter.Format((ushort)(100f * (float)amount / (float)off));
+        return off == 0 ? "0" : __instance.maxoutputFormatter.Format((ushort)(100f * amount / off));
     }
 
-    public static string GetFill(XUiC_PowerSourceStats __instance, int amount, int off)
+    public static string GetFill(XUiC_PowerSourceStats __instance, float amount, float off)
     {
-        return off == 0 ? "0" : __instance.powerFillFormatter.Format((float)amount / (float)off);
+        return off == 0 ? "0" : __instance.powerFillFormatter.Format(amount / off);
     }
 
     [HarmonyPatch]
@@ -724,9 +724,10 @@ public class OcbElectricityOverhaul : IModApi
             return targets;
         }
 
-        static int GetValue(string name, TileEntityPowerSource te)
+        static float GetValue(string name, TileEntityPowerSource te)
         {
             if (te == null) return -1;
+            if (Single.TryParse(name, out float val)) return val;
             switch (name)
             {
                 case "MaxOutput": return GetMaxOutput(te);
@@ -757,6 +758,16 @@ public class OcbElectricityOverhaul : IModApi
             return -1;
         }
 
+        static float GetValues(string name, TileEntityPowerSource te)
+        {
+            float sum = 1f;
+            foreach (string multiplier in name.Split('*'))
+            {
+                sum *= GetValue(multiplier, te);
+            }
+            return sum;
+        }
+
         // prefix all methods in someAssembly with a non-void return type and beginning with "Player"
         static void Postfix(
             XUiC_PowerSourceStats __instance,
@@ -771,11 +782,11 @@ public class OcbElectricityOverhaul : IModApi
             if (bindingName.StartsWith("Filler:"))
             {
                 var parts = bindingName.Substring(7).Split('/');
-                int dividend = 0; int divisor = 0;
+                float dividend = 0; float divisor = 0;
                 foreach (string part in parts[0].Split('+'))
-                    dividend += GetValue(part, ___tileEntity);
+                    dividend += GetValues(part, ___tileEntity);
                 foreach (string part in parts[1].Split('+'))
-                    divisor += GetValue(part, ___tileEntity);
+                    divisor += GetValues(part, ___tileEntity);
                 value = GetFill(__instance, dividend, divisor);
                 __result = true;
                 return;
@@ -783,11 +794,11 @@ public class OcbElectricityOverhaul : IModApi
             else if (bindingName.StartsWith("Percent:"))
             {
                 var parts = bindingName.Substring(8).Split('/');
-                int dividend = 0; int divisor = 0;
+                float dividend = 0; float divisor = 0;
                 foreach (string part in parts[0].Split('+'))
-                    dividend += GetValue(part, ___tileEntity);
+                    dividend += GetValues(part, ___tileEntity);
                 foreach (string part in parts[1].Split('+'))
-                    divisor += GetValue(part, ___tileEntity);
+                    divisor += GetValues(part, ___tileEntity);
                 value = GetPercent(__instance, dividend, divisor);
                 __result = true;
                 return;
