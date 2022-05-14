@@ -9,12 +9,25 @@ public class ElectricityOptionsPatch
 
     public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };
 
+    public static int GetBiggestEnum(TypeDefinition type)
+    {
+        int max = 0;
+        foreach (var field in type.Fields)
+        {
+            if (field.Constant is int val)
+            {
+                max = Math.Max(max, val);
+            }
+        }
+        return max;
+    }
+
     public static void PatchEnumGamePrefs(ModuleDefinition module)
     {
 
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
-        lastGamePrefEnum = enumType.Fields.Count - 2;
+        lastGamePrefEnum = GetBiggestEnum(enumType) + 1;
         int enumLast = lastGamePrefEnum;
 
         enumType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
