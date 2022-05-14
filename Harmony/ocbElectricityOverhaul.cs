@@ -1,6 +1,7 @@
 using System.IO;
 using HarmonyLib;
 using System.Reflection;
+using System.Collections.Generic;
 
 using static OCB.ElectricityUtils;
 using XMLData.Parsers;
@@ -665,12 +666,33 @@ public class OcbElectricityOverhaul : IModApi
         return off == 0 ? "0" : __instance.powerFillFormatter.Format((float)amount / (float)off);
     }
 
-    [HarmonyPatch(typeof(XUiC_PowerSourceStats))]
-    [HarmonyPatch("GetBindingValue")]
-    public class XUiC_PowerSourceStats_GetBindingValue
+    [HarmonyPatch]
+    class PatchPowerSourceStats
     {
-        static void Postfix(XUiC_PowerSourceStats __instance, TileEntityPowerSource ___tileEntity, ref string value, string bindingName, ref bool __result)
+        static IEnumerable<MethodBase> TargetMethods()
         {
+            List<MethodBase> targets = new List<MethodBase>();
+            if (AccessTools.TypeByName("XUiC_PowerSourceStats") is System.Type vanilla)
+            {
+                foreach (MethodInfo method in vanilla.GetMethods())
+                {
+                    if (method.Name != "GetBindingValue") continue;
+                    targets.Add(method);
+                    break;
+                }
+            }
+            return targets;
+        }
+
+        // prefix all methods in someAssembly with a non-void return type and beginning with "Player"
+        static void Postfix(
+            XUiC_PowerSourceStats __instance,
+            TileEntityPowerSource ___tileEntity,
+            ref string value,
+            string bindingName,
+            ref bool __result)
+        {
+            // Regular code path
             switch (bindingName)
             {
 
