@@ -796,39 +796,6 @@ public class OcbElectricityOverhaul : IModApi
             switch (bindingName)
             {
 
-                // Only available for local debugging
-                // Doesn't transfer info from server to client
-                case "batteryLeftA":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 0));
-                    __result = true;
-                    break;
-                case "batteryLeftB":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 1));
-                    __result = true;
-                    break;
-                case "batteryLeftC":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 2));
-                    __result = true;
-                    break;
-                case "batteryLeftD":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 3));
-                    __result = true;
-                    break;
-                case "batteryLeftE":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 4));
-                    __result = true;
-                    break;
-                case "batteryLeftF":
-                    value = __instance.powerSource == null ? "n/a"
-                        : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 5));
-                    __result = true;
-                    break;
-
                 case "StackPower": // unused
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetStackPower(___tileEntity));
                     __result = true;
@@ -881,12 +848,20 @@ public class OcbElectricityOverhaul : IModApi
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetGridChargingUsed(___tileEntity));
                     __result = true;
                     break;
+                case "LocalGridDemand": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridDemand(___tileEntity));
+                    __result = true;
+                    break;
                 case "LocalConsumerDemand": // used
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridConsumerDemand(___tileEntity));
                     __result = true;
                     break;
                 case "LocalChargingDemand": // used
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+                case "LocalGridUsed": // used
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridUsed(___tileEntity));
                     __result = true;
                     break;
                 case "LocalConsumerUsed": // used
@@ -938,15 +913,14 @@ public class OcbElectricityOverhaul : IModApi
 
                 case "UsedConsumerFill": // used
                     value = ___tileEntity == null ? "0" :
-                        GetFill(__instance, GetLentConsumed(___tileEntity), GetMaxProduction(___tileEntity));
+                        GetFill(__instance, GetLentConsumed(___tileEntity), GetMaxOutput(___tileEntity));
                     __result = true;
                     break;
                 case "UsedChargingFill": // used
                     value = ___tileEntity == null ? "0" :
-                        GetFill(__instance, GetLentConsumed(___tileEntity) + GetLentCharging(___tileEntity), GetMaxProduction(___tileEntity));
+                        GetFill(__instance, GetLentConsumed(___tileEntity) + GetLentCharging(___tileEntity), GetMaxOutput(___tileEntity));
                     __result = true;
                     break;
-
 
                 case "LentConsumerFill": // used
                     value = ___tileEntity == null ? "0" :
@@ -981,8 +955,6 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
 
-                // Overload to return MaxProduction instead of MaxOutput
-                // Reports actual capacity for BatteryBank if some cells are empty
                 case "MaxProduction":
                     value = ___tileEntity == null ? "n/a" :
                         __instance.maxoutputFormatter.Format(GetMaxProduction(___tileEntity));
@@ -999,22 +971,26 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
 
-                // Conditional for generator
-                case "NotGenerator":
-                    value = ___tileEntity == null ? "true" :
-                        (___tileEntity.PowerItemType != PowerItem.PowerItemTypes.Generator).ToString();
-                    __result = true;
-                    break;
-                // Conditional for generator
                 case "IsGenerator":
                     value = ___tileEntity == null ? "false" :
                         (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.Generator).ToString();
                     __result = true;
                     break;
-                // Conditional for battery banks
                 case "IsBatteryBank":
                     value = ___tileEntity == null ? "false" :
                         (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.BatteryBank).ToString();
+                    __result = true;
+                    break;
+                case "IsSolarBank":
+                    value = ___tileEntity == null ? "false" :
+                        (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.SolarPanel &&
+                        !___tileEntity.blockValue.Block.Properties.Contains("IsWindmill")).ToString();
+                    __result = true;
+                    break;
+                case "IsWindMill":
+                    value = ___tileEntity == null ? "false" :
+                        (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.SolarPanel &&
+                        ___tileEntity.blockValue.Block.Properties.Contains("IsWindmill")).ToString();
                     __result = true;
                     break;
 
