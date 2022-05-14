@@ -281,7 +281,7 @@ public class OcbPowerManager : PowerManager
                 {
                     if (slot.IsEmpty()) continue;
                     float cellPower = GetCellPowerByQuality(
-                        slot.itemValue.Quality) * factor;
+                        slot.itemValue) * factor;
                     if (source.IsOn && solar.HasLight)
                     {
                         production += cellPower * globalLight;
@@ -325,8 +325,8 @@ public class OcbPowerManager : PowerManager
             foreach (var slot in source.Stacks)
             {
                 if (slot.IsEmpty()) continue;
-                float discharge = GetDischargeByQuality(
-                    slot.itemValue.Quality) * factor;
+                float discharge = GetBatteryPowerByQuality(
+                    slot.itemValue) * factor;
                 if (source.IsOn)
                 {
                     // Check if battery has some juice left
@@ -340,7 +340,7 @@ public class OcbPowerManager : PowerManager
                     if (slot.itemValue.UseTimes > 0)
                     {
                         // ToDo: should we cap at what is actually needed?
-                        bank.ChargingDemand += GetChargeByQuality(slot.itemValue.Quality);
+                        bank.ChargingDemand += GetChargeByQuality(slot.itemValue);
                     }
                 }
                 // Production if all batteries are loaded

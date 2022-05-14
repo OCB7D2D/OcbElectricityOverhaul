@@ -1,5 +1,7 @@
 using System;
+using System.Reflection;
 using UnityEngine;
+using HarmonyLib;
 
 namespace OCB
 {
@@ -16,6 +18,8 @@ namespace OCB
         public const int PowerPerBatteryDefault = 50;
         public const int ChargePerBatteryDefault = 35;
         public const int GeneratorMaxFuelDefault = 5000;
+
+        public const float BatteryChargeSpeedRatio = 0.8f;
 
         // Should we try to load a vanilla map (initialize with defaults)
         public static bool isLoadVanillaMap = LoadVanillaMapDefault;
@@ -35,22 +39,51 @@ namespace OCB
         // This avoids too much charge/discharge ping-pong
         public static int minPowerForCharging = MinPowerForChargingDefault;
 
+        // Check for optional passive `PowerOutput` effect (e.g. undead legacy defines this)
+        static FieldInfo PowerOutputEffect = AccessTools.Field(typeof(PassiveEffects), "PowerOutput");
+
         // Get solar cell power by quality
-        static public float GetCellPowerByQuality(int quality)
+        static public float GetCellPowerByQuality(ItemValue item)
         {
-            return powerPerPanel * Mathf.Lerp(0.5f, 1f, quality / 6f);
+            // Support for Undead Legacy (adds a passive effect for power)
+            if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
+            {
+                return EffectManager.GetValue(effect, item, 0.0f, null, null,
+                    new FastTags(), false, false, false, false, 1, false);
+            }
+            // Support for vanilla (just lerping the power for quality)
+            return powerPerPanel * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
         }
 
         // Get discharge power by battery quality
-        static public float GetDischargeByQuality(int quality)
+        static public float GetBatteryPowerByQuality(ItemValue item)
         {
-            return powerPerBattery * Mathf.Lerp(0.5f, 1f, quality / 6f);
+            // Support for Undead Legacy (adds a passive effect for power)
+            if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
+            {
+                return EffectManager.GetValue(effect, item, 0.0f, null, null,
+                    new FastTags(), false, false, false, false, 1, false);
+            }
+            // Support for vanilla (just lerping the power for quality)
+            return powerPerBattery * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
         }
 
         // Get charging power by battery quality
-        static public ushort GetChargeByQuality(int quality)
+        static public ushort GetChargeByQuality(ItemValue item)
         {
-            return (ushort)((double)chargePerBattery * (double)Mathf.Lerp(0.5f, 1f, (float)quality / 6f));
+            return (ushort)(GetBatteryPowerByQuality(item) * BatteryChargeSpeedRatio);
+        }
+
+        static public ushort GetEnginePowerByQuality(ItemValue item)
+        {
+            // Support for Undead Legacy (adds a passive effect for power)
+            if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
+            {
+                return (ushort)EffectManager.GetValue(effect, item, 0.0f, null, null,
+                    new FastTags(), false, false, false, false, 1, false);
+            }
+            // Support for vanilla (just lerping the power for quality)
+            return (ushort)(powerPerEngine * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
         }
 
         // Check if given `source` has a parent power source
@@ -207,7 +240,7 @@ namespace OCB
 
                     // Get demand of local battery or what is left
                     ushort demand = (ushort)Mathf.Min(GetChargeByQuality(
-                        bank.Stacks[index].itemValue.Quality), power);
+                        bank.Stacks[index].itemValue), power);
                     float demandUses = demand / (float)batteryPowerPerUse;
                     // Check if current battery can take the full charge load
                     if (bank.Stacks[index].itemValue.UseTimes >= demandUses)
