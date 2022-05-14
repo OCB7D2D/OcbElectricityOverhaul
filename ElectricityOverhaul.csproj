@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Harmony\BepInExAutoInstall.cs" />
+    <Compile Include="Harmony\ModXmlPatcher.cs" />
     <Compile Include="Harmony\ocbElectricityManager.cs" />
     <Compile Include="Harmony\ocbElectricityOverhaul.cs" />
     <Compile Include="Harmony\ocbElectricityOverhaulCmd.cs" />
@@ -95,11 +96,20 @@
     <Compile Include="Harmony\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\items.xml" />
     <Content Include="Config\Localization.txt" />
+    <Content Include="Config\XUi\windows.a20.xml" />
+    <Content Include="Config\XUi\windows.ulm.xml" />
     <Content Include="Config\XUi\windows.xml" />
     <Content Include="Config\XUi\xui.xml" />
+    <Content Include="Config\XUi_Menu\windows.a20.xml" />
+    <Content Include="Config\XUi_Menu\windows.ulm.xml" />
     <Content Include="Config\XUi_Menu\windows.xml" />
     <Content Include="Config\blocks.xml" />
+    <Content Include="ModInfo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
