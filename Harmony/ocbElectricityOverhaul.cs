@@ -57,13 +57,37 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
+    private static void RecalcChargingDemand(PowerBatteryBank bank)
+    {
+        bank.ChargingDemand = 0;
+        float factor = bank.OutputPerStack / 50f;
+        foreach (var slot in bank.Stacks)
+        {
+            if (slot.IsEmpty()) continue;
+            // Check if battery could use some charging
+            if (slot.itemValue.UseTimes <= 0) continue;
+            // ToDo: should we cap at what is actually needed?
+            bank.ChargingDemand += (ushort)(factor *
+                GetChargeByQuality(slot.itemValue));
+        }
+    }
+
     private static void PowerSourceUpdateSlots(PowerSource source)
     {
         source.StackPower = 0;
+        float factor = 1f;
+        if (source is PowerSolarPanel) factor = source.OutputPerStack / 30f;
+        else if (source is PowerGenerator) factor = source.OutputPerStack / 100f;
+        else if (source is PowerBatteryBank bank)
+        {
+            factor = source.OutputPerStack / 50f;
+            RecalcChargingDemand(bank);
+        }
         foreach (var stack in source.Stacks)
         {
             if (stack.IsEmpty()) continue;
-            source.StackPower += (ushort)GetEnginePowerByQuality(stack.itemValue);
+            source.StackPower += (ushort)(factor *
+                GetEnginePowerByQuality(stack.itemValue));
         }
     }
 

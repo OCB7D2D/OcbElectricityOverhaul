@@ -288,36 +288,30 @@ public class OcbPowerManager : PowerManager
                     }
                 }
             }
-            if (source.IsOn)
+            if (Time.time > solar.lightUpdateTime)
             {
-                if (Time.time > solar.lightUpdateTime)
-                {
-                    solar.lightUpdateTime = Time.time + 2f;
-                    // ToDo: maybe add a bit more elaborate sun-light detection
-                    // Currently it will simply switch on/off between day/night
-                    // HasLight should probably be a float to achieve this
-                    solar.CheckLightLevel();
-                    source.MaxProduction = source.MaxOutput;
-                    source.MaxOutput = source.MaxPower;
-                }
+                solar.lightUpdateTime = Time.time + 2f;
+                // ToDo: maybe add a bit more elaborate sun-light detection
+                // Currently it will simply switch on/off between day/night
+                // HasLight should probably be a float to achieve this
+                solar.CheckLightLevel();
             }
+
             var props = Block.list[source.BlockID].Properties;
             if (!props.Values.ContainsKey("IsWindmill"))
             {
-                float production = 0;
-                float factor = source.OutputPerStack / 30f;
                 solar.LightLevel = (ushort)(GlobalLight * ushort.MaxValue);
-                if (!solar.HasLight) solar.LightLevel = (ushort)0;
-                if (source.IsOn && solar.HasLight)
-                {
-                    production = solar.StackPower * GlobalLight;
-                }
-                // Round solar power always up
-                production = Mathf.Ceil(production);
-                source.MaxPower = solar.StackPower;
-                source.MaxOutput = solar.StackPower;
-                source.MaxProduction = (ushort)production;
+                if (!solar.HasLight) solar.LightLevel = 0;
             }
+
+            float factor = (float)solar.LightLevel / ushort.MaxValue;
+            float production = !source.IsOn ? 0 : solar.StackPower;
+            source.MaxPower = solar.StackPower;
+            source.MaxOutput = solar.StackPower;
+
+            // Round solar power always up
+            production = Mathf.Ceil(factor * production);
+            source.MaxProduction = (ushort)production;
         }
         else
         {
