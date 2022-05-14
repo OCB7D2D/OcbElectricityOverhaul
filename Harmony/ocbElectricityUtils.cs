@@ -18,8 +18,6 @@ namespace OCB
         public const int PowerPerBatteryDefault = 50;
         public const int ChargePerBatteryDefault = 35;
 
-        public const float BatteryChargeSpeedRatio = 0.8f;
-
         // Should we try to load a vanilla map (initialize with defaults)
         public static bool isLoadVanillaMap = LoadVanillaMapDefault;
 
@@ -70,7 +68,9 @@ namespace OCB
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(ItemValue item)
         {
-            return (ushort)(GetBatteryPowerByQuality(item) * BatteryChargeSpeedRatio);
+            float used = item.MaxUseTimes == 0 ? 0f : item.UseTimes / item.MaxUseTimes;
+            return (ushort)(Mathf.SmoothStep(0.2f, 1.6f, used) *
+                GetBatteryPowerByQuality(item));
         }
 
         static public ushort GetEnginePowerByQuality(ItemValue item)
