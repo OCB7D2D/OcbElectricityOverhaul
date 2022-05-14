@@ -277,6 +277,8 @@ public class OcbPowerManager : PowerManager
             {
                 float production = 0, capacity = 0;
                 float factor = source.OutputPerStack / 30f;
+                solar.LightLevel = (ushort)(GlobalLight * ushort.MaxValue);
+                if (!solar.HasLight) solar.LightLevel = (ushort)0;
                 foreach (var slot in source.Stacks)
                 {
                     if (slot.IsEmpty()) continue;

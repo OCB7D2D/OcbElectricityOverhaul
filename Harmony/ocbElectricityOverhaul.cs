@@ -160,6 +160,14 @@ public class OcbElectricityOverhaul : IModApi
                     _bw.Write(source.ChargeFromSolar);
                     _bw.Write(source.ChargeFromGenerator);
                     _bw.Write(source.ChargeFromBattery);
+                    if (source is PowerSolarPanel panel)
+                    {
+                        _bw.Write(panel.LightLevel);
+                    }
+                    else
+                    {
+                        _bw.Write(false);
+                    }
                     break;
             }
         }
@@ -206,6 +214,7 @@ public class OcbElectricityOverhaul : IModApi
                     __instance.ClientData.ChargeFromSolar = _br.ReadBoolean();
                     __instance.ClientData.ChargeFromGenerator = _br.ReadBoolean();
                     __instance.ClientData.ChargeFromBattery = _br.ReadBoolean();
+                    __instance.ClientData.LightLevel = _br.ReadUInt16();
                     break;
             }
         }
@@ -639,6 +648,19 @@ public class OcbElectricityOverhaul : IModApi
             - source.Stacks[index].itemValue.UseTimes);
     }
 
+    public static ushort GetLightLevel(TileEntityPowerSource instance)
+    {
+        if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
+        {
+            if (instance.PowerItem is PowerSolarPanel panel) return panel.LightLevel;
+        }
+        else
+        {
+            return instance.ClientData.LightLevel;
+        }
+        return 0;
+    }
+
     public static ushort GetLocalGridConsumerUsed(TileEntityPowerSource instance)
     {
         return (ushort)(GetConsumerUsed(instance) + GetGridConsumerUsed(instance));
@@ -719,6 +741,7 @@ public class OcbElectricityOverhaul : IModApi
                 case "LocalGridUsed": return GetLocalGridUsed(te);
                 case "LocalConsumerUsed": return GetLocalGridConsumerUsed(te);
                 case "LocalChargingUsed": return GetLocalGridChargingUsed(te);
+                case "LightLevel": return GetLightLevel(te);
                 case "ushort.MaxValue": return ushort.MaxValue;
                 default: Log.Error("Invalid Filler Argument {0}", name); break;
             }
@@ -794,6 +817,11 @@ public class OcbElectricityOverhaul : IModApi
                 case "batteryLeftF":
                     value = __instance.powerSource == null ? "n/a"
                         : __instance.maxoutputFormatter.Format(getBatteryLeft(___tileEntity, 5));
+                    __result = true;
+                    break;
+
+                case "LightLevel": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLightLevel(___tileEntity));
                     __result = true;
                     break;
 

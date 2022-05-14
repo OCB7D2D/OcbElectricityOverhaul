@@ -41,6 +41,14 @@ public class ElectricityOverhaulPatch
         var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerConsumer"));
     }
 
+    public static void PatchPowerSolarPanel(ModuleDefinition module)
+    {
+        var manager = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
+        var type = MakeTypePublic(module.Types.First(d => d.Name == "PowerSolarPanel"));
+        TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
+        type.Fields.Add(new FieldDefinition("LightLevel", FieldAttributes.Public, ushortTypeRef));
+    }
+
     public static void PatchPowerSource(ModuleDefinition module)
     {
         var manager = MakeTypePublic(module.Types.First(d => d.Name == "PowerManager"));
@@ -102,6 +110,7 @@ public class ElectricityOverhaulPatch
         type.Fields.Add(new FieldDefinition("ChargeFromSolar", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromGenerator", FieldAttributes.Public, boolTypeRef));
         type.Fields.Add(new FieldDefinition("ChargeFromBattery", FieldAttributes.Public, boolTypeRef));
+        type.Fields.Add(new FieldDefinition("LightLevel", FieldAttributes.Public, ushortTypeRef));
     }
 
     public static void Patch(AssemblyDefinition assembly)
@@ -114,6 +123,7 @@ public class ElectricityOverhaulPatch
         PatchPowerTrigger(module);
         PatchPowerConsumer(module);
         PatchPowerSource(module);
+        PatchPowerSolarPanel(module);
         PatchPowerManager(module);
         PatchClientPowerData(module);
 
