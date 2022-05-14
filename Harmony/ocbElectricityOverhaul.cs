@@ -145,6 +145,7 @@ public class OcbElectricityOverhaul : IModApi
                         break;
                     // ToDo: check if we need em all (now 180 bytes)
                     _bw.Write(source.MaxProduction);
+                    _bw.Write(source.MaxGridProduction);
                     _bw.Write(source.ChargingUsed);
                     _bw.Write(source.ChargingDemand);
                     _bw.Write(source.ConsumerUsed);
@@ -199,6 +200,7 @@ public class OcbElectricityOverhaul : IModApi
                         break;
                     // ToDo: check if we need em all (now 180 bytes)
                     __instance.ClientData.MaxProduction = _br.ReadUInt16();
+                    __instance.ClientData.MaxGridProduction = _br.ReadUInt16();
                     __instance.ClientData.ChargingUsed = _br.ReadUInt16();
                     __instance.ClientData.ChargingDemand = _br.ReadUInt16();
                     __instance.ClientData.ConsumerUsed = _br.ReadUInt16();
@@ -567,13 +569,13 @@ public class OcbElectricityOverhaul : IModApi
             instance.ClientData.MaxOutput : (instance.PowerItem as PowerSource).MaxOutput;
     }
 
-    public static ushort GetMaxProduction(TileEntityPowerSource instance)
+    public static ushort GetMaxGridProduction(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
-            instance.ClientData.MaxProduction : (instance.PowerItem as PowerSource).MaxProduction;
+            instance.ClientData.MaxGridProduction : (instance.PowerItem as PowerSource).MaxGridProduction;
     }
 
-    public static ushort getBattery1Left(TileEntityPowerSource instance)
+    public static ushort GetMaxProduction(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
             instance.ClientData.MaxProduction : (instance.PowerItem as PowerSource).MaxProduction;
@@ -723,6 +725,7 @@ public class OcbElectricityOverhaul : IModApi
             {
                 case "MaxOutput": return GetMaxOutput(te);
                 case "MaxProduction": return GetMaxProduction(te);
+                case "MaxGridProduction": return GetMaxGridProduction(te);
                 case "LentConsumed": return GetLentConsumed(te);
                 case "LentCharging": return GetLentCharging(te);
                 case "LentConsumerUsed": return GetLentConsumerUsed(te);
@@ -959,6 +962,12 @@ public class OcbElectricityOverhaul : IModApi
                 case "GridChargingFill": // unused
                     value = ___tileEntity == null ? "0" :
                         GetFill(__instance, GetGridChargingUsed(___tileEntity), GetGridChargingDemand(___tileEntity));
+                    __result = true;
+                    break;
+
+                case "MaxGridProduction":
+                    value = ___tileEntity == null ? "n/a" :
+                        __instance.maxoutputFormatter.Format(GetMaxGridProduction(___tileEntity));
                     __result = true;
                     break;
 

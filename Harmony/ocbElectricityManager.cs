@@ -559,6 +559,9 @@ public class OcbPowerManager : PowerManager
         // Range of ushort is up to 65'535
         ushort power = (ushort)(lendable);
 
+        // Register the max grid production
+        root.MaxGridProduction = (ushort)lendable;
+
         // Loop all children non recursive
         // Adds further children to collection
         while (children.Count > 0)

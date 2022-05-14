@@ -63,6 +63,7 @@ public class ElectricityOverhaulPatch
 		TypeReference powerTriggerListTypeRef = module.ImportReference(fieldPowerTriggers.FieldType);
         type.Fields.Add(new FieldDefinition("StackFilled", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("MaxGridProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentCharging", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("ChargingUsed", FieldAttributes.Public, ushortTypeRef));
@@ -95,6 +96,7 @@ public class ElectricityOverhaulPatch
         TypeReference ushortTypeRef = module.ImportReference(typeof(ushort));
         TypeReference boolTypeRef = module.ImportReference(typeof(bool));
         type.Fields.Add(new FieldDefinition("MaxProduction", FieldAttributes.Public, ushortTypeRef));
+        type.Fields.Add(new FieldDefinition("MaxGridProduction", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentConsumed", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("LentCharging", FieldAttributes.Public, ushortTypeRef));
         type.Fields.Add(new FieldDefinition("ChargingUsed", FieldAttributes.Public, ushortTypeRef));
