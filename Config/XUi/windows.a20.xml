@@ -1,0 +1,129 @@
+<configs>
+
+	<!--
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']" name="height">512</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']" name="height">434</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/sprite[@type='sliced']" name="height">397</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect[@name='btnOn']" name="pos">0, -398</setattribute>
+	<setattribute xpath="/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect[@name='btnRefuel']" name="pos">0, -431</setattribute>
+	-->
+	<set xpath="(/windows/window[@name='windowPowerSourceStats']/rect[@name='content']/rect)[1]/grid[@name='stats']">
+		<panel height="30" width="340" disableautobackground="true" visible="{showfuel}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_gas" />
+			<label depth="1" width="180" pos="30,-2" name="lblFuel" font_size="22" text="{fueltitle|once}: [DECEA3]{fuel}/{maxfuel}[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" visible="false" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" visible="false" />
+			<sprite depth="2" name="sprFillPotential" width="68" pos="136, -9" height="6" type="filled" color="[beige]" fill="{potentialfuelfill}" visible="false" />
+			<sprite depth="2" name="sprFuelFill" width="68" pos="136, -8" height="8" type="filled" color="181,57,57" fill="{fuelfill}" visible="false" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" visible="{IsGenerator}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_max_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblNoise" font_size="22" text="{maxoutputtitle|once}: [DECEA3]{MaxOutput}w[-]" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiOutputTooltip" visible="{NotGenerator}">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_max_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblNoise" font_size="22" text="{OutputTitle|once}: [DECEA3]{MaxProduction}/{MaxOutput}w[-]" />
+		</panel>
+
+		<panel height="30" width="340" disableautobackground="true" visible="{IsSolarBank}" tooltip_key="xuiLightLevelTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_solar" />
+			<label depth="1" width="180" pos="30,-2" name="lblCharging" font_size="22" text="{LightLevelTitle|once}: [DECEA3]{Percent:LightLevel/ushort.MaxValue}%[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="filled" color="96,96,255" fill="{Filler:LightLevel/ushort.MaxValue}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" visible="{IsWindMill}" tooltip_key="xuiWindLevelTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_wind" />
+			<label depth="1" width="180" pos="30,-2" name="lblCharging" font_size="22" text="{WindLevelTitle|once}: [DECEA3]{Percent:LightLevel/ushort.MaxValue}%[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="filled" color="96,96,255" fill="{Filler:LightLevel/ushort.MaxValue}" />
+		</panel>
+
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiPowerTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_electric_power" />
+			<label depth="1" width="180" pos="30,-2" name="lblPower" font_size="22" text="{powertitle|once}: [DECEA3]{power}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprUsedChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{UsedChargingFill}" />
+			<sprite depth="2" name="sprUsedConsumerFill" width="68" pos="136, -8" height="8" type="filled" color="255,255,0" fill="{UsedConsumerFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" visible="{IsBatteryBank}" tooltip_key="xuiChargeTooltip">
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" sprite="ui_game_symbol_battery" />
+			<label depth="1" width="180" pos="30,-2" name="lblCharging" font_size="22" text="{ChargingTitle|once}: [DECEA3]{ChargingUsed}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{ChargingFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip_key="xuiGridFlowTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<!-- electricity consumption by counloucon from the Noun Project - https://thenounproject.com/term/energy-consumption/2419049/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_flow" />
+			<label depth="1" width="180" pos="30,-2" name="lblPower" font_size="22" text="{FlowTitle|once}: [DECEA3]{Flow}w[-]" />
+			<sprite depth="2" width="70" pos="135, -7" height="10" type="sliced" color="[black]" />
+			<sprite depth="2" width="68" pos="136, -8" height="8" type="sliced" color="[mediumGrey]" />
+			<sprite depth="2" name="sprLentChargingFill" width="68" pos="136, -8" height="8" type="filled" color="32,255,0" fill="{LentChargingFill}" />
+			<sprite depth="2" name="sprLentConsumerFill" width="68" pos="136, -8" height="8" type="filled" color="255,255,0" fill="{LentConsumerFill}" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip="{LocalConsumerTooltip|once}" tooltip_key="xuiConsumerTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_consumers" />
+			<label depth="1" width="180" pos="30,-2" name="lblGridSupply" font_size="22" text="{LocalSupplyTitle|once}: [DECEA3]{LocalConsumerUsed}/{LocalConsumerDemand}w[-]" />
+		</panel>
+		<panel height="30" width="340" disableautobackground="true" tooltip="LocalChargingTooltip" tooltip_key="xuiChargingTooltip">
+			<!-- electricity tower by Mohamed Mb from the Noun Project -> https://thenounproject.com/term/electricity-grid/3659830/ -->
+			<sprite depth="1" name="windowIcon" style="icon22px" pos="2,-2" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_charging" />
+			<label depth="1" width="180" pos="30,-2" name="lblGridCharging" font_size="22" text="{LocalChargingTitle|once}: [DECEA3]{LocalChargingUsed}/{LocalChargingDemand}w[-]" />
+		</panel>
+	</set>
+
+	<append xpath="/windows">
+		<window name="windowOcbPowerSourceStats" width="228" height="312" panel="Left" controller="OcbPowerSourceStats, ElectricityOverhaul" >
+			<panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
+				<sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5" sprite="ui_game_symbol_resource"/>
+				<label style="header.name" text="CHARGE" text_key="xuiChargeFrom" />
+			</panel>
+			<rect name="btnToggleSolarCharge" depth="3" pos="0, -46" height="36" >
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
+				<sprite depth="2" name="background" pos="3,-3" sprite="menu_empty" width="224" height="32" color="[darkGrey]" type="sliced" />
+				<rect depth="3" pos="1,-3" width="224" height="31">
+					<button name="clickable" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0" />
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-3" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-3" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
+					<sprite depth="2" name="sprToggleSolarCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_electric_solar"/>
+					<label depth="2" name="lblToggleSolarCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+				</rect>
+			</rect>
+			<rect name="btnToggleGeneratorCharge" depth="3" pos="0, -80" height="36" >
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
+				<sprite depth="2" name="background" pos="3,-3" sprite="menu_empty" width="224" height="32" color="[darkGrey]" type="sliced" />
+				<rect depth="3" pos="1,-3" width="224" height="31">
+					<button name="clickable" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0" />
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-3" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-3" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
+					<sprite depth="2" name="sprToggleGeneratorCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_electric_generator"/>
+					<label depth="2" name="lblToggleGeneratorCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+				</rect>
+			</rect>
+			<rect name="btnToggleBatteryCharge" depth="3" pos="0, -114" height="36" >
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
+				<sprite depth="2" name="background" pos="3,-3" sprite="menu_empty" width="224" height="32" color="[darkGrey]" type="sliced" />
+				<rect depth="3" pos="1,-3" width="224" height="31">
+					<button name="clickable" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0" />
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-3" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-3" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
+					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
+					<sprite depth="2" name="sprToggleBatteryCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_battery"/>
+					<label depth="2" name="lblToggleBatteryCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+				</rect>
+			</rect>
+
+		</window>
+	</append>
+
+</configs>

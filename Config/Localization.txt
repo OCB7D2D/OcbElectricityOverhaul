@@ -1,31 +1,42 @@
-Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
-goLoadVanillaMap,UI,Menu,x,,Load vanilla map
-goLoadVanillaMapDesc,UI,Menu,x,,"WARNING: Load existing map without Power Overhaul Mod, as we normally persist a few additional options. When loading a vanilla map, we initialize those fields with default values. Only enable this option once or you may destroy your save files. Make a backup! You've been warned!"
-goBatteryPowerPerUse,UI,Menu,x,,Battery Watts per Use
-goBatteryPowerPerUseDesc,UI,Menu,x,,Conversion factor for battery uses into watts,
-goMinPowerForCharging,UI,Menu,x,,Min power for charge
-goMinPowerForChargingDesc,UI,Menu,x,,Only charge batteries if excess energy is higher.
-goFuelPowerPerUse,UI,Menu,x,,Fuel Watts per Use
-goFuelPowerPerUseDesc,UI,Menu,x,,Conversion factor for fuel uses into watts,
-goPowerPerPanel,UI,Menu,x,,Watts per solar panel
-goPowerPerPanelDesc,UI,Menu,x,,Amount of power a single solar panel generates (depends on the tier quality).
-goPowerPerEngine,UI,Menu,x,,Watts per diesel engine
-goPowerPerEngineDesc,UI,Menu,x,,Amount of power a single diesel engine generates.
-goPowerPerBattery,UI,Menu,x,,Watts per battery
-goPowerPerBatteryDesc,UI,Menu,x,,Amount of power a single battery generates (depends on the tier quality).
-goChargePerBattery,UI,Menu,x,,Battery charge capacity
-goChargePerBatteryDesc,UI,Menu,x,,Maximum amount of power a single battery can be charged with (depends on the quality).
-goPowerFormat,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
-goPowerFormats,UI,Menu,x,,{0},,{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}
-xuiGameSettingsPower,UI,Menu,x,,Power
-xuiCharge,UI,Menu,x,,Charge
-xuiSupplied,UI,Menu,x,,Supplied
-xuiCharged,UI,Menu,x,,Charged
-xuiFlow,UI,Menu,x,,Flow
-xuiChargeTooltip,UI,Menu,x,,Charging power going into this battery bank.
-xuiConsumerTooltip,UI,Menu,x,,Grid-wide supply/demand of consumer items.
-xuiChargingTooltip,UI,Menu,x,,Grid-wide charging supply/demand (batteries).
-xuiOutputTooltip,UI,Menu,x,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
-xuiPowerTooltip,UI,Menu,x,,Yellow is for consumers and green for charging.
-xuiGridFlowTooltip,UI,Menu,x,,Overall power flowing through this node.
-xuiChargeFrom,UI,Menu,x,,Charging
+Key,File,Type,UsedInMainMenu,english
+goLoadVanillaMap,UI,Menu,x,Load vanilla map
+goLoadVanillaMapDesc,UI,Menu,x,"WARNING: Load existing map without Power Overhaul Mod, as we normally persist a few additional options. When loading a vanilla map, we initialize those fields with default values. Only enable this option once or you may destroy your save files. Make a backup! You've been warned!"
+goPreferFuelOverBattery,UI,Menu,x,Prefer fuel over batteries
+goPreferFuelOverBatteryDesc,UI,Menu,x,"If enabled, power will first be drawn from generators before battery banks. Otherwise closer one will be used first."
+goBatteryPowerPerUse,UI,Menu,x,Battery Watts per Use
+goBatteryPowerPerUseDesc,UI,Menu,x,Conversion factor for battery uses into watts,
+goMinPowerForCharging,UI,Menu,x,Min power for charge
+goMinPowerForChargingDesc,UI,Menu,x,Only charge batteries if excess energy is higher.
+goFuelPowerPerUse,UI,Menu,x,Fuel Watts per Use
+goFuelPowerPerUseDesc,UI,Menu,x,Conversion factor for fuel uses into watts,
+goPowerPerPanel,UI,Menu,x,Base Watts per solar cell
+goPowerPerPanelDesc,UI,Menu,x,Amount of power a regular single solar cell generates. Depends on (optional) tier quality and on `OutputPerStack` config.
+goPowerPerEngine,UI,Menu,x,Base Watts per diesel engine
+goPowerPerEngineDesc,UI,Menu,x,Amount of power a regular single diesel engine generates. Depends on (optional) tier quality and on `OutputPerStack` config.
+goPowerPerBattery,UI,Menu,x,Base Watts per battery
+goPowerPerBatteryDesc,UI,Menu,x,Amount of power a regular single battery generates. Depends on (optional) tier quality and on `OutputPerStack` config.
+goBatteryChargeFactorFull,UI,Menu,x,Charge factor when full
+goBatteryChargeFactorFullDesc,UI,Menu,x,Nearly full batteries charge slower than nearly empty ones.
+goBatteryChargeFactorEmpty,UI,Menu,x,Charge factor when empty
+goBatteryChargeFactorEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.
+goPowerFormat,UI,Menu,x,{0}w
+goPowerFormats,UI,Menu,x,{0}w
+goPercentFormat,UI,Menu,x,{0}%
+goPercentFormats,UI,Menu,x,{0}%
+xuiGameSettingsPower,UI,Menu,,Power
+xuiCharge,UI,Menu,,Charge
+xuiSupplied,UI,Menu,,Supplied
+xuiCharged,UI,Menu,,Charged
+xuiLightLevel,UI,Menu,,Light
+xuiWindLevel,UI,Menu,,Wind
+xuiFlow,UI,Menu,,Flow
+xuiOutput,UI,Menu,,Output
+xuiChargeTooltip,UI,Menu,,Charging power going into this battery bank.
+xuiLightLevelTooltip,UI,Menu,,Current light level.
+xuiWindLevelTooltip,UI,Menu,,Current wind level.
+xuiConsumerTooltip,UI,Menu,,Grid-wide supply/demand of consumer items.
+xuiChargingTooltip,UI,Menu,,Grid-wide charging supply/demand (batteries).
+xuiOutputTooltip,UI,Menu,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
+xuiPowerTooltip,UI,Menu,,Yellow is for consumers and green for charging.
+xuiGridFlowTooltip,UI,Menu,,Overall power flowing through this node.
+xuiChargeFrom,UI,Menu,,Charging

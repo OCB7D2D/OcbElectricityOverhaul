@@ -1,0 +1,199 @@
+<configs>
+
+	<remove xpath="/windows/window[@name='windowPowerSourceStats']/rect/rect[@pos='0,-60']/*"/>
+
+	<append xpath="/windows/window[@name='windowPowerSourceStats']/rect/rect[@pos='0,-60']">
+
+		<!-- <sprite style="background" pos="0,0" size="270,260" color="[red]"/> -->
+
+		<rect size="130,126" pos="0,0" tooltip_key="xuiPowerTooltip">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="65,-55"><rect size="110,110">
+				<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false"
+					type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+				<sprite depth="7" sprite="ui_power_output_fg" color="255,255,255,180" atlas="UIBackground" rotation="-216" globalopacity="false"
+					type="filled" pivot="center" filldirection="radial360" fillinvert="true"
+					fill="{Filler:MaxProduction*0.8/MaxProduction}"/>
+				<sprite depth="8" sprite="ui_power_output_fg" color="32,255,0" atlas="UIBackground" rotation="-216" globalopacity="false"
+					type="filled" pivot="center" filldirection="radial360" fillinvert="true"
+					fill="{Filler:LentConsumed*0.8+LentCharging*0.8/MaxProduction}"/>
+				<sprite depth="9" sprite="ui_power_output_fg" color="255,255,0" atlas="UIBackground" rotation="-216" globalopacity="false"
+					type="filled" pivot="center" filldirection="radial360" fillinvert="true"
+					fill="{Filler:LentConsumed*0.8/MaxProduction}"/>
+				<sprite depth="2" size="40,40" sprite="ui_game_symbol_electric_power" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+			</rect></rect>
+			<rect pos="4,-101" width="58" height="22">
+				<label depth="20" name="lblPower" font_size="20" text="{power}w" justify="center"/>
+			</rect>
+			<rect pos="68,-101" width="58" height="22">
+				<label depth="20" name="lblMaxOutput" font_size="20" text="{MaxProduction}w" justify="center"/>
+			</rect>
+		</rect>
+
+		<rect size="130,126" pos="140,0" tooltip_key="xuiChargeTooltip" visible="{IsBatteryBank}">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="65,-55">
+				<rect size="110,110">
+					<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+					<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" color="32,255,0" rotation="-216" globalopacity="false" type="filled" fill="{Filler:ChargingUsed*0.8/ChargingDemand}" pivot="center" filldirection="radial360" fillinvert="true"/>
+					<sprite depth="2" size="40,40" sprite="ui_game_symbol_battery" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+				</rect>
+			</rect>
+			<rect pos="4,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{ChargingUsed}w" justify="center"/>
+			</rect>
+			<rect pos="68,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{ChargingDemand}w" justify="center"/>
+			</rect>
+		</rect>
+
+		<rect size="130,126" pos="140,0" tooltip_key="xuiLightLevelTooltip" visible="{IsSolarBank}">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="65,-55">
+				<rect size="110,110">
+					<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+					<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" color="96,96,255" rotation="-216" globalopacity="false" type="filled" fill="{Filler:LightLevel*0.8/ushort.MaxValue}" pivot="center" filldirection="radial360" fillinvert="true"/>
+					<sprite depth="2" size="40,40" sprite="ui_game_symbol_electric_solar" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+				</rect>
+			</rect>
+			<rect pos="4,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{Percent:LightLevel/ushort.MaxValue}%" justify="center"/>
+			</rect>
+			<rect pos="68,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{StackPower}w" justify="center"/>
+			</rect>
+		</rect>
+
+
+		<rect size="130,126" pos="140,0" tooltip_key="xuiWindLevelTooltip" visible="{IsWindMill}">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="65,-55">
+				<rect size="110,110">
+					<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+					<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" color="96,96,255" rotation="-216" globalopacity="false" type="filled" fill="{Filler:LightLevel*0.8/ushort.MaxValue}" pivot="center" filldirection="radial360" fillinvert="true"/>
+					<sprite depth="2" size="40,40" sprite="ui_game_symbol_wind" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+				</rect>
+			</rect>
+			<rect pos="4,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{Percent:LightLevel/ushort.MaxValue}%" justify="center"/>
+			</rect>
+			<rect pos="68,-101" width="58" height="22">
+				<label depth="8" font_size="20" text="{StackPower}w" justify="center"/>
+			</rect>
+		</rect>
+		<!--
+		<rect size="130,126" pos="140,0" tooltip_key="xuiChargeTooltip" visible="{IsGenerator}">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="65,-55"><rect size="110,110">
+			<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+			<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" rotation="-216" globalopacity="false" type="filled" fill="{ChargingFill}" pivot="center" filldirection="radial360" fillinvert="true"/>
+			<sprite depth="2" size="40,40" sprite="ui_game_symbol_battery" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+			</rect></rect>
+			<rect pos="4,-101" width="58" height="22">
+				<label depth="8" name="lblChargingUsed" font_size="20" text="{ChargingUsed}w" justify="center"/>
+			</rect>
+			<rect pos="68,-101" width="58" height="22">
+				<label depth="8" name="lblChargingDemand" font_size="20" text="{ChargingDemand}w" justify="center"/>
+			</rect>
+		</rect>
+-->
+		<rect size="86,82" pos="0,-160" tooltip_key="xuiGridFlowTooltip">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="43,-36"><rect size="76,76">
+				<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216"
+					globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+				<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" rotation="-216" globalopacity="false" type="filled"
+					color="32,255,0" pivot="center" filldirection="radial360" fillinvert="true"
+					fill="{Filler:LentConsumerUsed*0.8+LentChargingUsed*0.8/MaxGridProduction}" />
+				<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" rotation="-216" globalopacity="false" type="filled"
+					color="255,255,0" pivot="center" filldirection="radial360" fillinvert="true"
+					fill="{Filler:LentConsumerUsed*0.8/MaxGridProduction}"/>
+				<sprite depth="2" size="35,35" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_flow" pivot="center"
+					foregroundlayer="true" color="{stateColor}"/>
+			</rect></rect>
+			<rect pos="3,-65" width="38" height="14">
+				<label depth="8" name="lblPower" font_size="14" text="{Flow}w" justify="center"/>
+			</rect>
+			<rect pos="45,-65" width="38" height="14">
+				<label depth="8" name="lblPower" font_size="14" text="{MaxGridProduction}w" justify="center"/>
+			</rect>
+		</rect>
+		<rect size="86,82" pos="92,-160" tooltip_key="xuiConsumerTooltip">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="43,-36"><rect size="76,76">
+				<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+				<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" color="255,255,0" rotation="-216" globalopacity="false" type="filled" fill="{Filler:LocalConsumerUsed*0.8/LocalConsumerDemand}" pivot="center" filldirection="radial360" fillinvert="true"/>
+				<sprite depth="2" size="40,40" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_consumers" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+			</rect></rect>
+			<rect pos="3,-65" width="38" height="14">
+				<label depth="8" name="lblLocalConsumerUsed" font_size="14" text="{LocalConsumerUsed}w" justify="center"/>
+			</rect>
+			<rect pos="45,-65" width="38" height="14">
+				<label depth="8" name="lblLocalConsumerDemand" font_size="14" text="{LocalConsumerDemand}w" justify="center"/>
+			</rect>
+		</rect>
+		<rect size="86,82" pos="184,-160" tooltip_key="xuiChargingTooltip">
+			<sprite style="background" atlas="UIBackground" sprite="ui_power_generator_output"/>
+			<rect depth="5" pos="43,-36"><rect size="76,76">
+				<sprite depth="6" sprite="ui_power_output_bg" atlas="UIBackground" color="0,0,0,180" rotation="-216" globalopacity="false" type="filled" fill="0.8" filldirection="radial360" pivot="center" fillinvert="true"/>
+				<sprite depth="6" sprite="ui_power_output_fg" atlas="UIBackground" color="32,255,0" rotation="-216" globalopacity="false" type="filled" fill="{Filler:LocalChargingUsed*0.8/LocalChargingDemand}" pivot="center" filldirection="radial360" fillinvert="true"/>
+				<sprite depth="2" size="40,40" atlas="ItemIconAtlas" sprite="ui_game_symbol_electric_grid_charging" pivot="center" foregroundlayer="true" color="{stateColor}"/>
+			</rect></rect>
+			<rect pos="3,-65" width="38" height="14">
+				<label depth="8" name="lblLocalChargingUsed" font_size="14" text="{LocalChargingUsed}w" justify="center"/>
+			</rect>
+			<rect pos="45,-65" width="38" height="14">
+				<label depth="8" name="lblLocalChargingDemand" font_size="14" text="{LocalChargingDemand}w" justify="center"/>
+			</rect>
+		</rect>
+
+	</append>
+
+	<append xpath="/windows">
+		<window name="windowOcbPowerSourceStats" width="286" height="216" panel="Left" controller="OcbPowerSourceStats, ElectricityOverhaul"
+				cursor_area="true">
+
+			<rect pos="0,-626">
+
+				<background size="290,216"/>
+
+				<rect pos="4,14" name="content">
+					<rect depth="2" name="chargingFromTitle">
+						<label style="ulmHeaderNoIcon" name="lblChargingFromTitle" text_key="xuiChargeFrom"/>
+					</rect>
+				</rect>
+
+				<sprite style="background" pos="4,-42" size="270,136" atlas="UIBackground" sprite="ui_power_generator_turn_on"/>
+
+				<grid depth="1" pos="168,-70" rows="3" cols="1" cell_width="80" cell_height="40" repeat_content="false" arrangement="vertical">
+					<rect name="btnToggleSolarCharge" height="40" width="114">
+						<rect pos="-118,0">
+							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
+							<sprite depth="2" size="24,24" name="sprToggleSolarCharge" sprite="ui_game_symbol_electric_solar" pivot="center" foregroundlayer="true"/>
+						</rect>
+						<label depth="2" size="186,40" name="lblToggleSolarCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
+						<button style="ulmButton_2x4" height="40"/>
+					</rect>
+					<rect name="btnToggleGeneratorCharge" height="40" width="114">
+						<rect pos="-118,0">
+							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
+							<sprite depth="2" size="24,24" name="sprToggleGeneratorCharge" sprite="ui_game_symbol_electric_generator" pivot="center" foregroundlayer="true"/>
+						</rect>
+						<label depth="2" size="186,60" name="lblToggleGeneratorCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
+						<button style="ulmButton_2x4" height="40"/>
+					</rect>
+					<rect name="btnToggleBatteryCharge" height="40" width="114">
+						<rect pos="-118,0">
+							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
+							<sprite depth="2" size="24,24" name="sprToggleBatteryCharge" sprite="ui_game_symbol_battery" pivot="center" foregroundlayer="true"/>
+						</rect>
+						<label depth="2" size="186,40" name="lblToggleBatteryCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
+						<button style="ulmButton_2x4" height="40"/>
+					</rect>
+				</grid>
+
+			</rect>
+		</window>
+	</append>
+
+</configs>

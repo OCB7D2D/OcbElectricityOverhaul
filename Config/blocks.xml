@@ -1,5 +1,22 @@
 ﻿<configs>
 
-	<setattribute xpath="/blocks/block[@name='generatorbank']/property[@name='MaxFuel']" name="value">5000</setattribute>
+	<modif condition="UndeadLegacy_CoreModule">
+
+		<append xpath="/blocks/block[@name='solarbank']">
+			<property name="OutputPerStack" value="30"/>
+		</append>
+		<append xpath="/blocks/block[@name='batterybank']">
+			<property name="OutputPerStack" value="50"/>
+		</append>
+		<append xpath="/blocks/block[@name='generatorbank']">
+			<property name="OutputPerStack" value="100"/>
+		</append>
+
+	</modif>
+	<modelse>
+
+		<setattribute xpath="/blocks/block[@name='generatorbank']/property[@name='MaxFuel']" name="value">5000</setattribute>
+
+	</modelse>
 
 </configs>

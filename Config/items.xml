@@ -1,0 +1,14 @@
+﻿<configs>
+
+	<modif condition="UndeadLegacy_CoreModule">
+
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV1']/effect_group/passive_effect[@name='PowerOutput']" name="value">25</setattribute>
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV4']/effect_group/passive_effect[@name='PowerOutput']" name="value">75</setattribute>
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV6']/effect_group/passive_effect[@name='PowerOutput']" name="value">100</setattribute>
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV8M']/effect_group/passive_effect[@name='PowerOutput']" name="value">125</setattribute>
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV8']/effect_group/passive_effect[@name='PowerOutput']" name="value">150</setattribute>
+		<setattribute xpath="/items/item[@name='ulmResourceEngineV12']/effect_group/passive_effect[@name='PowerOutput']" name="value">175</setattribute>
+
+	</modif>
+
+</configs>
