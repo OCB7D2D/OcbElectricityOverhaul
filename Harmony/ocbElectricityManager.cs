@@ -47,21 +47,23 @@ public class OcbPowerManager : PowerManager
         // hard-code a specific value into our own runtime. This allows
         // compatibility even if game dll alters the enum between version.
 
-        isLoadVanillaMap = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap"));
-        batteryPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryPowerPerUse"));
-        minPowerForCharging = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("MinPowerForCharging"));
-        fuelPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("FuelPowerPerUse"));
-        powerPerPanel = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerPanel"));
-        powerPerEngine = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerEngine"));
-        powerPerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerBattery"));
-        chargePerBatteryMin = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBatteryFactorMin"));
-        chargePerBatteryMax = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("ChargePerBatteryFactorMax"));
+        IsLoadVanillaMap = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap"));
+        IsPreferFuelOverBattery = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("PreferFuelOverBattery"));
+        BatteryPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryPowerPerUse"));
+        MinPowerForCharging = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("MinPowerForCharging"));
+        FuelPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("FuelPowerPerUse"));
+        PowerPerPanel = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerPanel"));
+        PowerPerEngine = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerEngine"));
+        PowerPerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerBattery"));
+        BatteryChargeFactorFull = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargeFactorFull"));
+        BatteryChargeFactorEmpty = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargeFactorEmpty"));
 
         // Give one debug message for now (just to be sure we are running)
-        Log.Out("Loaded OCB PowerManager (" + isLoadVanillaMap + "/" +
-                batteryPowerPerUse + "/" + minPowerForCharging + ")");
-        Log.Out("  Factors " + fuelPowerPerUse + "/" + powerPerPanel +
-                "/" + powerPerEngine + "/" + powerPerBattery);
+        Log.Out("Loaded OCB PowerManager (" +
+                IsLoadVanillaMap + "/" + IsPreferFuelOverBattery + "/" +
+                BatteryPowerPerUse + "/" + MinPowerForCharging + ")");
+        Log.Out("  Factors " + FuelPowerPerUse + "/" + PowerPerPanel +
+                "/" + PowerPerEngine + "/" + PowerPerBattery);
     }
 
     // Main function called by game manager per tick
@@ -260,6 +262,8 @@ public class OcbPowerManager : PowerManager
         if (source is PowerSolarPanel solar)
         {
             source.RequiredPower = 0;
+            if (source.OutputPerStack == 0) source
+                .OutputPerStack = (ushort)PowerPerPanel;
             if (Time.time > solar.wearUpdateTime)
             {
                 solar.wearUpdateTime = Time.time
@@ -281,8 +285,10 @@ public class OcbPowerManager : PowerManager
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {
-                                    solar.StackPower -= (ushort)(source.OutputPerStack *
-                                        GetEnginePowerByQuality(slot.itemValue) / (float)powerPerPanel);
+                                    solar.StackPower -= (ushort)(
+                                        source.OutputPerStack / PowerPerPanel *
+                                        GetSlotPowerByQuality(slot.itemValue,
+                                            PowerPerPanel, PowerPerPanelDefault));
                                 }
                             }
                         }
@@ -307,7 +313,6 @@ public class OcbPowerManager : PowerManager
 
             float factor = (float)solar.LightLevel / ushort.MaxValue;
             float production = !source.IsOn ? 0 : solar.StackPower;
-            source.MaxPower = solar.StackPower;
             source.MaxOutput = solar.StackPower;
 
             // Round solar power always up
@@ -319,13 +324,17 @@ public class OcbPowerManager : PowerManager
             source.MaxProduction = source.MaxOutput;
         }
 
+        // Limit MaxOutput according to MaxPower
+        source.MaxOutput = (ushort)Mathf.Min(
+            source.MaxOutput, source.MaxPower);
+
         if (source.IsOn)
         {
             // Code directly copied from decompiled dll
-            if (source.CurrentPower < source.MaxPower)
+            if (source.CurrentPower < source.MaxOutput)
                 source.TickPowerGeneration();
-            // else if ((int)source.CurrentPower > (int)source.MaxPower)
-            //     source.CurrentPower = source.MaxPower;
+            // else if ((int)source.CurrentPower > (int)source.MaxOutput)
+            //     source.CurrentPower = source.MaxOutput;
         }
 
         // We introduce `MaxProduction`, since vanilla code expects
@@ -339,12 +348,15 @@ public class OcbPowerManager : PowerManager
         if (source is PowerBatteryBank bank)
         {
             ushort capacity = 0, discharging = 0;
-            float factor = source.OutputPerStack / (float)powerPerBattery;
+            if (source.OutputPerStack == 0) source
+                .OutputPerStack = (ushort)PowerPerBattery;
+            float factor = source.OutputPerStack / (float)PowerPerBattery;
             foreach (var slot in source.Stacks)
             {
                 if (slot.IsEmpty()) continue;
                 ushort discharge = (ushort)(factor *
-                    GetBatteryPowerByQuality(slot.itemValue));
+                    GetSlotPowerByQuality(slot.itemValue,
+                        PowerPerBattery, PowerPerBatteryDefault));
                 if (source.IsOn)
                 {
                     // Check if battery has some juice left
@@ -365,7 +377,6 @@ public class OcbPowerManager : PowerManager
                 // Production if all batteries are loaded
                 capacity += discharge;
             }
-            source.MaxPower = capacity;
             source.MaxOutput = capacity;
             source.MaxProduction = discharging;
             // Power needed to charge batteries not fully loaded
@@ -374,15 +385,20 @@ public class OcbPowerManager : PowerManager
         else if (source is PowerGenerator)
         {
             // Calculate the maximum power will all the filled engine slots
-            float factor = source.OutputPerStack / (float)powerPerEngine;
+            if (source.OutputPerStack == 0) source
+                .OutputPerStack = (ushort)PowerPerEngine;
+            float factor = source.OutputPerStack / (float)PowerPerEngine;
             float power = source.StackPower * factor;
             source.RequiredPower = 0;
             source.MaxProduction = (ushort)
                 (source.IsOn ? power : 0);
             source.MaxOutput = (ushort)power;
-            source.MaxPower = (ushort)power;
 
         }
+
+        // Limit MaxOutput according to MaxPower
+        source.MaxOutput = (ushort)Mathf.Min(
+            source.MaxOutput, source.MaxPower);
 
         // Code directly copied from decompiled dll
         if (source.ShouldAutoTurnOff())
@@ -466,7 +482,6 @@ public class OcbPowerManager : PowerManager
         ushort before = distribute;
         if (distribute <= 0) return used;
         var enumerator = lenders.GetEnumerator();
-        int i = 0;
         while (enumerator.MoveNext())
         {
             PowerSource lender = enumerator.Current;
@@ -478,36 +493,71 @@ public class OcbPowerManager : PowerManager
             BorrowPowerFromSource(lender, ref distribute, battery);
             AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
             if (distribute == 0) break;
-            i++;
         }
 
-        enumerator = lenders.GetEnumerator();
-        i = 0;
-        while (enumerator.MoveNext())
+        if (IsPreferFuelOverBattery)
         {
-            PowerSource lender = enumerator.Current;
-            if (!lender.isOn) continue;
 
-            if (lender is PowerBatteryBank)
+            enumerator = lenders.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                if (battery != null && !battery.ChargeFromBattery)
-                    continue;
-            }
-            else if (lender is PowerGenerator)
-            {
+                PowerSource lender = enumerator.Current;
+                if (!lender.isOn) continue;
+                if (!(lender is PowerGenerator)) continue;
                 if (battery != null && !battery.ChargeFromGenerator)
                     continue;
+                ushort distributing = distribute;
+                BorrowPowerFromSource(lender, ref distribute, battery);
+                AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
+                if (distribute == 0) break;
             }
-            else
+
+            enumerator = lenders.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                continue;
+                PowerSource lender = enumerator.Current;
+                if (!lender.isOn) continue;
+                if (!(lender is PowerBatteryBank)) continue;
+                if (battery != null && !battery.ChargeFromBattery)
+                    continue;
+                ushort distributing = distribute;
+                BorrowPowerFromSource(lender, ref distribute, battery);
+                AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
+                if (distribute == 0) break;
             }
-            ushort distributing = distribute;
-            BorrowPowerFromSource(lender, ref distribute, battery);
-            AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
-            if (distribute == 0) break;
-            i++;
+
         }
+        else
+        {
+
+            enumerator = lenders.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                PowerSource lender = enumerator.Current;
+                if (!lender.isOn) continue;
+
+                if (lender is PowerBatteryBank)
+                {
+                    if (battery != null && !battery.ChargeFromBattery)
+                        continue;
+                }
+                else if (lender is PowerGenerator)
+                {
+                    if (battery != null && !battery.ChargeFromGenerator)
+                        continue;
+                }
+                else
+                {
+                    continue;
+                }
+                ushort distributing = distribute;
+                BorrowPowerFromSource(lender, ref distribute, battery);
+                AccountPowerUse(lender, (ushort)(distributing - distribute), battery);
+                if (distribute == 0) break;
+            }
+
+        }
+
         // Return how much power we used
         return (ushort)(before - distribute);
     }
@@ -722,7 +772,7 @@ public class OcbPowerManager : PowerManager
         if (bank.ChargeFromBattery) lendable += lendableBattery;
         if (bank.ChargeFromGenerator) lendable += lendableGenerator;
 
-        if (lendable >= minPowerForCharging)
+        if (lendable >= MinPowerForCharging)
         {
             // Get demand or what is available
             ushort demand = (ushort)Mathf.Min(

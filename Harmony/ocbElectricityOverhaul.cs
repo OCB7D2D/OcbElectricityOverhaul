@@ -2,9 +2,10 @@ using System.IO;
 using HarmonyLib;
 using System.Reflection;
 using System.Collections.Generic;
+using XMLData.Parsers;
+using UnityEngine;
 
 using static OCB.ElectricityUtils;
-using XMLData.Parsers;
 
 public class OcbElectricityOverhaul : IModApi
 {
@@ -60,7 +61,7 @@ public class OcbElectricityOverhaul : IModApi
     private static void RecalcChargingDemand(PowerBatteryBank bank)
     {
         bank.ChargingDemand = 0;
-        float factor = bank.OutputPerStack / (float)powerPerBattery;
+        float factor = bank.OutputPerStack / (float)PowerPerBattery;
         foreach (var slot in bank.Stacks)
         {
             if (slot.IsEmpty()) continue;
@@ -74,21 +75,34 @@ public class OcbElectricityOverhaul : IModApi
 
     private static void PowerSourceUpdateSlots(PowerSource source)
     {
-        source.StackPower = 0;
-        float factor = 1f;
-        if (source is PowerSolarPanel) factor = source.OutputPerStack / (float)powerPerPanel;
-        else if (source is PowerGenerator) factor = source.OutputPerStack / (float)powerPerEngine;
+        float powerPerSlot = 1f, defaultPower = 1f;
+        if (source is PowerSolarPanel)
+        {
+            defaultPower = PowerPerPanelDefault;
+            powerPerSlot = PowerPerPanel;
+        }
+        else if (source is PowerGenerator)
+        {
+            defaultPower = PowerPerEngineDefault;
+            powerPerSlot = PowerPerEngine;
+        }
         else if (source is PowerBatteryBank bank)
         {
-            factor = source.OutputPerStack / (float)powerPerBattery;
+            defaultPower = PowerPerBatteryDefault;
+            powerPerSlot = PowerPerBattery;
             RecalcChargingDemand(bank);
         }
+        source.StackPower = 0;
+        float factor = source.OutputPerStack / powerPerSlot;
         foreach (var stack in source.Stacks)
         {
             if (stack.IsEmpty()) continue;
             source.StackPower += (ushort)(factor *
-                GetEnginePowerByQuality(stack.itemValue));
+                GetSlotPowerByQuality(stack.itemValue,
+                    powerPerSlot, defaultPower));
         }
+        source.StackPower = (ushort)Mathf.Min(
+            source.StackPower, source.MaxPower);
     }
 
     [HarmonyPatch(typeof(PowerSource))]
@@ -142,6 +156,20 @@ public class OcbElectricityOverhaul : IModApi
             __instance.ChargeFromGenerator = _br.ReadBoolean();
             __instance.ChargeFromBattery = _br.ReadBoolean();
             PowerSourceUpdateSlots(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerSolarPanel))]
+    [HarmonyPatch("RefreshPowerStats")]
+    public class PowerSolarPanel_RefreshPowerStats
+    {
+        static void Postfix(PowerSolarPanel __instance)
+        {
+            Block block = Block.list[__instance.BlockID];
+            Log.Out("Setting values from block");
+            if (!block.Properties.Values.ContainsKey("MaxPower")) return;
+            __instance.MaxPower = ushort.Parse(block.Properties.Values["MaxPower"]);
+            Log.Out("Setting values from block asdasd {0}", __instance.MaxPower);
         }
     }
 
@@ -569,7 +597,7 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
-    public static ushort GetCurrentPower(TileEntityPowerSource instance)
+    public static ushort GetMaxPower(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
             (ushort)0 : (instance.PowerItem as PowerSource).MaxPower;
@@ -610,7 +638,7 @@ public class OcbElectricityOverhaul : IModApi
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
             (ushort)0 : (instance.PowerItem as PowerSource).StackPower;
     }
-    
+
     public static ushort GetLentConsumed(TileEntityPowerSource instance)
     {
         return !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ?
@@ -838,6 +866,18 @@ public class OcbElectricityOverhaul : IModApi
             switch (bindingName)
             {
 
+                case "MaxPower": // unused
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetMaxPower(___tileEntity));
+                    __result = true;
+                    break;
+                case "MaxProduction":
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetMaxProduction(___tileEntity));
+                    __result = true;
+                    break;
+                case "MaxOutput":
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetMaxOutput(___tileEntity));
+                    __result = true;
+                    break;
                 case "StackPower": // unused
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetStackPower(___tileEntity));
                     __result = true;
@@ -912,6 +952,19 @@ public class OcbElectricityOverhaul : IModApi
                     break;
                 case "LocalChargingUsed": // used
                     value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridChargingUsed(___tileEntity));
+                    __result = true;
+                    break;
+
+                case "LightLevelTitle":
+                    value = Localization.Get("xuiLightLevel");
+                    __result = true;
+                    break;
+                case "WindLevelTitle":
+                    value = Localization.Get("xuiWindLevel");
+                    __result = true;
+                    break;
+                case "OutputTitle":
+                    value = Localization.Get("xuiOutput");
                     __result = true;
                     break;
 
@@ -997,16 +1050,6 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
 
-                case "MaxProduction":
-                    value = ___tileEntity == null ? "n/a" :
-                        __instance.maxoutputFormatter.Format(GetMaxProduction(___tileEntity));
-                    __result = true;
-                    break;
-                case "MaxOutput":
-                    value = ___tileEntity == null ? "n/a" :
-                        __instance.maxoutputFormatter.Format(GetMaxOutput(___tileEntity));
-                    __result = true;
-                    break;
                 case "Flow":
                     value = ___tileEntity == null ? "n/a" :
                         __instance.maxoutputFormatter.Format((ushort)(GetLentConsumerUsed(___tileEntity) + GetLentChargingUsed(___tileEntity)));
@@ -1018,9 +1061,19 @@ public class OcbElectricityOverhaul : IModApi
                         (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.Generator).ToString();
                     __result = true;
                     break;
+                case "NotGenerator":
+                    value = ___tileEntity == null ? "false" :
+                        (!(___tileEntity.PowerItemType == PowerItem.PowerItemTypes.Generator)).ToString();
+                    __result = true;
+                    break;
                 case "IsBatteryBank":
                     value = ___tileEntity == null ? "false" :
                         (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.BatteryBank).ToString();
+                    __result = true;
+                    break;
+                case "NotBatteryBank":
+                    value = ___tileEntity == null ? "false" :
+                        (!(___tileEntity.PowerItemType == PowerItem.PowerItemTypes.BatteryBank)).ToString();
                     __result = true;
                     break;
                 case "IsSolarBank":
@@ -1029,10 +1082,22 @@ public class OcbElectricityOverhaul : IModApi
                         !___tileEntity.blockValue.Block.Properties.Contains("IsWindmill")).ToString();
                     __result = true;
                     break;
+                case "NotSolarBank":
+                    value = ___tileEntity == null ? "false" :
+                        (!(___tileEntity.PowerItemType == PowerItem.PowerItemTypes.SolarPanel &&
+                        !___tileEntity.blockValue.Block.Properties.Contains("IsWindmill"))).ToString();
+                    __result = true;
+                    break;
                 case "IsWindMill":
                     value = ___tileEntity == null ? "false" :
                         (___tileEntity.PowerItemType == PowerItem.PowerItemTypes.SolarPanel &&
                         ___tileEntity.blockValue.Block.Properties.Contains("IsWindmill")).ToString();
+                    __result = true;
+                    break;
+                case "NotWindMill":
+                    value = ___tileEntity == null ? "false" :
+                        (!(___tileEntity.PowerItemType == PowerItem.PowerItemTypes.SolarPanel &&
+                        ___tileEntity.blockValue.Block.Properties.Contains("IsWindmill"))).ToString();
                     __result = true;
                     break;
 

@@ -53,14 +53,15 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
             {
                 case "config":
                     Log.Out("Interval: {0}", pm.Interval);
-                    Log.Out("BatteryPowerPerUse: {0}", ElectricityUtils.batteryPowerPerUse);
-                    Log.Out("FuelPowerPerUse: {0}", ElectricityUtils.fuelPowerPerUse);
-                    Log.Out("PowerPerPanel: {0}", ElectricityUtils.powerPerPanel);
-                    Log.Out("PowerPerEngine: {0}", ElectricityUtils.powerPerEngine);
-                    Log.Out("PowerPerBattery: {0}", ElectricityUtils.powerPerBattery);
-                    Log.Out("ChargePerBatteryMin: {0}", ElectricityUtils.chargePerBatteryMin);
-                    Log.Out("ChargePerBatteryMax: {0}", ElectricityUtils.chargePerBatteryMax);
-                    Log.Out("MinPowerForCharging: {0}", ElectricityUtils.minPowerForCharging);
+                    Log.Out("IsPreferFuelOverBattery: {0}", ElectricityUtils.IsPreferFuelOverBattery);
+                    Log.Out("BatteryPowerPerUse: {0}", ElectricityUtils.BatteryPowerPerUse);
+                    Log.Out("FuelPowerPerUse: {0}", ElectricityUtils.FuelPowerPerUse);
+                    Log.Out("PowerPerPanel: {0}", ElectricityUtils.PowerPerPanel);
+                    Log.Out("PowerPerEngine: {0}", ElectricityUtils.PowerPerEngine);
+                    Log.Out("PowerPerBattery: {0}", ElectricityUtils.PowerPerBattery);
+                    Log.Out("MinPowerForCharging: {0}", ElectricityUtils.MinPowerForCharging);
+                    Log.Out("BatteryChargeFactorFull: {0}%", ElectricityUtils.BatteryChargeFactorFull);
+                    Log.Out("BatteryChargeFactorEmpty: {0}%", ElectricityUtils.BatteryChargeFactorEmpty);
                     break;
                 case "stats":
                     Log.Out("Reporting statistics of {0} grids", pm.Grids.Count);
@@ -82,37 +83,41 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     pm.Interval = float.Parse(_params[1]);
                     Log.Out("Interval: {0}", pm.Interval);
                     break;
+                case "IsPreferFuelOverBattery":
+                    ElectricityUtils.IsPreferFuelOverBattery = bool.Parse(_params[1]);
+                    Log.Out("IsPreferFuelOverBattery: {0}", ElectricityUtils.IsPreferFuelOverBattery);
+                    break;
                 case "BatteryPowerPerUse":
-                    ElectricityUtils.batteryPowerPerUse = int.Parse(_params[1]);
-                    Log.Out("BatteryPowerPerUse: {0}", ElectricityUtils.batteryPowerPerUse);
+                    ElectricityUtils.BatteryPowerPerUse = int.Parse(_params[1]);
+                    Log.Out("BatteryPowerPerUse: {0}", ElectricityUtils.BatteryPowerPerUse);
                     break;
                 case "FuelPowerPerUse":
-                    ElectricityUtils.fuelPowerPerUse = int.Parse(_params[1]);
-                    Log.Out("FuelPowerPerUse: {0}", ElectricityUtils.fuelPowerPerUse);
+                    ElectricityUtils.FuelPowerPerUse = int.Parse(_params[1]);
+                    Log.Out("FuelPowerPerUse: {0}", ElectricityUtils.FuelPowerPerUse);
                     break;
                 case "PowerPerPanel":
-                    ElectricityUtils.powerPerPanel = int.Parse(_params[1]);
-                    Log.Out("PowerPerPanel: {0}", ElectricityUtils.powerPerPanel);
+                    ElectricityUtils.PowerPerPanel = int.Parse(_params[1]);
+                    Log.Out("PowerPerPanel: {0}", ElectricityUtils.PowerPerPanel);
                     break;
                 case "PowerPerEngine":
-                    ElectricityUtils.powerPerEngine = int.Parse(_params[1]);
-                    Log.Out("PowerPerEngine: {0}", ElectricityUtils.powerPerEngine);
+                    ElectricityUtils.PowerPerEngine = int.Parse(_params[1]);
+                    Log.Out("PowerPerEngine: {0}", ElectricityUtils.PowerPerEngine);
                     break;
                 case "PowerPerBattery":
-                    ElectricityUtils.powerPerBattery = int.Parse(_params[1]);
-                    Log.Out("PowerPerBattery: {0}", ElectricityUtils.powerPerBattery);
-                    break;
-                case "ChargePerBatteryMin":
-                    ElectricityUtils.chargePerBatteryMin = float.Parse(_params[1]);
-                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBatteryMin);
-                    break;
-                case "ChargePerBatteryMax":
-                    ElectricityUtils.chargePerBatteryMax = float.Parse(_params[1]);
-                    Log.Out("ChargePerBattery: {0}", ElectricityUtils.chargePerBatteryMax);
+                    ElectricityUtils.PowerPerBattery = int.Parse(_params[1]);
+                    Log.Out("PowerPerBattery: {0}", ElectricityUtils.PowerPerBattery);
                     break;
                 case "MinPowerForCharging":
-                    ElectricityUtils.minPowerForCharging = int.Parse(_params[1]);
-                    Log.Out("MinPowerForCharging: {0}", ElectricityUtils.minPowerForCharging);
+                    ElectricityUtils.MinPowerForCharging = int.Parse(_params[1]);
+                    Log.Out("MinPowerForCharging: {0}", ElectricityUtils.MinPowerForCharging);
+                    break;
+                case "BatteryChargeFactorFull":
+                    ElectricityUtils.BatteryChargeFactorFull = int.Parse(_params[1]);
+                    Log.Out("BatteryChargeFactorFull: {0}%", ElectricityUtils.BatteryChargeFactorFull);
+                    break;
+                case "BatteryChargeFactorEmpty":
+                    ElectricityUtils.BatteryChargeFactorEmpty = int.Parse(_params[1]);
+                    Log.Out("BatteryChargeFactorEmpty: {0}%", ElectricityUtils.BatteryChargeFactorEmpty);
                     break;
                 default:
                     Log.Warning("Unknown command " + _params[0]);

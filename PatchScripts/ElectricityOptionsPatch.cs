@@ -3,6 +3,7 @@ using Mono.Cecil.Cil;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 public class ElectricityOptionsPatch
 {
@@ -27,10 +28,12 @@ public class ElectricityOptionsPatch
 
         // Add new field to EnumGamePrefs enum (not sure how `Last` enum plays here)
         var enumType = MakeTypePublic(module.Types.First(d => d.Name == "EnumGamePrefs"));
-        lastGamePrefEnum = GetBiggestEnum(enumType) + 1;
         int enumLast = lastGamePrefEnum;
 
         enumType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+            { Constant = enumLast++ });
+        enumType.Fields.Add(new FieldDefinition("PreferFuelOverBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = enumLast++ });
         enumType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
@@ -51,7 +54,10 @@ public class ElectricityOptionsPatch
         enumType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = enumLast++ });
-        enumType.Fields.Add(new FieldDefinition("ChargePerBattery", FieldAttributes.Static | FieldAttributes.Literal
+        enumType.Fields.Add(new FieldDefinition("BatteryChargeFactorFull", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
+        { Constant = enumLast++ });
+        enumType.Fields.Add(new FieldDefinition("BatteryChargeFactorEmpty", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = enumLast++ });
 
@@ -63,9 +69,13 @@ public class ElectricityOptionsPatch
         infoBoolType.Fields.Add(new FieldDefinition("LoadVanillaMap", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoBoolType)
             { Constant = ++infoBoolLast });
+        infoBoolType.Fields.Add(new FieldDefinition("PreferFuelOverBattery", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoBoolType)
+            { Constant = ++infoBoolLast });
 
         // Add new fields to GameInfoInt enum
         var infoIntType = MakeTypePublic(module.Types.First(d => d.Name == "GameInfoInt"));
+
         int infoIntLast = infoIntType.Fields.Count;
         infoIntType.Fields.Add(new FieldDefinition("BatteryPowerPerUse", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
@@ -85,7 +95,10 @@ public class ElectricityOptionsPatch
         infoIntType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
             { Constant = ++infoIntLast });
-        infoIntType.Fields.Add(new FieldDefinition("ChargePerBattery", FieldAttributes.Static | FieldAttributes.Literal
+        infoIntType.Fields.Add(new FieldDefinition("BatteryChargeFactorFull", FieldAttributes.Static | FieldAttributes.Literal
+                | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
+        { Constant = ++infoIntLast });
+        infoIntType.Fields.Add(new FieldDefinition("BatteryChargeFactorEmpty", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
             { Constant = ++infoIntLast });
     }
@@ -94,11 +107,12 @@ public class ElectricityOptionsPatch
     public const int MinPowerForChargingDefault = 20;
     public const int FuelPowerPerUseDefault = 750;
     public const int PowerPerPanelDefault = 30;
-    public const int PowerPerEngineDefault = 50;
+    public const int PowerPerEngineDefault = 100;
     public const int PowerPerBatteryDefault = 50;
-    public const int ChargePerBatteryDefault = 35;
+    public const int BatteryChargeFactorFullDefault = 60;
+    public const int BatteryChargeFactorEmptyDefault = 130;
 
-    private static int lastGamePrefEnum = 210;
+    private static int lastGamePrefEnum = 230;
 
     public static void PatchGamePrefsProps(ModuleDefinition module)
     {
@@ -114,6 +128,18 @@ public class ElectricityOptionsPatch
         ILProcessor worker = method.Body.GetILProcessor();
         Instruction[] instructions = new Instruction[]
         {
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // Persistent
+            worker.Create(OpCodes.Ldc_I4_3), // EnumType
+            worker.Create(OpCodes.Ldc_I4_0), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Boolean), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
 
             worker.Create(OpCodes.Dup), // Reference array
             worker.Create(OpCodes.Ldc_I4, lst++), // index
@@ -204,7 +230,19 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_1), // Persistent
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, ChargePerBatteryDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorFullDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Ldnull), // Unused
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_1), // Persistent
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorEmptyDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Ldnull), // Unused
             worker.Create(OpCodes.Ldnull), // Unused
@@ -213,7 +251,7 @@ public class ElectricityOptionsPatch
 
         };
 
-        // We are adding 8 new items to this array
+        // We are adding 10 new items to this array
         worker.Replace(method.Body.Instructions[7],
             worker.Create(OpCodes.Ldc_I4, lst));
 
@@ -248,7 +286,16 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Box, module.TypeSystem.Boolean), // Boxing
             worker.Create(OpCodes.Newobj, ctor),
             worker.Create(OpCodes.Stelem_Any, elem),
-            
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_3), // EnumType
+            worker.Create(OpCodes.Ldc_I4_0), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Boolean), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
             worker.Create(OpCodes.Dup), // Reference array
             worker.Create(OpCodes.Ldc_I4_S, lst++), // index
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
@@ -307,14 +354,23 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4_S, lst++), // index
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, ChargePerBatteryDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorFullDefault), // Default
+            worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
+            worker.Create(OpCodes.Newobj, ctor),
+            worker.Create(OpCodes.Stelem_Any, elem),
+
+            worker.Create(OpCodes.Dup), // Reference array
+            worker.Create(OpCodes.Ldc_I4_S, lst++), // index
+            worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
+            worker.Create(OpCodes.Ldc_I4_0), // EnumType
+            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorEmptyDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Newobj, ctor),
             worker.Create(OpCodes.Stelem_Any, elem),
 
         };
 
-        // We are adding 8 new items to this array
+        // We are adding 10 new items to this array
         worker.Replace(method.Body.Instructions[0],
             worker.Create(OpCodes.Ldc_I4_S, lst));
 
@@ -328,15 +384,14 @@ public class ElectricityOptionsPatch
 
     public static void PatchGamePrefPropValues(ModuleDefinition module)
     {
-
+        // Try to detect undead legacy mod to conditionally apply patch
+        // Unfortunately UL will emit a hard error to the console if we apply this patch
+        // But it is needed and UL still works, so for now we try to simply swallow it
+        // I hope UL will be willing to adjust their patching logic a bit
+        if (Directory.Exists("Mods/UndeadLegacy")) return;
         TypeDefinition prefs = module.Types.First(d => d.Name == "GamePrefs");
         MethodDefinition method = prefs.Methods.First(d => d.Name == ".ctor");
-        // if (ModManager.GetMod("UndeadLegacy_CoreModule") == null)
-        // {
-        //     method.Body.Instructions[1].Operand = 8 +
-        //         (int)method.Body.Instructions[1].Operand;
-        // }
-
+        method.Body.Instructions[1].Operand = (int)byte.MaxValue;
     }
 
     public static void Patch(AssemblyDefinition assembly)
@@ -344,6 +399,9 @@ public class ElectricityOptionsPatch
         Console.WriteLine("Applying OCB Electricity Options Patch");
 
         ModuleDefinition module = assembly.MainModule;
+
+        lastGamePrefEnum = GetBiggestEnum(module.Types
+            .First(d => d.Name == "EnumGamePrefs")) + 1;
 
         PatchEnumGamePrefs(module);
         PatchGamePrefsProps(module);

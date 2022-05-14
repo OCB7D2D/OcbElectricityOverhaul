@@ -1,7 +1,7 @@
-using System;
 using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
+using System.Linq;
 
 namespace OCB
 {
@@ -10,81 +10,61 @@ namespace OCB
 
         // Default values for configurable options
         public const bool LoadVanillaMapDefault = false;
+        public const bool PreferFuelOverBatteryDefault = false;
         public const int BatteryPowerPerUseDefault = 25;
         public const int MinPowerForChargingDefault = 20;
         public const int FuelPowerPerUseDefault = 750;
         public const int PowerPerPanelDefault = 30;
         public const int PowerPerEngineDefault = 100;
         public const int PowerPerBatteryDefault = 50;
-        public const float ChargePerBatteryFactorMin = 0.2f;
-        public const float ChargePerBatteryFactorMax = 1.6f;
+        public const int BatteryChargeFactorFullDefault = 60;
+        public const int BatteryChargeFactorEmptyDefault = 130;
 
         // Should we try to load a vanilla map (initialize with defaults)
-        public static bool isLoadVanillaMap = LoadVanillaMapDefault;
+        public static bool IsLoadVanillaMap = LoadVanillaMapDefault;
+        public static bool IsPreferFuelOverBattery = PreferFuelOverBatteryDefault;
 
         // Coefficient to exchange battery uses and watts
-        public static int batteryPowerPerUse = BatteryPowerPerUseDefault;
+        public static int BatteryPowerPerUse = BatteryPowerPerUseDefault;
 
         // Coefficient to exchange fuel into watts
-        public static int fuelPowerPerUse = FuelPowerPerUseDefault;
+        public static int FuelPowerPerUse = FuelPowerPerUseDefault;
 
-        public static int powerPerPanel = PowerPerPanelDefault;
-        public static int powerPerEngine = PowerPerEngineDefault;
-        public static int powerPerBattery = PowerPerBatteryDefault;
-        public static float chargePerBatteryMin = ChargePerBatteryFactorMin;
-        public static float chargePerBatteryMax = ChargePerBatteryFactorMax;
+        public static int PowerPerPanel = PowerPerPanelDefault;
+        public static int PowerPerEngine = PowerPerEngineDefault;
+        public static int PowerPerBattery = PowerPerBatteryDefault;
+        public static int BatteryChargeFactorFull = BatteryChargeFactorFullDefault;
+        public static int BatteryChargeFactorEmpty = BatteryChargeFactorEmptyDefault;
 
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
-        public static int minPowerForCharging = MinPowerForChargingDefault;
+        public static int MinPowerForCharging = MinPowerForChargingDefault;
 
-        // Check for optional passive `PowerOutput` effect (e.g. undead legacy defines this)
-        static FieldInfo PowerOutputEffect = AccessTools.Field(typeof(PassiveEffects), "PowerOutput");
-
-        // Get solar cell power by quality
-        static public float GetCellPowerByQuality(ItemValue item)
-        {
-            // Support for Undead Legacy (adds a passive effect for power)
-            if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
-            {
-                return EffectManager.GetValue(effect, item, 0.0f, null, null,
-                    new FastTags(), false, false, false, false, 1, false);
-            }
-            // Support for vanilla (just lerping the power for quality)
-            return powerPerPanel / 30f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
-        }
-
-        // Get discharge power by battery quality
-        static public float GetBatteryPowerByQuality(ItemValue item)
-        {
-            // Support for Undead Legacy (adds a passive effect for power)
-            if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
-            {
-                return EffectManager.GetValue(effect, item, 0.0f, null, null,
-                    new FastTags(), false, false, false, false, 1, false);
-            }
-            // Support for vanilla (just lerping the power for quality)
-            return powerPerBattery / 50f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f);
-        }
+        // Check for optional passive `PowerOutput` effect (e.g. Undead Legacy defines this)
+        // Note: make sure we don't put a warning to the console as `AccessTools.Field` would 
+        static readonly FieldInfo PowerOutputEffect = AccessTools
+            .TypeByName(nameof(PassiveEffects))?.GetFields()?
+                .First(field => field.Name == "PowerOutput");
 
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(ItemValue item)
         {
             float used = item.MaxUseTimes == 0 ? 0f : item.UseTimes / item.MaxUseTimes;
-            float factor = Mathf.SmoothStep(ChargePerBatteryFactorMin, chargePerBatteryMax, used);
-            return (ushort)(factor * GetBatteryPowerByQuality(item));
+            float factor = Mathf.SmoothStep(BatteryChargeFactorFull / 100f, BatteryChargeFactorEmpty / 100f, used);
+            return (ushort)(factor * GetSlotPowerByQuality(item, PowerPerBattery, 50f));
         }
 
-        static public ushort GetEnginePowerByQuality(ItemValue item)
+        static public ushort GetSlotPowerByQuality(ItemValue item, float powerPerSlot, float defaultPower)
         {
             // Support for Undead Legacy (adds a passive effect for power)
             if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
             {
-                return (ushort)EffectManager.GetValue(effect, item, 0.0f, null, null,
-                    new FastTags(), false, false, false, false, 1, false);
+                return (ushort)(powerPerSlot / defaultPower * EffectManager.GetValue(
+                    effect, item, 0.0f, null, null, new FastTags(),
+                    false, false, false, false, 1, false));
             }
             // Support for vanilla (just lerping the power for quality)
-            return (ushort)(powerPerEngine / 100f * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
+            return (ushort)(powerPerSlot * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
         }
 
         // Check if given `source` has a parent power source
@@ -151,9 +131,9 @@ namespace OCB
             // MaxPower - theoretical maximum power if all batteries have energy
             // CurrentPower - amount of power currently available in the bank
             // CurrentPower acts as a internal buffer, where excess energy is stored.
-            if (bank.CurrentPower < bank.MaxPower)
+            if (bank.CurrentPower < bank.MaxOutput)
             {
-                float neededToMax = bank.MaxPower - bank.CurrentPower;
+                float neededToMax = bank.MaxOutput - bank.CurrentPower;
                 for (int index = 0; index < bank.Stacks.Length; ++index)
                 {
                     // Skip over empty battery slots
@@ -166,9 +146,9 @@ namespace OCB
                     float usesLeftOver = bank.Stacks[index].itemValue.MaxUseTimes
                                          - (int)bank.Stacks[index].itemValue.UseTimes;
 
-                    if (neededToMax <= usesLeftOver * batteryPowerPerUse)
+                    if (neededToMax <= usesLeftOver * BatteryPowerPerUse)
                     {
-                        bank.Stacks[index].itemValue.UseTimes += neededToMax / batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += neededToMax / BatteryPowerPerUse;
                         bank.CurrentPower += (ushort)neededToMax;
                         // break; // Don't break in order to drain all batteries, this means we add
                         // more power than needed to the `CurrentPower` buffer, which means the initial
@@ -182,7 +162,7 @@ namespace OCB
                     else
                     {
                         // If battery can only sustain the required demand partially, take what is left.
-                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / batteryPowerPerUse;
+                        bank.Stacks[index].itemValue.UseTimes += usesLeftOver / BatteryPowerPerUse;
                         bank.CurrentPower += (ushort)usesLeftOver;
 
                     }
@@ -196,9 +176,9 @@ namespace OCB
             // Check if buffer has enough energy to fulfill max power
             if (generator.CurrentPower >= generator.MaxProduction) return;
             ushort neededToMax = (ushort)(generator.MaxProduction - generator.CurrentPower);
-            ushort consume = (ushort)Mathf.Ceil((float)neededToMax / (float)fuelPowerPerUse);
+            ushort consume = (ushort)Mathf.Ceil((float)neededToMax / FuelPowerPerUse);
             consume = (ushort)Mathf.Min(consume, generator.CurrentFuel);
-            generator.CurrentPower += (ushort)(consume * fuelPowerPerUse);
+            generator.CurrentPower += (ushort)(consume * FuelPowerPerUse);
             generator.CurrentFuel -= consume;
         }
 
@@ -232,7 +212,7 @@ namespace OCB
                     // Get demand of local battery or what is left
                     ushort demand = (ushort)Mathf.Min(GetChargeByQuality(
                         bank.Stacks[index].itemValue), power);
-                    float demandUses = demand / (float)batteryPowerPerUse;
+                    float demandUses = demand / (float)BatteryPowerPerUse;
                     // Check if current battery can take the full charge load
                     if (bank.Stacks[index].itemValue.UseTimes >= demandUses)
                     {
@@ -243,15 +223,15 @@ namespace OCB
                     // Can only take partial load (battery is fully charged)
                     else
                     {
-                        power -= (ushort)(bank.Stacks[index].itemValue.UseTimes * batteryPowerPerUse);
-                        used += (ushort)(bank.Stacks[index].itemValue.UseTimes * batteryPowerPerUse);
+                        power -= (ushort)(bank.Stacks[index].itemValue.UseTimes * BatteryPowerPerUse);
+                        used += (ushort)(bank.Stacks[index].itemValue.UseTimes * BatteryPowerPerUse);
                         bank.Stacks[index].itemValue.UseTimes = 0;
                     }
 
                 }
             }
             // Copied from original DLL
-            if ((int)bank.LastInputAmount == used) return;
+            if (bank.LastInputAmount == used) return;
             bank.SendHasLocalChangesToRoot();
             bank.LastInputAmount = (ushort)used;
         }
