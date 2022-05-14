@@ -1,4 +1,4 @@
-﻿<configs>
+﻿<configs patcher-version="1">
 
 	<modif condition="UndeadLegacy_CoreModule">
 

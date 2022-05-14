@@ -1,4 +1,13 @@
-﻿<configs>
+﻿<configs patcher-version="1">
+
+	<append xpath="/items/item[@name='resourceCloth']">
+		<property name="RepairAmount" value="100"/>
+		<property name="RepairTime" value="0.5"/>
+	</append>
+
+	<append xpath="/items/item[@name='solarCell']">
+		<property name="RepairTools" value="resourceCloth"/>
+	</append>
 
 	<modif condition="UndeadLegacy_CoreModule">
 
