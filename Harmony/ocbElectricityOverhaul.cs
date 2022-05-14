@@ -733,16 +733,23 @@ public class OcbElectricityOverhaul : IModApi
     [HarmonyPatch]
     class PatchPowerSourceStats
     {
+
+        private static readonly string[] PowerSourceStatClasses = new string[]
+            { "XUiC_PowerSourceStats", "XUiC_ULM_PowerSourceStats" };
+
         static IEnumerable<MethodBase> TargetMethods()
         {
             List<MethodBase> targets = new List<MethodBase>();
-            if (AccessTools.TypeByName("XUiC_PowerSourceStats") is System.Type vanilla)
+            foreach (string klass in PowerSourceStatClasses)
             {
-                foreach (MethodInfo method in vanilla.GetMethods())
+                if (AccessTools.TypeByName(klass) is System.Type vanilla)
                 {
-                    if (method.Name != "GetBindingValue") continue;
-                    targets.Add(method);
-                    break;
+                    foreach (MethodInfo method in vanilla.GetMethods())
+                    {
+                        if (method.Name != "GetBindingValue") continue;
+                        targets.Add(method);
+                        break;
+                    }
                 }
             }
             return targets;

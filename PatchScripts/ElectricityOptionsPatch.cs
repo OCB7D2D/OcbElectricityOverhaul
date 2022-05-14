@@ -331,9 +331,11 @@ public class ElectricityOptionsPatch
 
         TypeDefinition prefs = module.Types.First(d => d.Name == "GamePrefs");
         MethodDefinition method = prefs.Methods.First(d => d.Name == ".ctor");
-        // Get nested `PropertyDecl` sub-class in `GamePrefs` class
-        method.Body.Instructions[1].Operand = 8 +
-            (int)method.Body.Instructions[1].Operand;
+        // if (ModManager.GetMod("UndeadLegacy_CoreModule") == null)
+        // {
+        //     method.Body.Instructions[1].Operand = 8 +
+        //         (int)method.Body.Instructions[1].Operand;
+        // }
 
     }
 
