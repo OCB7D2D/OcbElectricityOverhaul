@@ -639,21 +639,31 @@ public class OcbElectricityOverhaul : IModApi
             - source.Stacks[index].itemValue.UseTimes);
     }
 
-    public static ushort GetLocalConsumerUsed(TileEntityPowerSource instance)
+    public static ushort GetLocalGridConsumerUsed(TileEntityPowerSource instance)
     {
         return (ushort)(GetConsumerUsed(instance) + GetGridConsumerUsed(instance));
     }
-    public static ushort GetLocalConsumerDemand(TileEntityPowerSource instance)
+    public static ushort GetLocalGridConsumerDemand(TileEntityPowerSource instance)
     {
         return (ushort)(GetConsumerDemand(instance) + GetGridConsumerDemand(instance));
     }
-    public static ushort GetLocalChargingUsed(TileEntityPowerSource instance)
+    public static ushort GetLocalGridChargingUsed(TileEntityPowerSource instance)
     {
         return (ushort)(GetChargingUsed(instance) + GetGridChargingUsed(instance));
     }
-    public static ushort GetLocalChargingDemand(TileEntityPowerSource instance)
+    public static ushort GetLocalGridChargingDemand(TileEntityPowerSource instance)
     {
         return (ushort)(GetChargingDemand(instance) + GetGridChargingDemand(instance));
+    }
+
+    public static ushort GetLocalGridUsed(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetLocalGridConsumerUsed(instance) + GetLocalGridChargingUsed(instance));
+    }
+
+    public static ushort GetLocalGridDemand(TileEntityPowerSource instance)
+    {
+        return (ushort)(GetLocalGridConsumerDemand(instance) + GetLocalGridChargingDemand(instance));
     }
 
     public static string GetPercent(XUiC_PowerSourceStats __instance, int amount, int off)
@@ -684,6 +694,37 @@ public class OcbElectricityOverhaul : IModApi
             return targets;
         }
 
+        static int GetValue(string name, TileEntityPowerSource te)
+        {
+            if (te == null) return -1;
+            switch (name)
+            {
+                case "MaxOutput": return GetMaxOutput(te);
+                case "MaxProduction": return GetMaxProduction(te);
+                case "LentConsumed": return GetLentConsumed(te);
+                case "LentCharging": return GetLentCharging(te);
+                case "LentConsumerUsed": return GetLentConsumerUsed(te);
+                case "LentChargingUsed": return GetLentChargingUsed(te);
+                case "ConsumerDemand": return GetConsumerDemand(te);
+                case "ChargingDemand": return GetChargingDemand(te);
+                case "ConsumerUsed": return GetConsumerUsed(te);
+                case "ChargingUsed": return GetChargingUsed(te);
+                case "GridConsumerDemand": return GetGridConsumerDemand(te);
+                case "GridChargingDemand": return GetGridChargingDemand(te);
+                case "GridConsumerUsed": return GetGridConsumerUsed(te);
+                case "GridChargingUsed": return GetGridChargingUsed(te);
+                case "LocalGridDemand": return GetLocalGridDemand(te);
+                case "LocalConsumerDemand": return GetLocalGridConsumerDemand(te);
+                case "LocalChargingDemand": return GetLocalGridChargingDemand(te);
+                case "LocalGridUsed": return GetLocalGridUsed(te);
+                case "LocalConsumerUsed": return GetLocalGridConsumerUsed(te);
+                case "LocalChargingUsed": return GetLocalGridChargingUsed(te);
+                case "ushort.MaxValue": return ushort.MaxValue;
+                default: Log.Error("Invalid Filler Argument {0}", name); break;
+            }
+            return -1;
+        }
+
         // prefix all methods in someAssembly with a non-void return type and beginning with "Player"
         static void Postfix(
             XUiC_PowerSourceStats __instance,
@@ -692,6 +733,33 @@ public class OcbElectricityOverhaul : IModApi
             string bindingName,
             ref bool __result)
         {
+            // Special macro to create fillers
+            // Probably not best for performance
+            // Consider baking the ones you use!
+            if (bindingName.StartsWith("Filler:"))
+            {
+                var parts = bindingName.Substring(7).Split('/');
+                int dividend = 0; int divisor = 0;
+                foreach (string part in parts[0].Split('+'))
+                    dividend += GetValue(part, ___tileEntity);
+                foreach (string part in parts[1].Split('+'))
+                    divisor += GetValue(part, ___tileEntity);
+                value = GetFill(__instance, dividend, divisor);
+                __result = true;
+                return;
+            }
+            else if (bindingName.StartsWith("Percent:"))
+            {
+                var parts = bindingName.Substring(8).Split('/');
+                int dividend = 0; int divisor = 0;
+                foreach (string part in parts[0].Split('+'))
+                    dividend += GetValue(part, ___tileEntity);
+                foreach (string part in parts[1].Split('+'))
+                    divisor += GetValue(part, ___tileEntity);
+                value = GetPercent(__instance, dividend, divisor);
+                __result = true;
+                return;
+            }
             // Regular code path
             switch (bindingName)
             {
@@ -773,19 +841,19 @@ public class OcbElectricityOverhaul : IModApi
                     __result = true;
                     break;
                 case "LocalConsumerDemand": // used
-                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalConsumerDemand(___tileEntity));
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridConsumerDemand(___tileEntity));
                     __result = true;
                     break;
                 case "LocalChargingDemand": // used
-                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalChargingDemand(___tileEntity));
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridChargingDemand(___tileEntity));
                     __result = true;
                     break;
                 case "LocalConsumerUsed": // used
-                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalConsumerUsed(___tileEntity));
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridConsumerUsed(___tileEntity));
                     __result = true;
                     break;
                 case "LocalChargingUsed": // used
-                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalChargingUsed(___tileEntity));
+                    value = ___tileEntity == null ? "n/a" : __instance.maxoutputFormatter.Format(GetLocalGridChargingUsed(___tileEntity));
                     __result = true;
                     break;
 
