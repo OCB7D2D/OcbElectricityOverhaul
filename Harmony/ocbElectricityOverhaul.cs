@@ -129,7 +129,7 @@ public class OcbElectricityOverhaul : IModApi
         static void Postfix(PooledBinaryWriter _bw, TileEntity.StreamModeWrite _eStreamMode,
             TileEntityPowerSource __instance, PowerItem.PowerItemTypes ___PowerItemType, PowerItem ___PowerItem)
         {
-            PowerSource powerItem = ___PowerItem as PowerSource;
+            PowerSource source = ___PowerItem as PowerSource;
             switch (_eStreamMode)
             {
                 case TileEntity.StreamModeWrite.Persistency:
@@ -140,26 +140,26 @@ public class OcbElectricityOverhaul : IModApi
                     _bw.Write(__instance.ClientData.ChargeFromBattery);
                     break;
                 default: // ToClient
-                    _bw.Write(powerItem != null);
-                    if (powerItem == null)
+                    _bw.Write(source != null);
+                    if (source == null)
                         break;
                     // ToDo: check if we need em all (now 180 bytes)
-                    _bw.Write(powerItem.MaxProduction);
-                    _bw.Write(powerItem.ChargingUsed);
-                    _bw.Write(powerItem.ChargingDemand);
-                    _bw.Write(powerItem.ConsumerUsed);
-                    _bw.Write(powerItem.ConsumerDemand);
-                    _bw.Write(powerItem.LentConsumed);
-                    _bw.Write(powerItem.LentCharging);
-                    _bw.Write(powerItem.GridConsumerDemand);
-                    _bw.Write(powerItem.GridChargingDemand);
-                    _bw.Write(powerItem.GridConsumerUsed);
-                    _bw.Write(powerItem.GridChargingUsed);
-                    _bw.Write(powerItem.LentConsumerUsed);
-                    _bw.Write(powerItem.LentChargingUsed);
-                    _bw.Write(powerItem.ChargeFromSolar);
-                    _bw.Write(powerItem.ChargeFromGenerator);
-                    _bw.Write(powerItem.ChargeFromBattery);
+                    _bw.Write(source.MaxProduction);
+                    _bw.Write(source.ChargingUsed);
+                    _bw.Write(source.ChargingDemand);
+                    _bw.Write(source.ConsumerUsed);
+                    _bw.Write(source.ConsumerDemand);
+                    _bw.Write(source.LentConsumed);
+                    _bw.Write(source.LentCharging);
+                    _bw.Write(source.GridConsumerDemand);
+                    _bw.Write(source.GridChargingDemand);
+                    _bw.Write(source.GridConsumerUsed);
+                    _bw.Write(source.GridChargingUsed);
+                    _bw.Write(source.LentConsumerUsed);
+                    _bw.Write(source.LentChargingUsed);
+                    _bw.Write(source.ChargeFromSolar);
+                    _bw.Write(source.ChargeFromGenerator);
+                    _bw.Write(source.ChargeFromBattery);
                     break;
             }
         }

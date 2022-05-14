@@ -17,7 +17,6 @@ namespace OCB
         public const int PowerPerEngineDefault = 50;
         public const int PowerPerBatteryDefault = 50;
         public const int ChargePerBatteryDefault = 35;
-        public const int GeneratorMaxFuelDefault = 5000;
 
         public const float BatteryChargeSpeedRatio = 0.8f;
 

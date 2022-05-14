@@ -26,7 +26,7 @@ public class OcbPowerManager : PowerManager
     public ulong Ticks { get; private set; }
 
     // Global light for solar panels
-    float globalLight = 1f;
+    public float GlobalLight = 1f;
 
     bool IsDirty = true;
 
@@ -130,7 +130,7 @@ public class OcbPowerManager : PowerManager
             float span = (world.DuskHour - world.DawnHour) / 2f;
             float halfTime = (world.DuskHour + world.DawnHour) / 2f;
             float distance = span - Mathf.Abs(time - halfTime);
-            globalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
+            GlobalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
         }
     }
 
@@ -212,7 +212,7 @@ public class OcbPowerManager : PowerManager
                 updateTime -= Time.deltaTime;
                 if (updateTime <= 0.0)
                 {
-                    globalLight = 0f;
+                    GlobalLight = 0f;
                     UpdateLight();
                     updateTime = Interval;
                 }
@@ -284,7 +284,7 @@ public class OcbPowerManager : PowerManager
                         slot.itemValue) * factor;
                     if (source.IsOn && solar.HasLight)
                     {
-                        production += cellPower * globalLight;
+                        production += cellPower * GlobalLight;
                     }
                     capacity += cellPower;
                 }
