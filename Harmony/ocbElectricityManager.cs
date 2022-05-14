@@ -343,13 +343,13 @@ public class OcbPowerManager : PowerManager
         // ToDo: find out how caching could work with this!
         if (source is PowerBatteryBank bank)
         {
-            float capacity = 0, discharging = 0;
+            ushort capacity = 0, discharging = 0;
             float factor = source.OutputPerStack / 50f;
             foreach (var slot in source.Stacks)
             {
                 if (slot.IsEmpty()) continue;
-                float discharge = GetBatteryPowerByQuality(
-                    slot.itemValue) * factor;
+                ushort discharge = (ushort)(factor *
+                    GetBatteryPowerByQuality(slot.itemValue));
                 if (source.IsOn)
                 {
                     // Check if battery has some juice left
@@ -363,15 +363,16 @@ public class OcbPowerManager : PowerManager
                     if (slot.itemValue.UseTimes > 0)
                     {
                         // ToDo: should we cap at what is actually needed?
-                        bank.ChargingDemand += GetChargeByQuality(slot.itemValue);
+                        bank.ChargingDemand += (ushort)(factor *
+                            GetChargeByQuality(slot.itemValue));
                     }
                 }
                 // Production if all batteries are loaded
                 capacity += discharge;
             }
-            source.MaxPower = (ushort)capacity;
-            source.MaxOutput = (ushort)capacity;
-            source.MaxProduction = (ushort)discharging;
+            source.MaxPower = capacity;
+            source.MaxOutput = capacity;
+            source.MaxProduction = discharging;
             // Power needed to charge batteries not fully loaded
             source.RequiredPower = bank.ChargingDemand;
         }
