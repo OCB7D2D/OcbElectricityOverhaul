@@ -106,6 +106,16 @@ public class OcbElectricityOverhaul : IModApi
     }
 
     [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch(MethodType.Constructor)]
+    public class PowerSource_Ctor
+    {
+        static void Postfix(PowerSource __instance)
+        {
+            __instance.ChargeFromSolar = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PowerSource))]
     [HarmonyPatch("SetSlots")]
     public class PowerSource_SetSlots
     {
