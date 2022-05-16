@@ -55,8 +55,8 @@ public class OcbPowerManager : PowerManager
         PowerPerPanel = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerPanel"));
         PowerPerEngine = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerEngine"));
         PowerPerBattery = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("PowerPerBattery"));
-        BatteryChargeFactorFull = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargeFactorFull"));
-        BatteryChargeFactorEmpty = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargeFactorEmpty"));
+        BatteryChargePercentFull = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargePercentFull"));
+        BatteryChargePercentEmpty = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargePercentEmpty"));
 
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" +

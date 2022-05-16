@@ -60,8 +60,8 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     Log.Out("PowerPerEngine: {0}", ElectricityUtils.PowerPerEngine);
                     Log.Out("PowerPerBattery: {0}", ElectricityUtils.PowerPerBattery);
                     Log.Out("MinPowerForCharging: {0}", ElectricityUtils.MinPowerForCharging);
-                    Log.Out("BatteryChargeFactorFull: {0}%", ElectricityUtils.BatteryChargeFactorFull);
-                    Log.Out("BatteryChargeFactorEmpty: {0}%", ElectricityUtils.BatteryChargeFactorEmpty);
+                    Log.Out("BatteryChargePercentFull: {0}%", ElectricityUtils.BatteryChargePercentFull);
+                    Log.Out("BatteryChargePercentEmpty: {0}%", ElectricityUtils.BatteryChargePercentEmpty);
                     break;
                 case "stats":
                     Log.Out("Reporting statistics of {0} grids", pm.Grids.Count);
@@ -111,13 +111,13 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     ElectricityUtils.MinPowerForCharging = int.Parse(_params[1]);
                     Log.Out("MinPowerForCharging: {0}", ElectricityUtils.MinPowerForCharging);
                     break;
-                case "BatteryChargeFactorFull":
-                    ElectricityUtils.BatteryChargeFactorFull = int.Parse(_params[1]);
-                    Log.Out("BatteryChargeFactorFull: {0}%", ElectricityUtils.BatteryChargeFactorFull);
+                case "BatteryChargePercentFull":
+                    ElectricityUtils.BatteryChargePercentFull = int.Parse(_params[1]);
+                    Log.Out("BatteryChargePercentFull: {0}%", ElectricityUtils.BatteryChargePercentFull);
                     break;
-                case "BatteryChargeFactorEmpty":
-                    ElectricityUtils.BatteryChargeFactorEmpty = int.Parse(_params[1]);
-                    Log.Out("BatteryChargeFactorEmpty: {0}%", ElectricityUtils.BatteryChargeFactorEmpty);
+                case "BatteryChargePercentEmpty":
+                    ElectricityUtils.BatteryChargePercentEmpty = int.Parse(_params[1]);
+                    Log.Out("BatteryChargePercentEmpty: {0}%", ElectricityUtils.BatteryChargePercentEmpty);
                     break;
                 default:
                     Log.Warning("Unknown command " + _params[0]);

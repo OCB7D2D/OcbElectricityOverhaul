@@ -21,8 +21,8 @@
 				<ulmOptionGame name="PowerPerEngine" title="goPowerPerEngine" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" value_localization_prefix="goPowerFormat" />
 				<ulmOptionGame name="PowerPerBattery" title="goPowerPerBattery" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" value_localization_prefix="goPowerFormat" />
 				<ulmOptionGame name="MinPowerForCharging" title="goMinPowerForCharging" value_wrap="false" value_type="int" values="0, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90" display_names="" value_localization_prefix="goPowerFormat" />
-				<ulmOptionGame name="BatteryChargeFactorFull" title="goBatteryChargeFactorFull" value_wrap="false" value_type="int" values="10, 20, 03, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200" display_names="" value_localization_prefix="goPercentFormat" />
-				<ulmOptionGame name="BatteryChargeFactorEmpty" title="goBatteryChargeFactorEmpty" value_wrap="false" value_type="int" values="10, 20, 03, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200" display_names="" value_localization_prefix="goPercentFormat" />
+				<ulmOptionGame name="BatteryChargePercentFull" title="goBatteryChargePercentFull" value_wrap="false" value_type="int" values="10, 20, 03, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200" display_names="" value_localization_prefix="goPercentFormat" />
+				<ulmOptionGame name="BatteryChargePercentEmpty" title="goBatteryChargePercentEmpty" value_wrap="false" value_type="int" values="10, 20, 03, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200" display_names="" value_localization_prefix="goPercentFormat" />
 			</grid>
 		</rect>
 

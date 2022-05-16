@@ -54,10 +54,10 @@ public class ElectricityOptionsPatch
         enumType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = enumLast++ });
-        enumType.Fields.Add(new FieldDefinition("BatteryChargeFactorFull", FieldAttributes.Static | FieldAttributes.Literal
+        enumType.Fields.Add(new FieldDefinition("BatteryChargePercentFull", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
         { Constant = enumLast++ });
-        enumType.Fields.Add(new FieldDefinition("BatteryChargeFactorEmpty", FieldAttributes.Static | FieldAttributes.Literal
+        enumType.Fields.Add(new FieldDefinition("BatteryChargePercentEmpty", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, enumType)
             { Constant = enumLast++ });
 
@@ -95,10 +95,10 @@ public class ElectricityOptionsPatch
         infoIntType.Fields.Add(new FieldDefinition("PowerPerBattery", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
             { Constant = ++infoIntLast });
-        infoIntType.Fields.Add(new FieldDefinition("BatteryChargeFactorFull", FieldAttributes.Static | FieldAttributes.Literal
+        infoIntType.Fields.Add(new FieldDefinition("BatteryChargePercentFull", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
         { Constant = ++infoIntLast });
-        infoIntType.Fields.Add(new FieldDefinition("BatteryChargeFactorEmpty", FieldAttributes.Static | FieldAttributes.Literal
+        infoIntType.Fields.Add(new FieldDefinition("BatteryChargePercentEmpty", FieldAttributes.Static | FieldAttributes.Literal
                 | FieldAttributes.Public | FieldAttributes.HasDefault, infoIntType)
             { Constant = ++infoIntLast });
     }
@@ -109,8 +109,8 @@ public class ElectricityOptionsPatch
     public const int PowerPerPanelDefault = 30;
     public const int PowerPerEngineDefault = 100;
     public const int PowerPerBatteryDefault = 50;
-    public const int BatteryChargeFactorFullDefault = 60;
-    public const int BatteryChargeFactorEmptyDefault = 130;
+    public const int BatteryChargePercentFullDefault = 60;
+    public const int BatteryChargePercentEmptyDefault = 130;
 
     private static int lastGamePrefEnum = 230;
 
@@ -230,7 +230,7 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_1), // Persistent
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorFullDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargePercentFullDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Ldnull), // Unused
             worker.Create(OpCodes.Ldnull), // Unused
@@ -242,7 +242,7 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_1), // Persistent
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorEmptyDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargePercentEmptyDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Ldnull), // Unused
             worker.Create(OpCodes.Ldnull), // Unused
@@ -354,7 +354,7 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4_S, lst++), // index
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorFullDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargePercentFullDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Newobj, ctor),
             worker.Create(OpCodes.Stelem_Any, elem),
@@ -363,7 +363,7 @@ public class ElectricityOptionsPatch
             worker.Create(OpCodes.Ldc_I4_S, lst++), // index
             worker.Create(OpCodes.Ldc_I4, enums++), // EnumGamePrefs
             worker.Create(OpCodes.Ldc_I4_0), // EnumType
-            worker.Create(OpCodes.Ldc_I4, BatteryChargeFactorEmptyDefault), // Default
+            worker.Create(OpCodes.Ldc_I4, BatteryChargePercentEmptyDefault), // Default
             worker.Create(OpCodes.Box, module.TypeSystem.Int32), // Boxing
             worker.Create(OpCodes.Newobj, ctor),
             worker.Create(OpCodes.Stelem_Any, elem),

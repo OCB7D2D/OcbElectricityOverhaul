@@ -17,8 +17,8 @@ namespace OCB
         public const int PowerPerPanelDefault = 30;
         public const int PowerPerEngineDefault = 100;
         public const int PowerPerBatteryDefault = 50;
-        public const int BatteryChargeFactorFullDefault = 60;
-        public const int BatteryChargeFactorEmptyDefault = 130;
+        public const int BatteryChargePercentFullDefault = 60;
+        public const int BatteryChargePercentEmptyDefault = 130;
 
         // Should we try to load a vanilla map (initialize with defaults)
         public static bool IsLoadVanillaMap = LoadVanillaMapDefault;
@@ -33,8 +33,8 @@ namespace OCB
         public static int PowerPerPanel = PowerPerPanelDefault;
         public static int PowerPerEngine = PowerPerEngineDefault;
         public static int PowerPerBattery = PowerPerBatteryDefault;
-        public static int BatteryChargeFactorFull = BatteryChargeFactorFullDefault;
-        public static int BatteryChargeFactorEmpty = BatteryChargeFactorEmptyDefault;
+        public static int BatteryChargePercentFull = BatteryChargePercentFullDefault;
+        public static int BatteryChargePercentEmpty = BatteryChargePercentEmptyDefault;
 
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
@@ -50,7 +50,7 @@ namespace OCB
         static public ushort GetChargeByQuality(ItemValue item)
         {
             float used = item.MaxUseTimes == 0 ? 0f : item.UseTimes / item.MaxUseTimes;
-            float factor = Mathf.SmoothStep(BatteryChargeFactorFull / 100f, BatteryChargeFactorEmpty / 100f, used);
+            float factor = Mathf.SmoothStep(BatteryChargePercentFull / 100f, BatteryChargePercentEmpty / 100f, used);
             return (ushort)(factor * GetSlotPowerByQuality(item, PowerPerBattery, 50f));
         }
 

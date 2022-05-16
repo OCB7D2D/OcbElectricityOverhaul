@@ -15,10 +15,10 @@ goPowerPerEngine,UI,Menu,x,Base Watts per diesel engine
 goPowerPerEngineDesc,UI,Menu,x,Amount of power a regular single diesel engine generates. Depends on (optional) tier quality and on `OutputPerStack` config.
 goPowerPerBattery,UI,Menu,x,Base Watts per battery
 goPowerPerBatteryDesc,UI,Menu,x,Amount of power a regular single battery generates. Depends on (optional) tier quality and on `OutputPerStack` config.
-goBatteryChargeFactorFull,UI,Menu,x,Charge factor when full
-goBatteryChargeFactorFullDesc,UI,Menu,x,Nearly full batteries charge slower than nearly empty ones.
-goBatteryChargeFactorEmpty,UI,Menu,x,Charge factor when empty
-goBatteryChargeFactorEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.
+goBatteryChargePercentFull,UI,Menu,x,Charge factor when full
+goBatteryChargePercentFullDesc,UI,Menu,x,Nearly full batteries charge slower than nearly empty ones.
+goBatteryChargePercentEmpty,UI,Menu,x,Charge factor when empty
+goBatteryChargePercentEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.
 goPowerFormat,UI,Menu,x,{0}w
 goPowerFormats,UI,Menu,x,{0}w
 goPercentFormat,UI,Menu,x,{0}%
