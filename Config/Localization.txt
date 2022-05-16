@@ -43,3 +43,5 @@ xuiChargeFrom,UI,Menu,,Charging from
 xuiChargeFromSolarTooltip,UI,Menu,,Allow charging from solar energy
 xuiChargeFromFuelTooltip,UI,Menu,,Allow charging from fueled generators
 xuiChargeFromBatteryTooltip,UI,Menu,,Allow charging from other battery banks
+xuiGridStatsTitle,UI,Menu,,Grid stats
+windmill,UI,Menu,,Windmill

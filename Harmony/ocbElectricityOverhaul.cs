@@ -1,3 +1,5 @@
+using System;
+using System.Xml;
 using System.IO;
 using HarmonyLib;
 using System.Reflection;
@@ -176,10 +178,8 @@ public class OcbElectricityOverhaul : IModApi
         static void Postfix(PowerSolarPanel __instance)
         {
             Block block = Block.list[__instance.BlockID];
-            Log.Out("Setting values from block");
             if (!block.Properties.Values.ContainsKey("MaxPower")) return;
             __instance.MaxPower = ushort.Parse(block.Properties.Values["MaxPower"]);
-            Log.Out("Setting values from block asdasd {0}", __instance.MaxPower);
         }
     }
 
@@ -281,6 +281,69 @@ public class OcbElectricityOverhaul : IModApi
                     __instance.ClientData.LightLevel = _br.ReadUInt16();
                     break;
             }
+        }
+    }
+
+    // Allow config defaults to be set via xml
+    [HarmonyPatch(typeof(XUiFromXml))]
+    [HarmonyPatch("loadWindows")]
+    public class XUiFromXml_loadWindows
+    {
+        static void Prefix(XmlFile _xmlFile)
+        {
+            foreach (XmlNode node in _xmlFile.XmlDoc.DocumentElement.ChildNodes)
+            {
+                if (node.NodeType != XmlNodeType.Element) continue;
+                if (!node.Name.Equals("electricity-overhaul")) continue;
+                foreach (XmlNode child in node.ChildNodes)
+                {
+                    if (child.NodeType != XmlNodeType.Element) continue;
+                    if (!child.Name.Equals("property")) continue;
+                    var el = child as XmlElement;
+                    string name = el.GetAttribute("name");
+                    string value = el.GetAttribute("value");
+                    switch (name)
+                    {
+                        case "IsPreferFuelOverBattery": IsPreferFuelOverBattery = bool.Parse(value); break;
+                        case "BatteryPowerPerUse": BatteryPowerPerUse = int.Parse(value); break;
+                        case "FuelPowerPerUse": FuelPowerPerUse = int.Parse(value); break;
+                        case "PowerPerPanel": PowerPerPanel = int.Parse(value); break;
+                        case "PowerPerEngine": PowerPerEngine = int.Parse(value); break;
+                        case "PowerPerBattery": PowerPerBattery = int.Parse(value); break;
+                        case "MinPowerForCharging": MinPowerForCharging = int.Parse(value); break;
+                        case "BatteryChargePercentFull": BatteryChargePercentFull = int.Parse(value); break;
+                        case "BatteryChargePercentEmpty": BatteryChargePercentEmpty = int.Parse(value); break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Force defaults when being asked for it
+    [HarmonyPatch(typeof(GameMode))]
+    [HarmonyPatch("GetGamePrefs")]
+    public class GameMode_GetGamePrefs
+    {
+
+        static void UpdateDefault(Dictionary<EnumGamePrefs, GameMode.ModeGamePref> prefs, string name, object value)
+        {
+            var id = EnumParser.Parse<EnumGamePrefs>(name);
+            var cpy = prefs[id];
+            cpy.DefaultValue = value;
+            prefs[id] = cpy;
+        }
+
+        static void Postfix(ref Dictionary<EnumGamePrefs, GameMode.ModeGamePref> __result)
+        {
+            UpdateDefault(__result, "PreferFuelOverBattery", IsPreferFuelOverBattery);
+            UpdateDefault(__result, "BatteryPowerPerUse", BatteryPowerPerUse);
+            UpdateDefault(__result, "FuelPowerPerUse", FuelPowerPerUse);
+            UpdateDefault(__result, "PowerPerPanel", PowerPerPanel);
+            UpdateDefault(__result, "PowerPerEngine", PowerPerEngine);
+            UpdateDefault(__result, "PowerPerBattery", PowerPerBattery);
+            UpdateDefault(__result, "MinPowerForCharging", MinPowerForCharging);
+            UpdateDefault(__result, "BatteryChargePercentFull", BatteryChargePercentFull);
+            UpdateDefault(__result, "BatteryChargePercentEmpty", BatteryChargePercentEmpty);
         }
     }
 
