@@ -163,29 +163,29 @@
 				<sprite style="background" pos="4,-42" size="270,136" atlas="UIBackground" sprite="ui_power_generator_turn_on"/>
 
 				<grid depth="1" pos="168,-70" rows="3" cols="1" cell_width="80" cell_height="40" repeat_content="false" arrangement="vertical">
-					<rect name="btnToggleSolarCharge" height="40" width="114" tooltip_key="xuiChargeFromSolarTooltip">
+					<rect name="btnToggleSolarCharge" height="40" width="114">
 						<rect pos="-118,0">
 							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
 							<sprite depth="2" size="24,24" name="sprToggleSolarCharge" sprite="ui_game_symbol_electric_solar" pivot="center" foregroundlayer="true"/>
 						</rect>
 						<label depth="2" size="186,40" name="lblToggleSolarCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
-						<button style="ulmButton_2x4" height="40"/>
+						<button style="ulmButton_2x4" height="40" tooltip_key="xuiChargeFromSolarTooltip" />
 					</rect>
-					<rect name="btnToggleGeneratorCharge" height="40" width="114" tooltip_key="xuiChargeFromFuelTooltip">
+					<rect name="btnToggleGeneratorCharge" height="40" width="114">
 						<rect pos="-118,0">
 							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
 							<sprite depth="2" size="24,24" name="sprToggleGeneratorCharge" sprite="ui_game_symbol_electric_generator" pivot="center" foregroundlayer="true"/>
 						</rect>
 						<label depth="2" size="186,60" name="lblToggleGeneratorCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
-						<button style="ulmButton_2x4" height="40"/>
+						<button style="ulmButton_2x4" height="40" tooltip_key="xuiChargeFromFuelTooltip" />
 					</rect>
-					<rect name="btnToggleBatteryCharge" height="40" width="114" tooltip_key="xuiChargeFromBatteryTooltip">
+					<rect name="btnToggleBatteryCharge" height="40" width="114">
 						<rect pos="-118,0">
 							<sprite size="60,36" style="backgroundStrong" atlas="UIBackground" sprite="Subquake_btn_banner_left" pivot="center"/>
 							<sprite depth="2" size="24,24" name="sprToggleBatteryCharge" sprite="ui_game_symbol_battery" pivot="center" foregroundlayer="true"/>
 						</rect>
 						<label depth="2" size="186,40" name="lblToggleBatteryCharge" font_size="20" text_key="xuiTurnOn" pivot="center" justify="center" upper_case="true" style="outline"/>
-						<button style="ulmButton_2x4" height="40"/>
+						<button style="ulmButton_2x4" height="40" tooltip_key="xuiChargeFromBatteryTooltip" />
 					</rect>
 				</grid>
 
