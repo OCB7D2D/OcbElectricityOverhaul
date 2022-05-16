@@ -39,4 +39,7 @@ xuiChargingTooltip,UI,Menu,,Grid-wide charging supply/demand (batteries).
 xuiOutputTooltip,UI,Menu,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
 xuiPowerTooltip,UI,Menu,,Yellow is for consumers and green for charging.
 xuiGridFlowTooltip,UI,Menu,,Overall power flowing through this node.
-xuiChargeFrom,UI,Menu,,Charging
+xuiChargeFrom,UI,Menu,,Charging from
+xuiChargeFromSolarTooltip,UI,Menu,,Allow charging from solar energy
+xuiChargeFromFuelTooltip,UI,Menu,,Allow charging from fueled generators
+xuiChargeFromBatteryTooltip,UI,Menu,,Allow charging from other battery banks
