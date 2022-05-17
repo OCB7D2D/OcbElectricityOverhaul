@@ -855,7 +855,7 @@ public class OcbElectricityOverhaul : IModApi
             List<MethodBase> targets = new List<MethodBase>();
             foreach (string klass in PowerSourceStatClasses)
             {
-                if (AccessTools.TypeByName(klass) is System.Type vanilla)
+                if (ReflectionUtils.TypeByName(klass) is Type vanilla)
                 {
                     foreach (MethodInfo method in vanilla.GetMethods())
                     {

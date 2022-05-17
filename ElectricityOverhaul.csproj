@@ -91,6 +91,7 @@
     <Compile Include="Harmony\ocbElectricityOverhaul.cs" />
     <Compile Include="Harmony\ocbElectricityOverhaulCmd.cs" />
     <Compile Include="Harmony\ocbElectricityUtils.cs" />
+    <Compile Include="Harmony\ReflectionUtils.cs" />
     <Compile Include="Harmony\XUiC_OcbPowerSourceStats.cs" />
     <Compile Include="Harmony\XUiC_OcbPowerSourceWindowGroup.cs" />
     <Compile Include="Harmony\AssemblyInfo.cs" />

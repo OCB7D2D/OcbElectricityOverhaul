@@ -44,7 +44,7 @@ namespace OCB
         // Note: make sure we don't put a warning to the console as `AccessTools.Field` would 
         static readonly FieldInfo PowerOutputEffect = AccessTools
             .TypeByName(nameof(PassiveEffects))?.GetFields()?
-                .First(field => field.Name == "PowerOutput");
+            .FirstOrDefault(field => field.Name == "PowerOutput");
 
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(ItemValue item)
