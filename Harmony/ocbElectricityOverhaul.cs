@@ -183,6 +183,18 @@ public class OcbElectricityOverhaul : IModApi
         }
     }
 
+    [HarmonyPatch(typeof(PowerSource))]
+    [HarmonyPatch("RefreshPowerStats")]
+    public class PowerSource_RefreshPowerStats
+    {
+        static void Postfix(PowerSolarPanel __instance)
+        {
+            Block block = Block.list[__instance.BlockID];
+            if (!block.Properties.Values.ContainsKey("MaxPower")) return;
+            __instance.MaxPower = ushort.Parse(block.Properties.Values["MaxPower"]);
+        }
+    }
+
     // Main overload to allow wire connections between power sources
     [HarmonyPatch(typeof(TileEntityPowerSource))]
     [HarmonyPatch("write")]

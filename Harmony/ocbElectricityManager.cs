@@ -327,6 +327,8 @@ public class OcbPowerManager : PowerManager
         // Limit MaxOutput according to MaxPower
         source.MaxOutput = (ushort)Mathf.Min(
             source.MaxOutput, source.MaxPower);
+        source.MaxProduction = (ushort)Mathf.Min(
+            source.MaxProduction, source.MaxOutput);
 
         if (source.IsOn)
         {
@@ -399,6 +401,8 @@ public class OcbPowerManager : PowerManager
         // Limit MaxOutput according to MaxPower
         source.MaxOutput = (ushort)Mathf.Min(
             source.MaxOutput, source.MaxPower);
+        source.MaxProduction = (ushort)Mathf.Min(
+            source.MaxProduction, source.MaxOutput);
 
         // Code directly copied from decompiled dll
         if (source.ShouldAutoTurnOff())
