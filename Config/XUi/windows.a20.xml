@@ -93,7 +93,7 @@
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_electric_solar" color="[black_half_alpha]"/>
 					<sprite depth="2" name="sprToggleSolarCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_electric_solar"/>
-					<label depth="2" name="lblToggleSolarCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+					<label depth="2" name="lblToggleSolarCharge" pos="10,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
 				</rect>
 			</rect>
 			<rect name="btnToggleGeneratorCharge" depth="3" pos="0, -80" height="36" >
@@ -106,7 +106,7 @@
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_electric_generator" color="[black_half_alpha]"/>
 					<sprite depth="2" name="sprToggleGeneratorCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_electric_generator"/>
-					<label depth="2" name="lblToggleGeneratorCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+					<label depth="2" name="lblToggleGeneratorCharge" pos="10,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
 				</rect>
 			</rect>
 			<rect name="btnToggleBatteryCharge" depth="3" pos="0, -114" height="36" >
@@ -119,7 +119,7 @@
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="44,-1" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
 					<sprite depth="2" name="windowIcon" width="24" height="24" pos="46,-1" sprite="ui_game_symbol_battery" color="[black_half_alpha]"/>
 					<sprite depth="2" name="sprToggleBatteryCharge" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_battery"/>
-					<label depth="2" name="lblToggleBatteryCharge" pos="0,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
+					<label depth="2" name="lblToggleBatteryCharge" pos="10,-4" justify="center" text="TURN ON" text_key="xuiTurnOn" font_size="24" />
 				</rect>
 			</rect>
 

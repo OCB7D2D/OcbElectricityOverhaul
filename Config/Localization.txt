@@ -1,47 +1,47 @@
-Key,File,Type,UsedInMainMenu,english
-goLoadVanillaMap,UI,Menu,x,Load vanilla map
-goLoadVanillaMapDesc,UI,Menu,x,"WARNING: Load existing map without Power Overhaul Mod, as we normally persist a few additional options. When loading a vanilla map, we initialize those fields with default values. Only enable this option once or you may destroy your save files. Make a backup! You've been warned!"
-goPreferFuelOverBattery,UI,Menu,x,Prefer fuel over batteries
-goPreferFuelOverBatteryDesc,UI,Menu,x,"If enabled, power will first be drawn from generators before battery banks. Otherwise closer one will be used first."
-goBatteryPowerPerUse,UI,Menu,x,Battery Watts per Use
-goBatteryPowerPerUseDesc,UI,Menu,x,Conversion factor for battery uses into watts,
-goMinPowerForCharging,UI,Menu,x,Min power for charge
-goMinPowerForChargingDesc,UI,Menu,x,Only charge batteries if excess energy is higher.
-goFuelPowerPerUse,UI,Menu,x,Fuel Watts per Use
-goFuelPowerPerUseDesc,UI,Menu,x,Conversion factor for fuel uses into watts,
-goPowerPerPanel,UI,Menu,x,Base Watts per solar cell
-goPowerPerPanelDesc,UI,Menu,x,Amount of power a regular single solar cell generates. Depends on (optional) tier quality and on `OutputPerStack` config.
-goPowerPerEngine,UI,Menu,x,Base Watts per diesel engine
-goPowerPerEngineDesc,UI,Menu,x,Amount of power a regular single diesel engine generates. Depends on (optional) tier quality and on `OutputPerStack` config.
-goPowerPerBattery,UI,Menu,x,Base Watts per battery
-goPowerPerBatteryDesc,UI,Menu,x,Amount of power a regular single battery generates. Depends on (optional) tier quality and on `OutputPerStack` config.
-goBatteryChargePercentFull,UI,Menu,x,Charge factor when full
-goBatteryChargePercentFullDesc,UI,Menu,x,Nearly full batteries charge slower than nearly empty ones.
-goBatteryChargePercentEmpty,UI,Menu,x,Charge factor when empty
-goBatteryChargePercentEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.
-goPowerFormat,UI,Menu,x,{0}w
-goPowerFormats,UI,Menu,x,{0}w
-goPercentFormat,UI,Menu,x,{0}%
-goPercentFormats,UI,Menu,x,{0}%
-xuiGameSettingsPower,UI,Menu,,Power
-xuiCharge,UI,Menu,,Charge
-xuiSupplied,UI,Menu,,Supplied
-xuiCharged,UI,Menu,,Charged
-xuiLightLevel,UI,Menu,,Light
-xuiWindLevel,UI,Menu,,Wind
-xuiFlow,UI,Menu,,Flow
-xuiOutput,UI,Menu,,Output
-xuiChargeTooltip,UI,Menu,,Charging power going into this battery bank.
-xuiLightLevelTooltip,UI,Menu,,Current light level.
-xuiWindLevelTooltip,UI,Menu,,Current wind level.
-xuiConsumerTooltip,UI,Menu,,Grid-wide supply/demand of consumer items.
-xuiChargingTooltip,UI,Menu,,Grid-wide charging supply/demand (batteries).
-xuiOutputTooltip,UI,Menu,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.
-xuiPowerTooltip,UI,Menu,,Yellow is for consumers and green for charging.
-xuiGridFlowTooltip,UI,Menu,,Overall power flowing through this node.
-xuiChargeFrom,UI,Menu,,Charging from
-xuiChargeFromSolarTooltip,UI,Menu,,Allow charging from solar energy
-xuiChargeFromFuelTooltip,UI,Menu,,Allow charging from fueled generators
-xuiChargeFromBatteryTooltip,UI,Menu,,Allow charging from other battery banks
-xuiGridStatsTitle,UI,Menu,,Grid stats
-windmill,UI,Menu,,Windmill
+Key,File,Type,UsedInMainMenu,english,german
+goLoadVanillaMap,UI,Menu,x,Load vanilla map,Lade original Map
+goLoadVanillaMapDesc,UI,Menu,x,"WARNING: Load existing map without Power Overhaul Mod, as we normally persist a few additional options. When loading a vanilla map, we initialize those fields with default values. Only enable this option once or you may destroy your save files. Make a backup! You've been warned!","WARNUNG: Lädt existierende Map welche noch nie mit dem Elektrizitäts Overhaul Mod lief, da der Mod einige zusätzliche Felder in den Speicherstand schreibt. Wenn die Option an ist, werden diese Felder mit dem standard Wert initialisiert. Dieser Toggle darf für jede Map nur einmalig angeschaltet werden! Mach ein Backup, du wurdest gewarnt!"
+goPreferFuelOverBattery,UI,Menu,x,Prefer fuel,Bevorzuge Treibstoff
+goPreferFuelOverBatteryDesc,UI,Menu,x,"If enabled, power will first be drawn from generators before battery banks. Otherwise closer one will be used first. When off the closest source will be used.","Wenn aktiviert, wird Strom zuerst von Treibstoff-Generatoren bezogen and erst dann von Batterien. Wenn aus wird die am nächsten liegende Stromquelle benutzt."
+goBatteryPowerPerUse,UI,Menu,x,Battery Watts per Use,Batterie-Strom pro Nutzung
+goBatteryPowerPerUseDesc,UI,Menu,x,Conversion factor for battery uses into watts,Konvertierungs-Faktor für Batterie-Benutzung zu Strom.
+goMinPowerForCharging,UI,Menu,x,Min power for charge,Minimal-Bedarf zum Laden
+goMinPowerForChargingDesc,UI,Menu,x,Only charge batteries if excess energy is higher than minmal requirement.,Lädt Batterien nur wenn der verfügbare Strom den minimalen Bedarf übersteigt.
+goFuelPowerPerUse,UI,Menu,x,Fuel Watts per Use,Treibstoff-Strom pro Nutzung
+goFuelPowerPerUseDesc,UI,Menu,x,Conversion factor for fuel uses into watts,Konvertierungs-Faktor für Treibstoff-Benutzung zu Strom.
+goPowerPerPanel,UI,Menu,x,Base Watts per solar cell,Basis Watt für Solarzellen
+goPowerPerPanelDesc,UI,Menu,x,Amount of power a regular single solar cell generates. Final value depends on (optional) tier quality and on `OutputPerStack` config.,Basis Strom-Wert für eine einzelene reguläre Solarzelle. Der finale Wert hängt (optional) auch von der Qualität und von der `OutputPerStack` Konfiguration ab.
+goPowerPerEngine,UI,Menu,x,Base Watts per diesel engine,Basis Watt für Motoren
+goPowerPerEngineDesc,UI,Menu,x,Amount of power a regular single diesel engine generates. Final value depends on (optional) tier quality and on `OutputPerStack` config.,Basis Strom-Wert für einen einzelenen regulären Motor. Der finale Wert hängt (optional) auch von der Qualität und von der `OutputPerStack` Konfiguration ab.
+goPowerPerBattery,UI,Menu,x,Base Watts per battery,Basis Watt für Batterien
+goPowerPerBatteryDesc,UI,Menu,x,Amount of power a regular single battery generates. Final value depends on (optional) tier quality and on `OutputPerStack` config.,Basis Strom-Wert für eine einzelene reguläre Battrie. Der finale Wert hängt (optional) auch von der Qualität und von der `OutputPerStack` Konfiguration ab.
+goBatteryChargePercentFull,UI,Menu,x,Charge factor when full,Lade-Faktor wenn Voll
+goBatteryChargePercentFullDesc,UI,Menu,x,Nearly full batteries charge slower than nearly empty ones.,Fast volle Batterien laden langsamer als fast leere.
+goBatteryChargePercentEmpty,UI,Menu,x,Charge factor when empty,Lade-Faktor wenn Leer
+goBatteryChargePercentEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.,Fast leere Batterien laden schneller als fast volle.
+goPowerFormat,UI,Menu,x,{0}w,{0}w
+goPowerFormats,UI,Menu,x,{0}w,{0}w
+goPercentFormat,UI,Menu,x,{0}%,{0}%
+goPercentFormats,UI,Menu,x,{0}%,{0}%
+xuiGameSettingsPower,UI,Menu,,Power,Strom
+xuiCharge,UI,Menu,,Charge,Laden
+xuiSupplied,UI,Menu,,Consumer,Verbrauch
+xuiCharged,UI,Menu,,Charged,Geladen
+xuiLightLevel,UI,Menu,,Light,Licht
+xuiWindLevel,UI,Menu,,Wind,Wind
+xuiFlow,UI,Menu,,Flow,Netz
+xuiOutput,UI,Menu,,Output,Produktion
+xuiChargeTooltip,UI,Menu,,Charging power going into this battery bank.,Lade-Strom welcher in die Batterien fliesst.
+xuiLightLevelTooltip,UI,Menu,,Current light level. Will be highest at noon and zero at night.,Aktuelle einfallendes Licht. Maximale produktion am Tag und keine in der Nacht.
+xuiWindLevelTooltip,UI,Menu,,Current wind level. Will vary during the day and night.,Aktueller gemessener Wind. Variiert über den Tag und über die Nacht.
+xuiConsumerTooltip,UI,Menu,,Grid-wide supply/demand of consumer items.,Angebot/Bedarf Netzweit für Verbaucher.
+xuiChargingTooltip,UI,Menu,,Grid-wide charging supply/demand (batteries).,Angebot/Bedarf Netzweit für Batterien.
+xuiOutputTooltip,UI,Menu,,Power production is impaired with empty batteries or when solar panels don't get any light during the night.,Stromproduktion ist vermindert wenn einzelne Batterien leer sind oder Solarzellen nicht genug Licht bekommen.
+xuiPowerTooltip,UI,Menu,,Yellow is for consumers and green for charging.,Gelb steht für Verbraucher und grün für Laden.
+xuiGridFlowTooltip,UI,Menu,,Overall power flowing through this node.,Gesammter lokaler Stromdurchfluss.
+xuiChargeFrom,UI,Menu,,Charging from,Lade von
+xuiChargeFromSolarTooltip,UI,Menu,,Allow charging from renewable energy,Lade von erneuerbaren Energien
+xuiChargeFromFuelTooltip,UI,Menu,,Allow charging from fueled generators,Lade von Treibstoff-Generatoren
+xuiChargeFromBatteryTooltip,UI,Menu,,Allow charging from other battery banks,Lade von anderen Batterien
+xuiGridStatsTitle,UI,Menu,,Grid stats,Netzstatus
+windmill,UI,Menu,,Windmill,Windmühle
