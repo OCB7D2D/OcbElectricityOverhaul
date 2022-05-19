@@ -258,9 +258,11 @@ basic information about all grids (most notably the average update time):
   Rename this mod to e.g `ZElectricityOverhaul` to load after UL
 - Charging demand for batteries changes according to fill state  
   Nearly empty batteries charge faster than nearly full ones
+- Items in solar banks and windmills degrade very slowly  
+  Can be repaired quite easily (maintenace needed ~10d)
 - Replaces `BatteryChargeDemand` for min/max smoothstep configs
-- Items in solar banks and windmills degrade very slowly
 - Adds new game option to prefer fuel over batteries
+- Adds German translations
 
 ### Version 0.9.6
 

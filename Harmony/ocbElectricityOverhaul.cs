@@ -241,7 +241,7 @@ public class OcbElectricityOverhaul : IModApi
                     }
                     else
                     {
-                        _bw.Write(false);
+                        _bw.Write((ushort)0);
                     }
                     break;
             }
