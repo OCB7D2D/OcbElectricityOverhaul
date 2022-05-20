@@ -266,8 +266,8 @@ public class OcbPowerManager : PowerManager
                 .OutputPerStack = (ushort)PowerPerPanel;
             if (Time.time > solar.wearUpdateTime)
             {
-                solar.wearUpdateTime = Time.time
-                    + Random.Range(30f, 45f);
+                solar.wearUpdateTime = Time.time + Random
+                    .Range(WearMinInterval, WearMaxInterval);
                 foreach (var slot in source.Stacks)
                 {
                     if (slot.IsEmpty()) continue;
@@ -278,10 +278,10 @@ public class OcbPowerManager : PowerManager
                         if (slot.itemValue.UseTimes < slot.itemValue.MaxUseTimes)
                         {
                             // Add more randomness to it
-                            if (Random.Range(0f, 1f) < 0.4)
+                            if (Random.Range(0f, 1f) < WearThreshold)
                             {
                                 // Slightly damage the item
-                                slot.itemValue.UseTimes += 1;
+                                slot.itemValue.UseTimes += WearFactor;
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {
@@ -289,6 +289,7 @@ public class OcbPowerManager : PowerManager
                                         source.OutputPerStack / PowerPerPanel *
                                         GetSlotPowerByQuality(slot.itemValue,
                                             PowerPerPanel, PowerPerPanelDefault));
+                                    break; // Only decrement one per tick
                                 }
                             }
                         }

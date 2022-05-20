@@ -62,6 +62,10 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     Log.Out("MinPowerForCharging: {0}", ElectricityUtils.MinPowerForCharging);
                     Log.Out("BatteryChargePercentFull: {0}%", ElectricityUtils.BatteryChargePercentFull);
                     Log.Out("BatteryChargePercentEmpty: {0}%", ElectricityUtils.BatteryChargePercentEmpty);
+                    Log.Out("WearThreshold: {0}%", ElectricityUtils.WearThreshold * 100f);
+                    Log.Out("WearFactor: {0}", ElectricityUtils.WearFactor);
+                    Log.Out("WearMinInterval: {0}", ElectricityUtils.WearMinInterval);
+                    Log.Out("WearMaxInterval: {0}", ElectricityUtils.WearMaxInterval);
                     break;
                 case "stats":
                     Log.Out("Reporting statistics of {0} grids", pm.Grids.Count);
@@ -118,6 +122,22 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                 case "BatteryChargePercentEmpty":
                     ElectricityUtils.BatteryChargePercentEmpty = int.Parse(_params[1]);
                     Log.Out("BatteryChargePercentEmpty: {0}%", ElectricityUtils.BatteryChargePercentEmpty);
+                    break;
+                case "WearThreshold":
+                    ElectricityUtils.WearThreshold = float.Parse(_params[1]);
+                    Log.Out("WearThreshold: {0}%", ElectricityUtils.WearThreshold);
+                    break;
+                case "WearFactor":
+                    ElectricityUtils.WearFactor = float.Parse(_params[1]);
+                    Log.Out("WearFactor: {0}%", ElectricityUtils.WearFactor);
+                    break;
+                case "WearMinInterval":
+                    ElectricityUtils.WearMinInterval = float.Parse(_params[1]);
+                    Log.Out("WearMinInterval: {0}%", ElectricityUtils.WearMinInterval);
+                    break;
+                case "WearMaxInterval":
+                    ElectricityUtils.WearMaxInterval = float.Parse(_params[1]);
+                    Log.Out("WearMaxInterval: {0}%", ElectricityUtils.WearMaxInterval);
                     break;
                 default:
                     Log.Warning("Unknown command " + _params[0]);

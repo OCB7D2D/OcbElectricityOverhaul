@@ -36,6 +36,12 @@ namespace OCB
         public static int BatteryChargePercentFull = BatteryChargePercentFullDefault;
         public static int BatteryChargePercentEmpty = BatteryChargePercentEmptyDefault;
 
+        // Property not yet configurable via regular game options (or xml config)
+        public static float WearMinInterval = 10f;
+        public static float WearMaxInterval = 35f;
+        public static float WearThreshold = 0.4f;
+        public static float WearFactor = 1f;
+
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
         public static int MinPowerForCharging = MinPowerForChargingDefault;
@@ -119,6 +125,23 @@ namespace OCB
                 }
             }
             return isActive;
+        }
+
+        static public float GetWorstStackItemUseState(PowerSource source)
+        {
+            float state = 1f;
+            for (int index = 0; index < source.Stacks.Length; ++index)
+            {
+                // Skip over empty battery slots
+                if (source.Stacks[index].IsEmpty()) continue;
+                // Avoid potential division by zero
+                if (source.Stacks[index].itemValue.MaxUseTimes == 0) continue;
+                // Calculate usage state (0 => not used, 1 => fully used)
+                float used = source.Stacks[index].itemValue.UseTimes
+                    / source.Stacks[index].itemValue.MaxUseTimes;
+                state = Mathf.Max(state, used);
+            }
+            return state;
         }
 
         // Fill `CurrentPower` of BatteryBank by draining batteries.
