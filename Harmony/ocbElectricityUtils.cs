@@ -37,10 +37,10 @@ namespace OCB
         public static int BatteryChargePercentEmpty = BatteryChargePercentEmptyDefault;
 
         // Property not yet configurable via regular game options (or xml config)
-        public static float WearMinInterval = 10f;
-        public static float WearMaxInterval = 35f;
-        public static float WearThreshold = 0.4f;
-        public static float WearFactor = 1f;
+        public static float WearMinInterval = 5f;
+        public static float WearMaxInterval = 20f;
+        public static float WearThreshold = 0.15f;
+        public static float WearFactor = 3f;
 
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong
@@ -129,19 +129,25 @@ namespace OCB
 
         static public float GetWorstStackItemUseState(PowerSource source)
         {
-            float state = 1f;
+            float state = 0f; bool hasLeft = false; bool isEmpty = true;
             for (int index = 0; index < source.Stacks.Length; ++index)
             {
                 // Skip over empty battery slots
                 if (source.Stacks[index].IsEmpty()) continue;
-                // Avoid potential division by zero
+                // Check if item has quality, otherwise it always "just" works
+                if (!source.Stacks[index].itemValue.HasQuality) return 1f;
+                // Avoid potential division by zero (play safe) 
                 if (source.Stacks[index].itemValue.MaxUseTimes == 0) continue;
                 // Calculate usage state (0 => not used, 1 => fully used)
                 float used = source.Stacks[index].itemValue.UseTimes
                     / source.Stacks[index].itemValue.MaxUseTimes;
                 state = Mathf.Max(state, used);
+                if (used < 1f) hasLeft = true;
+                isEmpty = false;
             }
-            return state;
+            if (isEmpty) return -2f;
+            if (!hasLeft) return -1f;
+            return 1f - state;
         }
 
         // Fill `CurrentPower` of BatteryBank by draining batteries.

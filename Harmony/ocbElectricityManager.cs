@@ -281,7 +281,7 @@ public class OcbPowerManager : PowerManager
                             if (Random.Range(0f, 1f) < WearThreshold)
                             {
                                 // Slightly damage the item
-                                slot.itemValue.UseTimes += WearFactor;
+                                slot.itemValue.UseTimes += Random.Range(1f, WearFactor);
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {

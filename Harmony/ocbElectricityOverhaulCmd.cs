@@ -125,19 +125,19 @@ class OcbElectricityOverhaulCmd : ConsoleCmdAbstract
                     break;
                 case "WearThreshold":
                     ElectricityUtils.WearThreshold = float.Parse(_params[1]);
-                    Log.Out("WearThreshold: {0}%", ElectricityUtils.WearThreshold);
+                    Log.Out("WearThreshold: {0}%", ElectricityUtils.WearThreshold * 100);
                     break;
                 case "WearFactor":
                     ElectricityUtils.WearFactor = float.Parse(_params[1]);
-                    Log.Out("WearFactor: {0}%", ElectricityUtils.WearFactor);
+                    Log.Out("WearFactor: {0}", ElectricityUtils.WearFactor);
                     break;
                 case "WearMinInterval":
                     ElectricityUtils.WearMinInterval = float.Parse(_params[1]);
-                    Log.Out("WearMinInterval: {0}%", ElectricityUtils.WearMinInterval);
+                    Log.Out("WearMinInterval: {0}", ElectricityUtils.WearMinInterval);
                     break;
                 case "WearMaxInterval":
                     ElectricityUtils.WearMaxInterval = float.Parse(_params[1]);
-                    Log.Out("WearMaxInterval: {0}%", ElectricityUtils.WearMaxInterval);
+                    Log.Out("WearMaxInterval: {0}", ElectricityUtils.WearMaxInterval);
                     break;
                 default:
                     Log.Warning("Unknown command " + _params[0]);

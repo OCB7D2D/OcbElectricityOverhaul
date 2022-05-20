@@ -28,6 +28,9 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
     <br clear="left"/>
 </p>
 
+For extended power source info on hovering to work for multiplayer, you also
+need [OcbRemoteDescription][4] to be installed on the server and each client.
+
 ## Additional mods (pick the ones you like)
 
 These mods are all additional mods that have been tested with this mod.
@@ -262,6 +265,8 @@ basic information about all grids (most notably the average update time):
   Can be repaired quite easily (maintenace needed ~10d)
 - Replaces `BatteryChargeDemand` for min/max smoothstep configs
 - Adds new game option to prefer fuel over batteries
+- Adds extended info when hovering over power sources  
+  Needs [OcbRemoteDescription][4] to work in multiplayer
 - Adds German translations
 
 ### Version 0.9.6
@@ -339,3 +344,4 @@ I've developed and tested this Mod against version a19.6b8.
 [1]: https://github.com/HAL-NINE-THOUSAND/DMT
 [2]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml
 [3]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml/badge.svg
+[4]: https://github.com/OCB7D2D/OcbRemoteDescription

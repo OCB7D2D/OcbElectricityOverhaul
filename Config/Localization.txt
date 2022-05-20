@@ -21,8 +21,8 @@ goBatteryChargePercentEmpty,UI,Menu,x,Charge factor when empty,Lade-Faktor wenn 
 goBatteryChargePercentEmptyDesc,UI,Menu,x,Nearly empty batteries charge faster than nearly full ones.,Fast leere Batterien laden schneller als fast volle.
 goPowerFormat,UI,Menu,x,{0}w,{0}w
 goPowerFormats,UI,Menu,x,{0}w,{0}w
-goPercentFormat,UI,Menu,x,{0}%,{0}%
-goPercentFormats,UI,Menu,x,{0}%,{0}%
+goPercentFormat,UI,Menu,x,{0:0}%,{0:0}%
+goPercentFormats,UI,Menu,x,{0:0}%,{0:0}%
 xuiGameSettingsPower,UI,Menu,,Power,Strom
 xuiCharge,UI,Menu,,Charge,Laden
 xuiSupplied,UI,Menu,,Consumer,Verbrauch
@@ -45,3 +45,22 @@ xuiChargeFromFuelTooltip,UI,Menu,,Allow charging from fueled generators,Lade von
 xuiChargeFromBatteryTooltip,UI,Menu,,Allow charging from other battery banks,Lade von anderen Batterien
 xuiGridStatsTitle,UI,Menu,,Grid stats,Netzstatus
 windmill,UI,Menu,,Windmill,Windmühle
+xuiPowerGeneratorHover,UI,Menu,,Generating {0}w/{1}w. {2}.,Produziert {0}w/{1}w. {2}.
+xuiPowerSolarHover,UI,Menu,,Generating {0}w/{1}w ({2:0}% light). {3}.,Produziert {0}w/{1}w ({2:0}% Licht). {3}.
+xuiPowerWindHover,UI,Menu,,Generating {0}w/{1}w ({2:0}% wind). {3}.,Produziert {0}w/{1}w ({2:0}% Wind). {3}.
+xuiPowerBatteryHover,UI,Menu,,Generating {0}w/{1}w. Charging {2}w/{3}w. {4}.,Produziert {0}w/{1}w. Lädt {2}w/{3}w. {4}.
+xuiPowerStackConditionBroken,UI,Menu,,Fully broken,Komplett kaputt
+xuiPowerStackConditionBad,UI,Menu,,Repair needed immediately,Reparaturbedürftig
+xuiPowerStackConditionPoor,UI,Menu,,Repair needed urgently,Schlechter Zustand
+xuiPowerStackConditionMedium,UI,Menu,,Repair needed soon,Zustand einigermassen
+xuiPowerStackConditionGood,UI,Menu,,Good condition,Guter Zustand
+xuiPowerStackConditionPerfect,UI,Menu,,Perfect condition,Perfekter Zustand
+xuiPowerStackConditionEmpty,UI,Menu,,No engine,Keine Motoren
+xuiBatteryStackConditionBroken,UI,Menu,,Fully discharged,Vollständig entladen
+xuiBatteryStackConditionBad,UI,Menu,,Charge state nearly empty,Ladezustand fast leer
+xuiBatteryStackConditionPoor,UI,Menu,,Charge state bad,Ladezustand schlecht
+xuiBatteryStackConditionMedium,UI,Menu,,Charge state ok,Ladezustand OK
+xuiBatteryStackConditionGood,UI,Menu,,Charge state good,Ladezustand Gut
+xuiBatteryStackConditionPerfect,UI,Menu,,Charge state full,Ladezustand Voll
+xuiBatteryStackConditionEmpty,UI,Menu,,No batteries,Keine Batterien
+xuiGeneratorFuelCondition,UI,Menu,,Gasoline {0:0}%,Treibstoff {0:0}%
