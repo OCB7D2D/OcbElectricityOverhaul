@@ -255,6 +255,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.0.1
+
+- Fix battery bank hover text if batteries have no qualities (DF)
+
 ### Version 1.0.0
 
 - Introducing compatibility for Undead Legacy (experimental)  

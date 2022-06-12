@@ -135,7 +135,7 @@ namespace OCB
                 // Skip over empty battery slots
                 if (source.Stacks[index].IsEmpty()) continue;
                 // Check if item has quality, otherwise it always "just" works
-                if (!source.Stacks[index].itemValue.HasQuality) return 1f;
+                // if (!source.Stacks[index].itemValue.HasQuality) return 1f;
                 // Avoid potential division by zero (play safe) 
                 if (source.Stacks[index].itemValue.MaxUseTimes == 0) continue;
                 // Calculate usage state (0 => not used, 1 => fully used)
