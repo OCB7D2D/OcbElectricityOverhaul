@@ -106,15 +106,19 @@ a lot of power sources. Please open an issue here if you run into problems.
 
 ### Server config xml
 
+You only need to add these if you want to change the defaults!
+
 ```xml
 <property name="LoadVanillaMap" value="false" />
 <property name="BatteryPowerPerUse" value="25" />
 <property name="MinPowerForCharging" value="20" />
 <property name="FuelPowerPerUse" value="750" />
 <property name="PowerPerPanel" value="30" />
-<property name="PowerPerEngine" value="50" />
+<property name="PowerPerEngine" value="100" />
 <property name="PowerPerBattery" value="50" />
-<property name="ChargePerBattery" value="35" />
+<property name="PreferFuelOverBattery" value="false" />
+<property name="BatteryChargePercentFull" value="60" />
+<property name="BatteryChargePercentEmpty" value="130" />
 ```
 
 ## Vanilla Map Loading
