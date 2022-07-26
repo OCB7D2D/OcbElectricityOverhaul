@@ -261,7 +261,9 @@ basic information about all grids (most notably the average update time):
 
 ### Version 1.0.1
 
+- Add automated translations for 27 languages via DeepL
 - Fix battery bank hover text if batteries have no qualities (DF)
+- Fix localization issue (typo in translation key)
 
 ### Version 1.0.0
 
