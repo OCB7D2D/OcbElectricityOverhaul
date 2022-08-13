@@ -15,6 +15,7 @@
 *.sass text eol=lf
 *.css text eol=lf
 *.cs text eol=lf
+*.sh text eol=lf
 *.t text eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
