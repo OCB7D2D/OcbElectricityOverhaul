@@ -259,6 +259,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.0.2
+
+- Improving repairability in UL (only in maintenance station)
+
 ### Version 1.0.1
 
 - Add automated translations for 27 languages via DeepL
