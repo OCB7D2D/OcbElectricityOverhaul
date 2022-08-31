@@ -263,6 +263,7 @@ basic information about all grids (most notably the average update time):
 
 - Improving repairability in UL (only in maintenance station)
 - Avoid "no engine" state if wind/solar items have no quality
+- Add SMX compatibility patch for power source UIs
 
 ### Version 1.0.1
 
@@ -277,7 +278,7 @@ basic information about all grids (most notably the average update time):
 - Charging demand for batteries changes according to fill state  
   Nearly empty batteries charge faster than nearly full ones
 - Items in solar banks and windmills degrade very slowly  
-  Can be repaired quite easily (maintenace needed ~10d)
+  Can be repaired quite easily (maintenance needed ~10d)
 - Replaces `BatteryChargeDemand` for min/max smoothstep configs
 - Adds new game option to prefer fuel over batteries
 - Adds extended info when hovering over power sources  

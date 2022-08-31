@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<xml>
+	<ModInfo>
+		<Name value="ZMXuiCPOCBEO" />
+		<Description value="An extension modlet module for SMXhud that enables compatibility with Electricity Overhaul" />
+		<Author value="ocbMaurice" />
+		<Version value="1.0.2" />
+		<Website value="https://github.com/OCB7D2D/ElectricityOverhaul" />
+	</ModInfo>
+</xml>

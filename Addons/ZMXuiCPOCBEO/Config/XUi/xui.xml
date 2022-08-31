@@ -1,0 +1,7 @@
+<configs patcher-version="1">
+
+	<!-- For this to work we need Electricity Overhaul Mod available -->
+	<!-- By directly embedding the code we run into the same issue -->
+	<include path="../../../ElectricityOverhaul/Config/XUi/xui.a20.xml"/>
+
+</configs>

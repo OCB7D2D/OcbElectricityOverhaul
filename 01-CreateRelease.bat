@@ -1,6 +1,14 @@
 @echo off
 
-SET NAME=ElectricityOverhaul
+SET VERSION=snapshot
+
+if not "%1"=="" (
+  SET VERSION=%1
+)
+
+goto MAIN
+
+:BUILD
 
 if not exist build\ (
   mkdir build
@@ -13,28 +21,21 @@ if exist build\%NAME%\ (
 
 mkdir build\%NAME%
 
-SET VERSION=snapshot
-
-if not "%1"=="" (
-  SET VERSION=%1
-)
-
 echo create %VERSION%
 
-xcopy *.xml build\%NAME%\
-xcopy *.md build\%NAME%\
-xcopy *.dll build\%NAME%\
-xcopy Config build\%NAME%\Config\ /S
-xcopy Resources build\%NAME%\Resources\ /S
-xcopy UIAtlases build\%NAME%\UIAtlases\ /S
-xcopy BepInEx build\%NAME%\BepInEx\ /S
+xcopy %FOLDER%\*.xml build\%NAME%\
+xcopy %FOLDER%\*.md build\%NAME%\
+xcopy %FOLDER%\*.dll build\%NAME%\
+xcopy %FOLDER%\Config build\%NAME%\Config\ /S
+xcopy %FOLDER%\Resources build\%NAME%\Resources\ /S
+xcopy %FOLDER%\UIAtlases build\%NAME%\UIAtlases\ /S
+xcopy %FOLDER%\BepInEx build\%NAME%\BepInEx\ /S
 
-xcopy patchers\*.dll build\%NAME%\patchers\
-xcopy 98-install-bepinex.sh build\%NAME%\
-xcopy 98-install-bepinex.bat build\%NAME%\
-xcopy 99-uninstall-bepinex.sh build\%NAME%\
-xcopy 99-uninstall-bepinex.bat build\%NAME%\
-
+xcopy %FOLDER%\patchers\*.dll build\%NAME%\patchers\
+xcopy %FOLDER%\98-install-bepinex.sh build\%NAME%\
+xcopy %FOLDER%\98-install-bepinex.bat build\%NAME%\
+xcopy %FOLDER%\99-uninstall-bepinex.sh build\%NAME%\
+xcopy %FOLDER%\99-uninstall-bepinex.bat build\%NAME%\
 
 cd build
 echo Packaging %NAME%-%VERSION%.zip
@@ -44,3 +45,14 @@ cd ..
 SET RV=%ERRORLEVEL%
 if "%CI%"=="" pause
 exit /B %RV%
+
+:MAIN
+
+SET FOLDER=.
+SET NAME=ElectricityOverhaul
+call :BUILD 
+
+SET FOLDER=Addons\ZMXuiCPOCBEO
+SET NAME=ZMXuiCPOCBEO
+call :BUILD 
+
