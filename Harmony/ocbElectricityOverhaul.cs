@@ -1341,22 +1341,20 @@ public class OcbElectricityOverhaul : IModApi
                 {
                     if (pw is PowerSolarPanel solar)
                     {
+                        var te = solar?.TileEntity as TileEntityPowerSource;
+                        bool hasQuality = (bool)te?.SlotItem?.HasQuality;
+                        var label = "xuiPowerSolarHoverNoQuality";
+                        if (hasQuality) label = "xuiPowerSolarHover";
                         if (block.Properties.GetBool("IsWindmill"))
                         {
-                            AppendLine(ref __result, string.Format(
-                                Localization.Get("xuiPowerWindHover"),
-                                solar.LastPowerUsed, solar.MaxProduction,
-                                100f * solar.LightLevel / ushort.MaxValue, 
-                                GetRepairText(solar)));
+                            label = "xuiPowerWindHoverNoQuality";
+                            if (hasQuality) label = "xuiPowerWindHover";
                         }
-                        else
-                        {
-                            AppendLine(ref __result, string.Format(
-                                Localization.Get("xuiPowerSolarHover"),
-                                solar.LastPowerUsed, solar.MaxProduction,
-                                100f * solar.LightLevel / ushort.MaxValue,
-                                GetRepairText(solar)));
-                        }
+                        AppendLine(ref __result, string.Format(
+                            Localization.Get(label),
+                            solar.LastPowerUsed, solar.MaxProduction,
+                            100f * solar.LightLevel / ushort.MaxValue,
+                            hasQuality ? GetRepairText(solar) : ""));
                     }
                     else if (pw is PowerGenerator generator)
                     {
