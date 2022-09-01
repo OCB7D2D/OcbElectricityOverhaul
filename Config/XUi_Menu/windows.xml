@@ -1,7 +1,10 @@
-<configs patcher-version="1">
+<configs patcher-version="2">
 	<modif condition="UndeadLegacy_CoreModule">
 		<include path="windows.ulm.xml"/>
 	</modif>
+	<modelsif condition="!Darkness Falls Core&lt;4.1.0">
+		<include path="windows.df.xml"/>
+	</modelsif>
 	<modelse>
 		<include path="windows.a20.xml"/>
 	</modelse>

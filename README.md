@@ -259,6 +259,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.0.3
+
+- Update for DF 4.1.0 compatibility (for Quartz)
+
 ### Version 1.0.2
 
 - Improving repairability in UL (only in maintenance station)
