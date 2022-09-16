@@ -1,4 +1,4 @@
-<configs patcher-version="1">
+<configs patcher-version="3">
 	<modif condition="UndeadLegacy_CoreModule">
 		<include path="windows.ulm.xml"/>
 	</modif>

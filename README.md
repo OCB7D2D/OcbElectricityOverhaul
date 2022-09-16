@@ -259,6 +259,11 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.0.4
+
+- Upgrade XmlPatcher to version 3 to fix 1.0.3  
+  UI Patches did not load correctly for vanilla.
+
 ### Version 1.0.3
 
 - Update for DF 4.1.0 compatibility (for Quartz)

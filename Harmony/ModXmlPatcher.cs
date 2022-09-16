@@ -93,9 +93,7 @@ static class ModXmlPatcher
                 }
                 else
                 {
-                    // This has an issue, but for now we can workaround.
-                    // Fix in next version when we have more to release.
-                    result = notpos == 0;
+                    result = false;
                 }
             }
             else if (!EvaluateCondition(name))
@@ -166,9 +164,15 @@ static class ModXmlPatcher
 
     // Basically the same function as `XmlPatcher.PatchXml`
     // Patched to support `include` and `modif` XML elements
+
+    static int count = 0;
+
     public static bool PatchXml(XmlFile xmlFile, XmlFile patchXml, XmlElement node, string patchName)
     {
         bool result = true;
+        count++;
+        ParserStack stack = new ParserStack();
+        stack.count = count;
         foreach (XmlNode child in node.ChildNodes)
         {
             if (child.NodeType == XmlNodeType.Element)
@@ -180,8 +184,17 @@ static class ModXmlPatcher
                     // Will do the magic by calling our functions again
                     IncludeAnotherDocument(xmlFile, patchXml, element, patchName);
                 }
+                else if (child.Name == "echo")
+                {
+                    foreach (XmlAttribute attr in child.Attributes)
+                    {
+                        if (attr.Name == "log") Log.Out("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name == "warn") Log.Warning("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name == "error") Log.Error("{1}: {0}", attr.Value, xmlFile.Filename);
+                    }
+                }
                 // Otherwise try to apply the patches found in child element
-                else if (!ApplyPatchEntry(xmlFile, patchXml, element, patchName))
+                else if (!ApplyPatchEntry(xmlFile, patchXml, element, patchName, ref stack))
                 {
                     IXmlLineInfo lineInfo = (IXmlLineInfo)element;
                     Log.Warning(string.Format("XML patch for \"{0}\" from mod \"{1}\" did not apply: {2} (line {3} at pos {4})",
@@ -194,12 +207,16 @@ static class ModXmlPatcher
     }
 
     // Flags for consecutive mod-if parsing
-    private static bool IfClauseParsed = false;
-    private static bool PreviousResult = false;
+    public struct ParserStack
+    {
+        public int count;
+        public bool IfClauseParsed;
+        public bool PreviousResult;
+    }
 
     // Entry point instead of (private) `XmlPatcher.singlePatch`
     // Implements conditional patching and also allows includes
-    private static bool ApplyPatchEntry(XmlFile _xmlFile, XmlFile _patchXml, XmlElement _patchElement, string _patchName)
+    private static bool ApplyPatchEntry(XmlFile _xmlFile, XmlFile _patchXml, XmlElement _patchElement, string _patchName, ref ParserStack stack)
     {
 
         // Only support root level
@@ -215,8 +232,8 @@ static class ModXmlPatcher
             case "modif":
 
                 // Reset flags first
-                IfClauseParsed = true;
-                PreviousResult = false;
+                stack.IfClauseParsed = true;
+                stack.PreviousResult = false;
 
                 // Check if we have true conditions
                 foreach (XmlAttribute attr in _patchElement.Attributes)
@@ -230,7 +247,7 @@ static class ModXmlPatcher
                     // Evaluate one or'ed condition
                     if (EvaluateConditions(attr.Value))
                     {
-                        PreviousResult = true;
+                        stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
                             _patchElement, _patchName);
                     }
@@ -242,17 +259,14 @@ static class ModXmlPatcher
             case "modelsif":
 
                 // Check for correct parser state
-                if (!IfClauseParsed)
+                if (!stack.IfClauseParsed)
                 {
                     Log.Error("Found <modelsif> clause out of order");
                     return false;
                 }
 
                 // Abort else when last result was true
-                if (PreviousResult) return true;
-
-                // Reset flags first
-                PreviousResult = false;
+                if (stack.PreviousResult) return true;
 
                 // Check if we have true conditions
                 foreach (XmlAttribute attr in _patchElement.Attributes)
@@ -266,7 +280,7 @@ static class ModXmlPatcher
                     // Evaluate one or'ed condition
                     if (EvaluateConditions(attr.Value))
                     {
-                        PreviousResult = true;
+                        stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
                             _patchElement, _patchName);
                     }
@@ -277,20 +291,17 @@ static class ModXmlPatcher
 
             case "modelse":
 
-                // Abort else when last result was true
-                if (PreviousResult) return true;
-
                 // Reset flags first
-                IfClauseParsed = false;
-                PreviousResult = false;
-
+                stack.IfClauseParsed = false;
+                // Abort else when last result was true
+                if (stack.PreviousResult) return true;
                 return PatchXml(_xmlFile, _patchXml,
                     _patchElement, _patchName);
 
             default:
                 // Reset flags first
-                IfClauseParsed = false;
-                PreviousResult = true;
+                stack.IfClauseParsed = false;
+                stack.PreviousResult = true;
                 // Dispatch to original function
                 return (bool)MethodSinglePatch.Invoke(null,
                     new object[] { _xmlFile, _patchElement, _patchName });
@@ -323,7 +334,7 @@ static class ModXmlPatcher
             if (!string.IsNullOrEmpty(version))
             {
                 // Check if version is too new for us
-                if (int.Parse(version) > 2) return true;
+                if (int.Parse(version) > 3) return true;
             }
             // Call out to static helper function
             __result = PatchXml(
