@@ -262,6 +262,7 @@ basic information about all grids (most notably the average update time):
 ### Version 1.0.5
 
 - [UL] Fix issue when power items have fully degraded
+- [UL] Rebalance gasonline to watt factor
 
 ### Version 1.0.4
 

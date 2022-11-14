@@ -16,7 +16,7 @@
 				<ulmOptionGame name="LoadVanillaMap" title="goLoadVanillaMap" value_wrap="false" value_type="bool" values="" display_names="" value_localization_prefix="xuiComboOnOff" />
 				<ulmOptionGame name="PreferFuelOverBattery" title="goPreferFuelOverBattery" value_wrap="false" value_type="bool" values="" display_names="" value_localization_prefix="xuiComboOnOff" />
 				<ulmOptionGame name="BatteryPowerPerUse" title="goBatteryPowerPerUse" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" />
-				<ulmOptionGame name="FuelPowerPerUse" title="goFuelPowerPerUse" value_wrap="false" value_type="int" values="1, 5, 10, 15, 25, 50, 75, 100, 200, 300, 400, 500, 750, 1000, 1250, 1500, 2000, 5000, 11250" display_names="" />
+				<ulmOptionGame name="FuelPowerPerUse" title="goFuelPowerPerUse" value_wrap="false" value_type="int" values="1, 5, 10, 15, 25, 50, 75, 100, 200, 300, 400, 500, 750, 1000, 1250, 1500, 2000, 3000, 4000, 5000, 7500, 11250" display_names="" />
 				<ulmOptionGame name="PowerPerPanel" title="goPowerPerPanel" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" value_localization_prefix="goPowerFormat" />
 				<ulmOptionGame name="PowerPerEngine" title="goPowerPerEngine" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" value_localization_prefix="goPowerFormat" />
 				<ulmOptionGame name="PowerPerBattery" title="goPowerPerBattery" value_wrap="false" value_type="int" values="1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125" display_names="" value_localization_prefix="goPowerFormat" />
@@ -33,17 +33,16 @@
 		<!-- Certainly not the right place semantically -->
 		<!-- But was more or less free to add it in here -->
 		<electricity-overhaul>
-
 			<property name="BatteryPowerPerUse" value="80" />
-
+			<property name="FuelPowerPerUse" value="4000" />
 			<!--
-			<property name="FuelPowerPerUse" value="750" />
 			<property name="PowerPerPanel" value="30" />
 			<property name="PowerPerEngine" value="100" />
 			<property name="PowerPerBattery" value="50" />
 			<property name="MinPowerForCharging" value="20" />
+			<property name="BatteryChargePercentFull" value="60" />
+			<property name="BatteryChargePercentEmpty" value="130" />
 			-->
-
 		</electricity-overhaul>
 		
 	</append>
