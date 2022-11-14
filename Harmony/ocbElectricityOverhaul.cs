@@ -100,12 +100,18 @@ public class OcbElectricityOverhaul : IModApi
         foreach (var stack in source.Stacks)
         {
             if (stack.IsEmpty()) continue;
+            if (stack.itemValue.MaxUseTimes > 0
+                && stack.itemValue.UseTimes >=
+                stack.itemValue.MaxUseTimes) continue;
             source.StackPower += (ushort)(factor *
                 GetSlotPowerByQuality(stack.itemValue,
                     powerPerSlot, defaultPower));
         }
         source.StackPower = (ushort)Mathf.Min(
             source.StackPower, source.MaxPower);
+        // Turn off when all is defect
+        if (source.StackPower <= 0)
+            source.IsOn = false;
     }
 
     [HarmonyPatch(typeof(PowerSource))]

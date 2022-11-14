@@ -285,16 +285,24 @@ public class OcbPowerManager : PowerManager
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {
+                                    slot.itemValue.UseTimes = slot.itemValue.MaxUseTimes;
                                     solar.StackPower -= (ushort)(
                                         source.OutputPerStack / PowerPerPanel *
                                         GetSlotPowerByQuality(slot.itemValue,
                                             PowerPerPanel, PowerPerPanelDefault));
+                                    solar.TileEntity?.MarkChanged();
                                     break; // Only decrement one per tick
                                 }
                             }
                         }
+
+                        if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
+                            slot.itemValue.UseTimes = slot.itemValue.MaxUseTimes;
                     }
                 }
+                // Turn off when all is defect
+                if (solar.StackPower <= 0)
+                    solar.IsOn = false;
             }
             if (Time.time > solar.lightUpdateTime)
             {

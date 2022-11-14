@@ -259,6 +259,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.0.5
+
+- [UL] Fix issue when power items have fully degraded
+
 ### Version 1.0.4
 
 - Upgrade XmlPatcher to version 3 to fix 1.0.3  
