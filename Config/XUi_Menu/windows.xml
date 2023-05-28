@@ -8,6 +8,11 @@
 		<echo log="Inlcuding Darkness Falls 4.1 patches"/>
 		<include path="windows.df.xml"/>
 	</modelsif>
+	<modelsif condition="zz_TraderNetwork_MoreJobs_Rebirth">
+		<echo log="Inlcuding Rebirth patches"/>
+		<echo log="Ensure mod loads last to work properly!"/>
+		<include path="windows.df.xml"/>
+	</modelsif>
 	<modelsif condition="0-RHCore">
 		<echo log="Inlcuding Ravenhearst patches"/>
 		<echo log="Ensure mod loads last to work properly!"/>
