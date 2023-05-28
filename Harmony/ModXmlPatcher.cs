@@ -59,50 +59,78 @@ static class ModXmlPatcher
 
     // Evaluate a comma separated list of conditions
     // The results are logically `and'ed` together
-    private static bool EvaluateConditions(string conditions)
+    private static bool EvaluateConditions(string conditions, XmlFile xml)
     {
         // Ignore if condition is empty or null
         if (string.IsNullOrEmpty(conditions)) return false;
         // Split comma separated list (no whitespace allowed yet)
-        foreach (string condition in conditions.Split(','))
+
+        if (conditions.StartsWith("xpath:"))
         {
-            bool result = true;
-            // Try to find version comparator
-            int notpos = condition[0] == '!' ? 1 : 0;
-            int ltpos = condition.IndexOf("<");
-            int gtpos = condition.IndexOf(">");
-            int lepos = condition.IndexOf("≤");
-            int gepos = condition.IndexOf("≥");
-            int length = condition.Length - notpos;
-            if (ltpos != -1) length = ltpos - notpos;
-            else if (gtpos != -1) length = gtpos - notpos;
-            else if (lepos != -1) length = lepos - notpos;
-            else if (gepos != -1) length = gepos - notpos;
-            string name = condition.Substring(notpos, length);
-            if (length != condition.Length - notpos)
+            conditions = conditions.Substring(6);
+            foreach (string xpath in conditions.Split(','))
             {
-                if (ModManager.GetMod(name) is Mod mod)
+                bool negate = false;
+                XmlNodeList xmlNodeList;
+                if (xpath.StartsWith("!"))
                 {
-                    string version = condition.Substring(notpos + length + 1);
-                    Version having = Version.Parse(mod.ModInfo?.Version?.Value);
-                    Version testing = Version.Parse(version);
-                    if (ltpos != -1) result = having < testing;
-                    if (gtpos != -1) result = having > testing;
-                    if (lepos != -1) result = having <= testing;
-                    if (gepos != -1) result = having >= testing;
+                    negate = true;
+                    xmlNodeList = xml.XmlDoc.SelectNodes(
+                        xpath.Substring(1));
                 }
                 else
                 {
+                    xmlNodeList = xml.XmlDoc.SelectNodes(xpath);
+                }
+                bool result = true;
+                if (xmlNodeList == null) result = false;
+                if (xmlNodeList.Count == 0) result = false;
+                if (negate) result = !result;
+                if (!result) return false;
+            }
+        }
+        else
+        {
+            foreach (string condition in conditions.Split(','))
+            {
+                bool result = true;
+                // Try to find version comparator
+                int notpos = condition[0] == '!' ? 1 : 0;
+                int ltpos = condition.IndexOf("<");
+                int gtpos = condition.IndexOf(">");
+                int lepos = condition.IndexOf("≤");
+                int gepos = condition.IndexOf("≥");
+                int length = condition.Length - notpos;
+                if (ltpos != -1) length = ltpos - notpos;
+                else if (gtpos != -1) length = gtpos - notpos;
+                else if (lepos != -1) length = lepos - notpos;
+                else if (gepos != -1) length = gepos - notpos;
+                string name = condition.Substring(notpos, length);
+                if (length != condition.Length - notpos)
+                {
+                    if (ModManager.GetMod(name) is Mod mod)
+                    {
+                        string version = condition.Substring(notpos + length + 1);
+                        Version having = Version.Parse(mod.ModInfo?.Version?.Value);
+                        Version testing = Version.Parse(version);
+                        if (ltpos != -1) result = having < testing;
+                        if (gtpos != -1) result = having > testing;
+                        if (lepos != -1) result = having <= testing;
+                        if (gepos != -1) result = having >= testing;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
+                else if (!EvaluateCondition(name))
+                {
                     result = false;
                 }
-            }
-            else if (!EvaluateCondition(name))
-            {
-                result = false;
-            }
 
-            if (notpos == 1) result = !result;
-            if (result == false) return false;
+                if (notpos == 1) result = !result;
+                if (result == false) return false;
+            }
         }
 
         // Something was true
@@ -191,6 +219,8 @@ static class ModXmlPatcher
                         if (attr.Name == "log") Log.Out("{1}: {0}", attr.Value, xmlFile.Filename);
                         if (attr.Name == "warn") Log.Warning("{1}: {0}", attr.Value, xmlFile.Filename);
                         if (attr.Name == "error") Log.Error("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name != "log" && attr.Name != "warn" && attr.Name != "error")
+                            Log.Warning("Echo has no valid name (log, warn or error)");
                     }
                 }
                 // Otherwise try to apply the patches found in child element
@@ -245,7 +275,7 @@ static class ModXmlPatcher
                         continue;
                     }
                     // Evaluate one or'ed condition
-                    if (EvaluateConditions(attr.Value))
+                    if (EvaluateConditions(attr.Value, _xmlFile))
                     {
                         stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
@@ -278,7 +308,7 @@ static class ModXmlPatcher
                         continue;
                     }
                     // Evaluate one or'ed condition
-                    if (EvaluateConditions(attr.Value))
+                    if (EvaluateConditions(attr.Value, _xmlFile))
                     {
                         stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
@@ -334,7 +364,7 @@ static class ModXmlPatcher
             if (!string.IsNullOrEmpty(version))
             {
                 // Check if version is too new for us
-                if (int.Parse(version) > 3) return true;
+                if (int.Parse(version) > 4) return true;
             }
             // Call out to static helper function
             __result = PatchXml(
