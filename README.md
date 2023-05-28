@@ -259,6 +259,13 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.1.0
+
+- Add Rebirth and Ravenhearst menu compatibility patch
+- Fix localization issue with string replacement messed up
+- Update BepInEx multifolder loader to support UserDataFolder
+- Upgrade XmlPatcher to version 4 with xpath condition support
+
 ### Version 1.0.5
 
 - [UL] Fix issue when power items have fully degraded
