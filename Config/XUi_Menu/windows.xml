@@ -1,11 +1,17 @@
 <configs patcher-version="3">
 	<modif condition="UndeadLegacy_CoreModule">
 		<echo log="Inlcuding Undead Legacy patches"/>
+		<echo log="Ensure mod loads last to work properly!"/>
 		<include path="windows.ulm.xml"/>
 	</modif>
 	<modelsif condition="Darkness Falls Core≥4.1.0">
 		<echo log="Inlcuding Darkness Falls 4.1 patches"/>
 		<include path="windows.df.xml"/>
+	</modelsif>
+	<modelsif condition="0-RHCore">
+		<echo log="Inlcuding Ravenhearst patches"/>
+		<echo log="Ensure mod loads last to work properly!"/>
+		<include path="windows.rh.xml"/>
 	</modelsif>
 	<modelse>
 		<echo log="Inlcuding Vanilla A20 patches"/>
