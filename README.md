@@ -1,11 +1,9 @@
-# OCB Electricity Overhaul Mod - 7 Days to Die Addon
+# OCB Electricity Overhaul Mod - 7 Days to Die (A21) Addon
 
-Electricity done right, enables to connect multiple power sources
-to each other. Still every power item can only have one parent
-connection, but can lend power from upstream if multiple sources
+Electricity done better! Enables to connect multiple power sources to
+each other. Every power item can still only have one parent connection
+though, but it can lend power from multiple upstream sources that
 are connected in line. Also preserves pass-through trigger groups.
-
-https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
 
 <img src="Screens/in-game.jpg" alt="Blocks shown in-game" height="400" />
 
@@ -28,14 +26,16 @@ https://community.7daystodie.com/topic/25507-electricity-overhaul-mod/
     <br clear="left"/>
 </p>
 
-For extended power source info on hovering to work for multiplayer, you also
-need [OcbRemoteDescription][4] to be installed on the server and each client.
+For the extended power source info to work for multiplayer, you will need
+[OcbRemoteDescription][4] to be installed on the server and each client.
 
 ## Additional mods (pick the ones you like)
 
 These mods are all additional mods that have been tested with this mod.
 But the also work on their own. Therefore pick the ones you like and
 install them additionally to the Electricity Overhaul mod.
+
+Note for A21 update: Not everything has been ported and tested yet!
 
 - https://github.com/OCB7D2D/ElectricityWorkarounds (recommended)
 - https://github.com/OCB7D2D/ElectricityWireColors (recommended)
@@ -48,7 +48,6 @@ install them additionally to the Electricity Overhaul mod.
 
 - Not "Easy Anti-Cheat" compatible, so you need to turn EAC off!
 - probably incompatible with anything else touching electricity!
-- Needs BepInEx to work to patch the main game dll before startup
 
 This Mod hasn't yet been tested much in the wild and bugs are to be
 expected. Some might even not be fixable due to the nature of the
@@ -60,43 +59,7 @@ fields are transferred between server and client for every power source.
 
 So far I hope the thing will scale well enough already, but that needs
 more testing. For that I included a check that will emit a warning
-when the update call takes longer than 40ms.
-
-### Installation requires A20BepInExPreloader
-
-- https://github.com/OCB7D2D/A20BepInExPreloader
-
-The required files are also included directly in this repository and if you
-load the mod for the very first time, it will try to install the necessary
-files for you. Unfortunately this will lead to a broken initial Game-Menu.
-Simply restart the game once and the mod should start loading correctly.
-Check the console (F1) to see if BepInEx was correctly detected or not.
-
-Alternatively you can also manually install (or uninstall) the files.
-For convenience I added two batch files you can use to achieve that.
-Check the mod folder (once installed) and you should find them there.
-
-### Linux support
-
-This is even more experimental and needs a bit of work from the user.
-Unfortunately there is no magic hook for BepInEx to use, you need to
-"tell" the game that it should load additional libraries before the
-game starts. To help you with that dilema, this mod will install a
-startup script that should do the necessary parts. Unfortunately this
-makes the game-launcher obsolete and if you want to change any startup
-options, you'd have to do it in the startup script directly. Also you
-can't start the game from steam launcher directly anymore!
-
-The relevant startup scripts are:
-
-- startmodclient.sh
-- startmodserver.sh
-
-### Semantic versioning
-
-We try to use semi/major/minor versioning, while major version increments
-mean that the underlying `Assembly-CSharp.dll` had changes. All minor
-versions should be compatible without updating the assembly dll.
+when the update call takes longer than 20ms.
 
 ## Multi-player (Dedicated Server) support
 
@@ -104,21 +67,34 @@ This Mod should work with dedicated servers, although the new algorithm
 may lead to higher CPU utilization, specially if a lot of players build
 a lot of power sources. Please open an issue here if you run into problems.
 
+Note for A21 update: MP has only been tested for the basics!
+
 ### Server config xml
 
-You only need to add these if you want to change the defaults!
+With A21 update and the removal of BepInEx patching, we can no longer
+use the server-config.xml to define options for Power-Manager. Instead
+these options have been moved to `Config/misc.xml`:
 
 ```xml
-<property name="LoadVanillaMap" value="false" />
-<property name="BatteryPowerPerUse" value="25" />
-<property name="MinPowerForCharging" value="20" />
-<property name="FuelPowerPerUse" value="750" />
-<property name="PowerPerPanel" value="30" />
-<property name="PowerPerEngine" value="100" />
-<property name="PowerPerBattery" value="50" />
-<property name="PreferFuelOverBattery" value="false" />
-<property name="BatteryChargePercentFull" value="60" />
-<property name="BatteryChargePercentEmpty" value="130" />
+<config>
+  <append xpath="/iteminfo">
+    <!-- This replaces old way of setting options for dedicated servers -->
+    <!-- With only harmony, we can't patch server config parsing anymore -->
+    <!-- You only need to add the ones you want to change from the default -->
+    <electricity-overhaul>
+      <property name="LoadVanillaMap" value="false" />
+      <property name="BatteryPowerPerUse" value="25" />
+      <property name="MinPowerForCharging" value="20" />
+      <property name="FuelPowerPerUse" value="750" />
+      <property name="PowerPerPanel" value="30" />
+      <property name="PowerPerEngine" value="100" />
+      <property name="PowerPerBattery" value="50" />
+      <property name="PreferFuelOverBattery" value="false" />
+      <property name="BatteryChargePercentFull" value="60" />
+      <property name="BatteryChargePercentEmpty" value="130" />
+    </electricity-overhaul>
+  </append>
+</config>
 ```
 
 ## Vanilla Map Loading
@@ -130,6 +106,8 @@ initialized with the default settings. And once the save files are written
 again, these options will then be included ("upgraded" so to speak). So make
 sure you only enable this option exactly once, otherwise you may loose your
 save files. Probably a good time to make a backup!
+
+Note for A21 update: Feature hasn't been tested that well yet!
 
 ## Power distribution logic
 
@@ -259,6 +237,11 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 1.2.0
+
+- Refactor and Update for first A21 compatibility
+- Removed BepInEx requirement for easier deployment
+
 ### Version 1.1.0
 
 - Add Rebirth and Ravenhearst menu compatibility patch
@@ -376,7 +359,7 @@ basic information about all grids (most notably the average update time):
 
 ## Compatibility
 
-I've developed and tested this Mod against version a19.6b8.
+Developed initially for version A19.6(b8), updated through A21.1(b16).
 
 [1]: https://github.com/HAL-NINE-THOUSAND/DMT
 [2]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml

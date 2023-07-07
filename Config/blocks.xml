@@ -1,7 +1,5 @@
-﻿<configs patcher-version="1">
-
+﻿<configs patcher-version="4">
 	<modif condition="UndeadLegacy_CoreModule">
-
 		<append xpath="/blocks/block[@name='solarbank']">
 			<property name="OutputPerStack" value="30"/>
 			<property name="MaxPower" value="300"/>
@@ -14,12 +12,8 @@
 			<property name="OutputPerStack" value="100"/>
 			<property name="MaxPower" value="500"/>
 		</append>
-
 	</modif>
 	<modelse>
-
 		<setattribute xpath="/blocks/block[@name='generatorbank']/property[@name='MaxFuel']" name="value">5000</setattribute>
-
 	</modelse>
-
 </configs>

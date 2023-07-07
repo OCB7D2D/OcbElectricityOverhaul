@@ -1,8 +1,9 @@
-<configs patcher-version="3">
+<configs patcher-version="4">
 	<modif condition="UndeadLegacy_CoreModule">
-		<include path="windows.ulm.xml"/>
+		<echo error="EO: No Undead Legacy Support and A21 yet"/>
+		<include path="windows.a20.ulm.xml"/>
 	</modif>
 	<modelse>
-		<include path="windows.a20.xml"/>
+		<include path="windows.a21.xml"/>
 	</modelse>
 </configs>

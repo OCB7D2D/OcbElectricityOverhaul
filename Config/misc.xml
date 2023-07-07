@@ -1,0 +1,21 @@
+<config>
+	<append xpath="/iteminfo">
+		<!-- This replaces old way of setting options for dedicated servers -->
+		<!-- With only harmony, we can't patch server config parsing anymore -->
+		<!-- You only need to add the ones you want to change from the default -->
+		<electricity-overhaul>
+			<!--
+			<property name="LoadVanillaMap" value="false" />
+			<property name="BatteryPowerPerUse" value="25" />
+			<property name="MinPowerForCharging" value="20" />
+			<property name="FuelPowerPerUse" value="750" />
+			<property name="PowerPerPanel" value="30" />
+			<property name="PowerPerEngine" value="100" />
+			<property name="PowerPerBattery" value="50" />
+			<property name="PreferFuelOverBattery" value="false" />
+			<property name="BatteryChargePercentFull" value="60" />
+			<property name="BatteryChargePercentEmpty" value="130" />
+			-->
+		</electricity-overhaul>
+	</append>
+</config>

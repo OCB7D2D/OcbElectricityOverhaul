@@ -1,7 +1,5 @@
-﻿<configs patcher-version="1">
-
+﻿<configs patcher-version="4">
 	<modif condition="UndeadLegacy_CoreModule">
-
 		<setattribute xpath="/items/item[@name='ulmResourceEngineV1']/effect_group/passive_effect[@name='PowerOutput']" name="value">25</setattribute>
 		<setattribute xpath="/items/item[@name='ulmResourceEngineV4']/effect_group/passive_effect[@name='PowerOutput']" name="value">75</setattribute>
 		<setattribute xpath="/items/item[@name='ulmResourceEngineV6']/effect_group/passive_effect[@name='PowerOutput']" name="value">100</setattribute>
@@ -13,10 +11,8 @@
 			<property name="RepairTools" value="resourceRepairKit"/>
 			<property name="MaintenanceGroup" value="MG_ArmorCloth"/>
 		</append>
-
 	</modif>
 	<modelse>
-
 		<append xpath="/items/item[@name='resourceCloth']">
 			<property name="RepairAmount" value="100"/>
 			<property name="RepairTime" value="0.5"/>
@@ -25,7 +21,5 @@
 		<append xpath="/items/item[@name='solarCell']">
 			<property name="RepairTools" value="resourceCloth"/>
 		</append>
-
 	</modelse>
-
 </configs>

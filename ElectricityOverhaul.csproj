@@ -2,6 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <PATH_7D2D_MANAGED Condition=" '$(PATH_7D2D_MANAGED)' == '' ">..\..\7DaysToDie_Data\Managed</PATH_7D2D_MANAGED>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <BaseIntermediateOutputPath>build\obj\$(AssemblyName)</BaseIntermediateOutputPath>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -22,6 +23,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PostBuildEvent>
+      copy /Y /B "$(AssemblyName).dll" "..\..\..\$(AssemblyName).dll"
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,13 +34,19 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PostBuildEvent>
+      copy /Y /B "$(AssemblyName).dll" "..\..\..\$(AssemblyName).dll"
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>$(PATH_7D2D_MANAGED)\mscorlib.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(PATH_7D2D_MANAGED)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>build\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(PATH_7D2D_MANAGED)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="LogLibrary">
       <HintPath>$(PATH_7D2D_MANAGED)\LogLibrary.dll</HintPath>
@@ -85,30 +95,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Harmony\BepInExAutoInstall.cs" />
-    <Compile Include="Harmony\ModXmlPatcher.cs" />
-    <Compile Include="Harmony\ocbElectricityManager.cs" />
-    <Compile Include="Harmony\ocbElectricityOverhaul.cs" />
-    <Compile Include="Harmony\ocbElectricityOverhaulCmd.cs" />
-    <Compile Include="Harmony\ocbElectricityUtils.cs" />
-    <Compile Include="Harmony\ReflectionUtils.cs" />
-    <Compile Include="Harmony\XUiC_OcbPowerSourceStats.cs" />
-    <Compile Include="Harmony\XUiC_OcbPowerSourceWindowGroup.cs" />
-    <Compile Include="Harmony\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Config\items.xml" />
     <Content Include="Config\Localization.txt" />
+    <Content Include="Config\misc.xml" />
+    <Content Include="Config\XUi\windows.a21.xml" />
     <Content Include="Config\XUi\windows.a20.xml" />
-    <Content Include="Config\XUi\windows.ulm.xml" />
+    <Content Include="Config\XUi\windows.a20.ulm.xml" />
     <Content Include="Config\XUi\windows.xml" />
-    <Content Include="Config\XUi\xui.ulm.xml" />
+    <Content Include="Config\XUi\xui.a21.xml" />
+    <Content Include="Config\XUi\xui.a20.ulm.xml" />
     <Content Include="Config\XUi\xui.a20.xml" />
     <Content Include="Config\XUi\xui.xml" />
-    <Content Include="Config\XUi_Menu\windows.df.xml" />
+    <Content Include="Config\XUi_Menu\windows.a21.xml" />
+    <Content Include="Config\XUi_Menu\windows.a20.df.xml" />
     <Content Include="Config\XUi_Menu\windows.a20.xml" />
-    <Content Include="Config\XUi_Menu\windows.rh.xml" />
-    <Content Include="Config\XUi_Menu\windows.ulm.xml" />
+    <Content Include="Config\XUi_Menu\windows.a20.rh.xml" />
+    <Content Include="Config\XUi_Menu\windows.a20.ulm.xml" />
     <Content Include="Config\XUi_Menu\windows.xml" />
     <Content Include="Config\blocks.xml" />
     <Content Include="ModInfo.xml" />
@@ -116,5 +118,30 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sources\Harmony\CustomActivationTextPatch.cs" />
+    <Compile Include="Sources\Harmony\CustomGamePrefsPatch.cs" />
+    <Compile Include="Sources\Harmony\ElectricityOverhaulPatch.cs" />
+    <Compile Include="Sources\Utils\HarmonyFieldProxy.cs" />
+    <Compile Include="Sources\Utils\HarmonyPropertyProxy.cs" />
+    <Compile Include="Sources\Utils\HarmonyUitls.cs" />
+    <Compile Include="Sources\Utils\ModXmlPatcher.cs" />
+    <Compile Include="Sources\Harmony\PowerDistributionPatch.cs" />
+    <Compile Include="Sources\Harmony\XUiPowerSourceStats.cs" />
+    <Compile Include="Sources\PowerManager\OcbElectricityUtils.cs" />
+    <Compile Include="Sources\PowerManager\PowerManagerBase.cs" />
+    <Compile Include="Sources\PowerSources\OcbPowerGenerator.cs" />
+    <Compile Include="Sources\PowerSources\OcbPowerBatteryBank.cs" />
+    <Compile Include="Sources\PowerSources\PowerBatteryBankBase.cs" />
+    <Compile Include="Sources\PowerSources\OcbPowerSolarPanel.cs" />
+    <Compile Include="Sources\PowerSources\PowerSolarPanelBase.cs" />
+    <Compile Include="Sources\PowerSources\PowerGeneratorBase.cs" />
+    <Compile Include="Sources\TileEntities\OcbTileEntityPowerSource.cs" />
+    <Compile Include="Sources\PowerManager\OcbPowerSource.cs" />
+    <Compile Include="Sources\PowerManager\OcbPowerManager.cs" />
+    <Compile Include="Sources\UI\XUiC_OcbPowerSourceStats.cs" />
+    <Compile Include="Sources\UI\XUiC_OcbPowerSourceWindowGroup.cs" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

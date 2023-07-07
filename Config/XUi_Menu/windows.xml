@@ -1,25 +1,28 @@
-<configs patcher-version="3">
+<configs patcher-version="4">
 	<modif condition="UndeadLegacy_CoreModule">
-		<echo log="Inlcuding Undead Legacy patches"/>
-		<echo log="Ensure mod loads last to work properly!"/>
-		<include path="windows.ulm.xml"/>
+		<echo log="EO: Inlcuding Undead Legacy patches"/>
+		<echo log="EO: Ensure mod loads last to work properly!"/>
+		<echo error="EO: No Undead Legacy Support and A21 yet"/>
+		<include path="windows.a20.ulm.xml"/>
 	</modif>
 	<modelsif condition="Darkness Falls Core≥4.1.0">
-		<echo log="Inlcuding Darkness Falls 4.1 patches"/>
-		<include path="windows.df.xml"/>
+		<echo log="EO: Inlcuding Darkness Falls 4.1 patches"/>
+		<echo error="EO: No Darkness Falls Support and A21 yet"/>
+		<include path="windows.a20.df.xml"/>
 	</modelsif>
 	<modelsif condition="zz_TraderNetwork_MoreJobs_Rebirth">
-		<echo log="Inlcuding Rebirth patches"/>
-		<echo log="Ensure mod loads last to work properly!"/>
-		<include path="windows.df.xml"/>
+		<echo log="EO: Inlcuding Rebirth patches"/>
+		<echo log="EO: Ensure mod loads last to work properly!"/>
+		<echo error="EO: No Rebirth Support and A21 yet"/>
+		<include path="windows.a20.df.xml"/>
 	</modelsif>
 	<modelsif condition="0-RHCore">
-		<echo log="Inlcuding Ravenhearst patches"/>
-		<echo log="Ensure mod loads last to work properly!"/>
-		<include path="windows.rh.xml"/>
+		<echo log="EO: Inlcuding Ravenhearst patches"/>
+		<echo log="EO: Ensure mod loads last to work properly!"/>
+		<echo error="EO: No Ravenhearst Support and A21 yet"/>
+		<include path="windows.a20.rh.xml"/>
 	</modelsif>
 	<modelse>
-		<echo log="Inlcuding Vanilla A20 patches"/>
-		<include path="windows.a20.xml"/>
+		<include path="windows.a21.xml"/>
 	</modelse>
 </configs>
