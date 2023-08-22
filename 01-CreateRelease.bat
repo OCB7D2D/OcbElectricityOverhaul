@@ -24,18 +24,11 @@ mkdir build\%NAME%
 echo create %VERSION%
 
 xcopy %FOLDER%\*.xml build\%NAME%\
-xcopy %FOLDER%\*.md build\%NAME%\
 xcopy %FOLDER%\*.dll build\%NAME%\
+xcopy %FOLDER%\README.md build\%NAME%\
 xcopy %FOLDER%\Config build\%NAME%\Config\ /S
 xcopy %FOLDER%\Resources build\%NAME%\Resources\ /S
 xcopy %FOLDER%\UIAtlases build\%NAME%\UIAtlases\ /S
-xcopy %FOLDER%\BepInEx build\%NAME%\BepInEx\ /S
-
-xcopy %FOLDER%\patchers\*.dll build\%NAME%\patchers\
-xcopy %FOLDER%\98-install-bepinex.sh build\%NAME%\
-xcopy %FOLDER%\98-install-bepinex.bat build\%NAME%\
-xcopy %FOLDER%\99-uninstall-bepinex.sh build\%NAME%\
-xcopy %FOLDER%\99-uninstall-bepinex.bat build\%NAME%\
 
 cd build
 echo Packaging %NAME%-%VERSION%.zip
@@ -52,7 +45,7 @@ SET FOLDER=.
 SET NAME=ElectricityOverhaul
 call :BUILD 
 
-SET FOLDER=Addons\ZMXuiCPOCBEO
-SET NAME=ZMXuiCPOCBEO
-call :BUILD 
+REM SET FOLDER=Addons\ZMXuiCPOCBEO
+REM SET NAME=ZMXuiCPOCBEO
+REM call :BUILD 
 
