@@ -8,6 +8,10 @@ using static OCB.ElectricityUtils;
 
 public class OcbPowerSource : PowerSource
 {
+
+    // ####################################################################
+    // ####################################################################
+
     public ushort StackPower;
     public ushort MaxProduction;
     public ushort MaxGridProduction;
@@ -34,6 +38,8 @@ public class OcbPowerSource : PowerSource
     public float AvgTime;
     public ulong LastTick;
 
+    // ####################################################################
+    // ####################################################################
 
     public void DoPowerGenerationTick()
         => TickPowerGeneration();
@@ -49,6 +55,9 @@ public class OcbPowerSource : PowerSource
         _bw.Write(ChargeFromBattery);
 
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void read(BinaryReader _br, byte _version)
     {
@@ -70,6 +79,9 @@ public class OcbPowerSource : PowerSource
         UpdateSlots();
     }
 
+    // ####################################################################
+    // ####################################################################
+    
     private static void RecalcChargingDemand(OcbPowerBatteryBank bank)
     {
         bank.ChargingDemand = 0;
@@ -84,6 +96,9 @@ public class OcbPowerSource : PowerSource
                 GetChargeByQuality(slot.itemValue));
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public void UpdateSlots()
     {
@@ -123,6 +138,9 @@ public class OcbPowerSource : PowerSource
             this.IsOn = false;
     }
 
+    // ####################################################################
+    // ####################################################################
+
     [HarmonyPatch(typeof(PowerSource))]
     [HarmonyPatch("SetSlots")]
     public class PowerSource_SetSlots
@@ -144,6 +162,9 @@ public class OcbPowerSource : PowerSource
                 source.UpdateSlots();
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     [HarmonyPatch(typeof(PowerSolarPanel))]
     [HarmonyPatch("RefreshPowerStats")]
@@ -168,6 +189,9 @@ public class OcbPowerSource : PowerSource
             __instance.MaxPower = ushort.Parse(block.Properties.Values["MaxPower"]);
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Allow config defaults to be set via xml
     [HarmonyPatch(typeof(MiscFromXml))]
@@ -216,5 +240,8 @@ public class OcbPowerSource : PowerSource
             }
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
 }

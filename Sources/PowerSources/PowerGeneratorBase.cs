@@ -10,19 +10,24 @@
 public class PowerGeneratorBase : OcbPowerSource
 {
 
+    // ####################################################################
+    // ####################################################################
+
     public ushort CurrentFuel;
     public ushort MaxFuel;
     public float OutputPerFuel;
 
-    public PowerGeneratorBase() : base()
-    {
-    }
+    // ####################################################################
+    // ####################################################################
 
     public override PowerItem.PowerItemTypes PowerItemType => PowerItem.PowerItemTypes.Generator;
 
     public override string OnSound => "generator_start";
 
     public override string OffSound => "generator_stop";
+
+    // ####################################################################
+    // ####################################################################
 
     public override void read(BinaryReader _br, byte _version)
     {
@@ -36,7 +41,13 @@ public class PowerGeneratorBase : OcbPowerSource
         _bw.Write(this.CurrentFuel);
     }
 
+    // ####################################################################
+    // ####################################################################
+
     protected override bool ShouldAutoTurnOff() => this.CurrentFuel <= (ushort)0;
+
+    // ####################################################################
+    // ####################################################################
 
     protected override void TickPowerGeneration()
     {
@@ -45,6 +56,9 @@ public class PowerGeneratorBase : OcbPowerSource
         --this.CurrentFuel;
         this.CurrentPower += (ushort)(uint)(ushort)this.OutputPerFuel;
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void SetValuesFromBlock()
     {
@@ -58,4 +72,8 @@ public class PowerGeneratorBase : OcbPowerSource
         else
             this.OutputPerFuel = 100f;
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }

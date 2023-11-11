@@ -1,5 +1,9 @@
 ﻿public class OcbTileEntityPowerSource : TileEntityPowerSource
 {
+
+    // ####################################################################
+    // ####################################################################
+
     public class OcbClientPowerData : ClientPowerData
     {
         public ushort MaxProduction;
@@ -22,14 +26,18 @@
         public ushort LightLevel;
     }
 
+    // ####################################################################
+    // ####################################################################
 
-    public OcbTileEntityPowerSource(Chunk _chunk) : base(_chunk)
-    {
-    }
+    public OcbTileEntityPowerSource(Chunk _chunk) : base(_chunk) {}
 
-    // public TileEntityPowerSource.ClientPowerData ClientData = new TileEntityPowerSource.ClientPowerData();
+    // ####################################################################
+    // ####################################################################
 
     public new OcbClientPowerData ClientData => base.ClientData as OcbClientPowerData;
+
+    // ####################################################################
+    // ####################################################################
 
     private OcbTileEntityPowerSource(OcbTileEntityPowerSource _other) : base(null)
     {
@@ -37,8 +45,10 @@
         PowerItem = _other.PowerItem;
     }
 
+    // ####################################################################
+    // ####################################################################
 
-    public override TileEntity Clone() => (TileEntity)new OcbTileEntityPowerSource(this);
+    public override TileEntity Clone() => new OcbTileEntityPowerSource(this);
 
     // ####################################################################
     // ####################################################################
@@ -152,5 +162,9 @@
                 break;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }
 

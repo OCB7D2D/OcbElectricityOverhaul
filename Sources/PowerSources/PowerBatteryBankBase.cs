@@ -9,11 +9,18 @@
 
 public class PowerBatteryBankBase : OcbPowerSource
 {
+
+    // ####################################################################
+    // ####################################################################
+
     public ushort LastInputAmount;
     public ushort LastPowerReceived;
     public ushort InputPerTick;
     public ushort ChargePerInput;
     public ushort OutputPerCharge;
+
+    // ####################################################################
+    // ####################################################################
 
     public override PowerItem.PowerItemTypes PowerItemType => PowerItem.PowerItemTypes.BatteryBank;
 
@@ -24,6 +31,14 @@ public class PowerBatteryBankBase : OcbPowerSource
     public override bool CanParent(PowerItem parent) => true;
 
     public override bool IsPowered => this.isOn || this.isPowered;
+
+    // ####################################################################
+    // ####################################################################
+
+    public override bool PowerChildren() => true;
+
+    // ####################################################################
+    // ####################################################################
 
     protected bool ParentPowering
     {
@@ -44,6 +59,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public override void Update()
     {
         if (this.Parent != null && this.LastPowerReceived > (ushort)0)
@@ -55,6 +73,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         else
             base.Update();
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void HandleSendPower()
     {
@@ -90,6 +111,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         this.CurrentPower -= (ushort)(uint)(ushort)Mathf.Min((int)this.CurrentPower, (int)this.LastPowerUsed);
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public override void HandlePowerReceived(ref ushort power)
     {
         this.LastPowerUsed = (ushort)0;
@@ -117,6 +141,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public virtual void AddPowerToBatteries(int power)
     {
         int num1 = power;
@@ -143,6 +170,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         this.LastInputAmount = (ushort)num3;
     }
 
+    // ####################################################################
+    // ####################################################################
+
     protected override void TickPowerGeneration()
     {
         base.TickPowerGeneration();
@@ -162,7 +192,8 @@ public class PowerBatteryBankBase : OcbPowerSource
         }
     }
 
-    public override bool PowerChildren() => true;
+    // ####################################################################
+    // ####################################################################
 
     public override void HandlePowerUpdate(bool isOn)
     {
@@ -171,6 +202,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         for (int index = 0; index < this.Children.Count; ++index)
             this.Children[index].HandlePowerUpdate(isOn);
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void HandleDisconnect()
     {
@@ -187,6 +221,9 @@ public class PowerBatteryBankBase : OcbPowerSource
         this.TileEntity.SetModified();
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public override void SetValuesFromBlock()
     {
         base.SetValuesFromBlock();
@@ -201,4 +238,8 @@ public class PowerBatteryBankBase : OcbPowerSource
             return;
         this.MaxPower = ushort.Parse(block.Properties.Values["MaxPower"]);
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }

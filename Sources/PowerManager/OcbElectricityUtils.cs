@@ -8,6 +8,9 @@ namespace OCB
     public static class ElectricityUtils
     {
 
+        // ####################################################################
+        // ####################################################################
+
         // Default values for configurable options
         public const bool LoadVanillaMapDefault = false;
         public const bool PreferFuelOverBatteryDefault = false;
@@ -19,6 +22,9 @@ namespace OCB
         public const int PowerPerBatteryDefault = 50;
         public const int BatteryChargePercentFullDefault = 60;
         public const int BatteryChargePercentEmptyDefault = 130;
+
+        // ####################################################################
+        // ####################################################################
 
         // Should we try to load a vanilla map (initialize with defaults)
         public static bool IsLoadVanillaMap = LoadVanillaMapDefault;
@@ -46,11 +52,17 @@ namespace OCB
         // This avoids too much charge/discharge ping-pong
         public static int MinPowerForCharging = MinPowerForChargingDefault;
 
+        // ####################################################################
+        // ####################################################################
+
         // Check for optional passive `PowerOutput` effect (e.g. Undead Legacy defines this)
         // Note: make sure we don't put a warning to the console as `AccessTools.Field` would 
         static readonly FieldInfo PowerOutputEffect = AccessTools
             .TypeByName(nameof(PassiveEffects))?.GetFields()?
             .FirstOrDefault(field => field.Name == "PowerOutput");
+
+        // ####################################################################
+        // ####################################################################
 
         // Get charging power by battery quality
         static public ushort GetChargeByQuality(ItemValue item)
@@ -73,6 +85,9 @@ namespace OCB
             return (ushort)(powerPerSlot * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));
         }
 
+        // ####################################################################
+        // ####################################################################
+
         // Check if given `source` has a parent power source
         // Return `null` if any trigger group between is off
         static public OcbPowerSource GetParentSources(OcbPowerSource source)
@@ -84,6 +99,9 @@ namespace OCB
 
             return null;
         }
+
+        // ####################################################################
+        // ####################################################################
 
         // Check if the item is connected to a power source
         // Does correctly handle trigger groups via parents
@@ -127,6 +145,11 @@ namespace OCB
             return isActive;
         }
 
+        // ####################################################################
+        // ####################################################################
+
+        // Used for reporting information about overall state of the block
+        // Worst item gives a good indication when a user wants to repair it
         static public float GetWorstStackItemUseState(OcbPowerSource source)
         {
             float state = 0f; bool hasLeft = false; bool isEmpty = true;
@@ -149,6 +172,9 @@ namespace OCB
             if (!hasLeft) return -1f;
             return 1f - state;
         }
+
+        // ####################################################################
+        // ####################################################################
 
         // Fill `CurrentPower` of BatteryBank by draining batteries.
         // We try to distribute the power among all batteries. This
@@ -199,6 +225,9 @@ namespace OCB
             }
         }
 
+        // ####################################################################
+        // ####################################################################
+
         // Mostly copied from original dll to insert our configurable conversion factor
         static public void TickBatteryDieselPowerGeneration(OcbPowerGenerator generator)
         {
@@ -210,6 +239,9 @@ namespace OCB
             generator.CurrentPower += (ushort)(consume * FuelPowerPerUse);
             generator.CurrentFuel -= consume;
         }
+
+        // ####################################################################
+        // ####################################################################
 
         // We get some amount of power that can be put into our batteries.
         // There are multiple ways to distribute that power (and how much)
@@ -266,5 +298,9 @@ namespace OCB
         }
 
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }
 

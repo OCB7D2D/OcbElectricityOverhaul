@@ -4,6 +4,9 @@ using System.Reflection;
 static class PowerDistributionPatch
 {
 
+    // ####################################################################
+    // ####################################################################
+
     // Copied from original dll
     // Removed dispatching to children
     // Only consume energy if fully powered
@@ -30,6 +33,9 @@ static class PowerDistributionPatch
             return false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Copied from original dll
     // Removed dispatching to children
@@ -59,6 +65,8 @@ static class PowerDistributionPatch
         }
     }
 
+    // ####################################################################
+    // ####################################################################
 
     // Copied from original dll
     // Removed dispatching to children
@@ -84,6 +92,9 @@ static class PowerDistributionPatch
             return false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Copied from original dll
     // Removed dispatching to children
@@ -114,6 +125,9 @@ static class PowerDistributionPatch
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Copied from original dll
     // Removed dispatching to children
     // Doesn't obey `PowerChildren` flag!?
@@ -137,6 +151,9 @@ static class PowerDistributionPatch
             return false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Copied from original dll
     // Removed dispatching to children
@@ -165,6 +182,9 @@ static class PowerDistributionPatch
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Copied from original dll
     // Removed dispatching to children
     // Obeys to `PowerChildren` flag!!
@@ -187,6 +207,9 @@ static class PowerDistributionPatch
             return false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Copied from original dll
     // Removed dispatching to children
@@ -212,6 +235,9 @@ static class PowerDistributionPatch
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Only consumers obey this flag!?
     // A21: Exact copy of A20 patch version
     [HarmonyPatch(typeof(PowerItem))]
@@ -223,6 +249,9 @@ static class PowerDistributionPatch
             __result = false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Don't forcefully remove children if one trigger goes inactive
     // Some child might be another trigger, forming a trigger group,
@@ -272,5 +301,9 @@ static class PowerDistributionPatch
             return false;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }
 

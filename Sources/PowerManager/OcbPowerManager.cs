@@ -7,9 +7,15 @@ using Random = UnityEngine.Random;
 public class OcbPowerManager : PowerManagerBase
 {
 
+    // ####################################################################
+    // ####################################################################
+
+    bool IsDirty = true;
+
     public float Interval = .16f;
-    static readonly HarmonyFieldProxy<bool> PowerItemHasLocalChanges =
-        new HarmonyFieldProxy<bool>(typeof(PowerItem), "hasChangesLocal");
+
+    // ####################################################################
+    // ####################################################################
 
     // Upstream power sources when we go down
     // the tree via `ProcessPowerSource`.
@@ -24,18 +30,24 @@ public class OcbPowerManager : PowerManagerBase
     private static readonly Queue<PowerItem> collect
         = new Queue<PowerItem>();
 
+    // ####################################################################
+    // ####################################################################
+
     // Store the current/last timer tick count
     public ulong Ticks { get; private set; }
 
     // Global light for solar panels
     public float GlobalLight = 1f;
 
-    bool IsDirty = true;
+    // ####################################################################
+    // ####################################################################
 
-    // Constructor
-    public OcbPowerManager() : base()
-    {
-    }
+    static readonly HarmonyFieldProxy<bool> PowerItemHasLocalChanges =
+        new HarmonyFieldProxy<bool>(typeof(PowerItem), "hasChangesLocal");
+
+
+    // ####################################################################
+    // ####################################################################
 
     public override void LoadPowerManager()
     {
@@ -68,6 +80,9 @@ public class OcbPowerManager : PowerManagerBase
                 "/" + PowerPerEngine + "/" + PowerPerBattery);
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Main function called by game manager per tick
     // Ticks seem to be in a strictly timely manner
     // ToDo: check exactly how tick updates are called
@@ -97,6 +112,9 @@ public class OcbPowerManager : PowerManagerBase
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public void ResetGrids()
     {
         Grids.Clear();
@@ -123,6 +141,9 @@ public class OcbPowerManager : PowerManagerBase
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public void UpdateLight()
     {
         // Calculate light levels once
@@ -138,6 +159,9 @@ public class OcbPowerManager : PowerManagerBase
             GlobalLight = Mathf.SmoothStep(0f, 1f, distance / 2f);
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public void UpdateGrid(OcbPowerSource root)
     {
@@ -181,6 +205,9 @@ public class OcbPowerManager : PowerManagerBase
         root.AvgTime = 0.9f * root.AvgTime + 0.1f * (float)watch.Elapsed.TotalMilliseconds;
 
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void Update()
     {
@@ -249,6 +276,9 @@ public class OcbPowerManager : PowerManagerBase
             ClientUpdateList[index].ClientUpdate();
 
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Ensure that enough power is available in `CurrentPower`
     // The `CurrentPower` property acts like a buffer
@@ -424,6 +454,9 @@ public class OcbPowerManager : PowerManagerBase
 
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Borrow as much power from `lender` as possible to fulfill `distribute` requirement
     public void BorrowPowerFromSource(OcbPowerSource lender, ref ushort distribute, OcbPowerBatteryBank battery = null)
     {
@@ -461,6 +494,9 @@ public class OcbPowerManager : PowerManagerBase
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     // Accumulate data for statistic purposes to show how much
     // energy is actually flowing through any given node. For that
     // we register our energy use on every parent power source,
@@ -485,6 +521,9 @@ public class OcbPowerManager : PowerManagerBase
         }
 
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Distribute the `distribute` load to all lenders
     // ToDo: loop and casts seems semi optimal
@@ -576,6 +615,9 @@ public class OcbPowerManager : PowerManagerBase
         // Return how much power we used
         return (ushort)(before - distribute);
     }
+
+    // ####################################################################
+    // ####################################################################
 
     // Our bread and butter function that drives the whole electricity grid.
     public void ProcessPowerSource(OcbPowerSource root)
@@ -748,6 +790,10 @@ public class OcbPowerManager : PowerManagerBase
         PowerItemHasLocalChanges.Set(root, false);
     }
 
+    // ####################################################################
+    // ####################################################################
+
+    // Add power left in the grid, after distribution, to batteries
     private void DistributeLeftToBank(OcbPowerBatteryBank bank)
     {
         bank.ChargingUsed = 0;
@@ -808,6 +854,9 @@ public class OcbPowerManager : PowerManagerBase
 
     }
 
+    // ####################################################################
+    // ####################################################################
+    
     public void FinalizePowerSource(OcbPowerSource source)
     {
         // Tick disconnected source
@@ -821,18 +870,24 @@ public class OcbPowerManager : PowerManagerBase
         PowerItemHasLocalChanges.Set(source, false);
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public override void RemoveParent(PowerItem node)
     {
         base.RemoveParent(node);
-        IsDirty = true;
         // ResetGrids();
+        IsDirty = true;
     }
 
     public override void SetParent(PowerItem child, PowerItem parent)
     {
         base.SetParent(child, parent);
-        IsDirty = true;
         // ResetGrids();
+        IsDirty = true;
     }
+
+    // ####################################################################
+    // ####################################################################
 
 }

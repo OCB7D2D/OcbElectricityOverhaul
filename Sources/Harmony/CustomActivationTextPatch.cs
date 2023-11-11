@@ -20,7 +20,7 @@ public static class CustomActivationTextPatch
             {
                 if (block is BlockPowerSource || block is BlockPowered || block is BlockPoweredLight)
                 {
-                    // Patch display info for plants (show more data)
+                    // Patch display info for power blocks (show more info)
                     block.Properties.Values["RemoteDescription"] = "true";
                 }
             }

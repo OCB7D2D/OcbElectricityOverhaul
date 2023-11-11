@@ -3,6 +3,9 @@ using UnityEngine;
 public class XUiC_OcbPowerSourceStats : XUiController
 {
 
+    // ####################################################################
+    // ####################################################################
+
     public XUiC_OcbPowerSourceWindowGroup Owner { get; set; }
 
     private Color32 onColor = new Color32((byte)250, byte.MaxValue, (byte)163, byte.MaxValue);
@@ -49,6 +52,9 @@ public class XUiC_OcbPowerSourceStats : XUiController
 
     private string turnOn;
 
+    // ####################################################################
+    // ####################################################################
+
     public override void Init()
     {
         base.Init();
@@ -87,6 +93,9 @@ public class XUiC_OcbPowerSourceStats : XUiController
         turnOn = Localization.Get("xuiTurnOn");
     }
 
+    // ####################################################################
+    // ####################################################################
+
     private void BtnToggleSolarCharge_OnHover(XUiController _sender, bool _isOver)
     {
         btnToggleSolarChargeHovered = _isOver;
@@ -105,9 +114,12 @@ public class XUiC_OcbPowerSourceStats : XUiController
         RefreshBindings();
     }
 
+    // ####################################################################
+    // ####################################################################
+
     private void BtnToggleSolarCharge_OnPress(XUiController _sender, int _mouseButton)
     {
-        Toggle(ref chargeFromSolar, ref lblToggleSolarCharge, ref sprToggleSolarCharge);
+        Toggle(ref chargeFromSolar, lblToggleSolarCharge, sprToggleSolarCharge);
         if (Owner == null) return;
         if (Owner.TileEntity != null && Owner.TileEntity.GetPowerItem() != null)
         {
@@ -132,9 +144,12 @@ public class XUiC_OcbPowerSourceStats : XUiController
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     private void BtnToggleGeneratorCharge_OnPress(XUiController _sender, int _mouseButton)
     {
-        Toggle(ref chargeFromGenerator, ref lblToggleGeneratorCharge, ref sprToggleGeneratorCharge);
+        Toggle(ref chargeFromGenerator, lblToggleGeneratorCharge, sprToggleGeneratorCharge);
         if (Owner == null) return;
         if (Owner.TileEntity != null && Owner.TileEntity.GetPowerItem() != null)
         {
@@ -159,9 +174,12 @@ public class XUiC_OcbPowerSourceStats : XUiController
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     private void BtnToggleBatteryCharge_OnPress(XUiController _sender, int _mouseButton)
     {
-        Toggle(ref chargeFromBattery, ref lblToggleBatteryCharge, ref sprToggleBatteryCharge);
+        Toggle(ref chargeFromBattery, lblToggleBatteryCharge, sprToggleBatteryCharge);
         if (Owner == null) return;
         if (Owner.TileEntity != null && Owner.TileEntity.GetPowerItem() != null)
         {
@@ -186,7 +204,10 @@ public class XUiC_OcbPowerSourceStats : XUiController
         }
     }
 
-    private void Toggle(ref bool flag, ref XUiV_Label label, ref XUiV_Sprite sprite)
+    // ####################################################################
+    // ####################################################################
+
+    private void Toggle(ref bool flag, XUiV_Label label, XUiV_Sprite sprite)
     {
         Update(flag = !flag, label, sprite);
     }
@@ -216,6 +237,9 @@ public class XUiC_OcbPowerSourceStats : XUiController
             }
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void OnOpen()
     {
@@ -252,5 +276,8 @@ public class XUiC_OcbPowerSourceStats : XUiController
         Update(chargeFromBattery, lblToggleBatteryCharge, sprToggleBatteryCharge);
 
     }
+
+    // ####################################################################
+    // ####################################################################
 
 }

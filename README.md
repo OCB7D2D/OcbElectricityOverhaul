@@ -237,7 +237,7 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
-### Version 1.2.0
+### Version 2.0.0
 
 - Refactor and Update for first A21 compatibility
 - Removed BepInEx requirement for easier deployment

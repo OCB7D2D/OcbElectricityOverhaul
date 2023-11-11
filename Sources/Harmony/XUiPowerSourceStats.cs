@@ -6,14 +6,14 @@ using System.Reflection;
 public static class XUiPowerSourceStats
 {
 
-    static readonly CachedStringFormatter<ushort> fuelFormatter = new CachedStringFormatter<ushort>((ushort _i) => _i.ToString());
-    static readonly CachedStringFormatter<ushort> maxfuelFormatter = new CachedStringFormatter<ushort>((ushort _i) => _i.ToString());
-    static readonly CachedStringFormatter<ushort> maxoutputFormatter = new CachedStringFormatter<ushort>((ushort _i) => _i.ToString());
-    static readonly CachedStringFormatter<ushort> powerFormatter = new CachedStringFormatter<ushort>((ushort _i) => _i.ToString());
-    static readonly CachedStringFormatterFloat potentialFuelFillFormatter = new CachedStringFormatterFloat();
-    static readonly CachedStringFormatterFloat powerFillFormatter = new CachedStringFormatterFloat();
-    static readonly CachedStringFormatterFloat fuelFillFormatter = new CachedStringFormatterFloat();
+    // ####################################################################
+    // ####################################################################
 
+    static readonly CachedStringFormatterFloat powerFillFormatter = new CachedStringFormatterFloat();
+    static readonly CachedStringFormatter<ushort> maxOutputFormatter = new CachedStringFormatter<ushort>((ushort _i) => _i.ToString());
+
+    // ####################################################################
+    // ####################################################################
 
     public static ushort GetMaxPower(OcbTileEntityPowerSource instance)
     {
@@ -168,13 +168,16 @@ public static class XUiPowerSourceStats
 
     public static string GetPercent(XUiC_PowerSourceStats __instance, float amount, float off)
     {
-        return off == 0 ? "0" : maxoutputFormatter.Format((ushort)(100f * amount / off));
+        return off == 0 ? "0" : maxOutputFormatter.Format((ushort)(100f * amount / off));
     }
 
     public static string GetFill(XUiC_PowerSourceStats __instance, float amount, float off)
     {
         return off == 0 ? "0" : powerFillFormatter.Format(amount / off);
     }
+
+    // ####################################################################
+    // ####################################################################
 
     [HarmonyPatch]
     class PatchPowerSourceStats
@@ -288,23 +291,23 @@ public static class XUiPowerSourceStats
             {
 
                 case "MaxPower": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetMaxPower(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetMaxPower(te));
                     __result = true;
                     break;
                 case "MaxProduction":
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetMaxProduction(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetMaxProduction(te));
                     __result = true;
                     break;
                 case "MaxOutput":
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetMaxOutput(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetMaxOutput(te));
                     __result = true;
                     break;
                 case "StackPower": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetStackPower(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetStackPower(te));
                     __result = true;
                     break;
                 case "LightLevel": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLightLevel(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLightLevel(te));
                     __result = true;
                     break;
 
@@ -312,67 +315,67 @@ public static class XUiPowerSourceStats
                 // ToDo: really needed (overhead)
                 // ToDo: maybe only for single-player
                 case "LentConsumed": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLentConsumed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLentConsumed(te));
                     __result = true;
                     break;
                 case "LentCharging": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLentCharging(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLentCharging(te));
                     __result = true;
                     break;
                 case "ConsumerDemand": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetConsumerDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetConsumerDemand(te));
                     __result = true;
                     break;
                 case "ChargingDemand": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetChargingDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetChargingDemand(te));
                     __result = true;
                     break;
                 case "ConsumerUsed": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetConsumerUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetConsumerUsed(te));
                     __result = true;
                     break;
                 case "ChargingUsed": // battery only
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetChargingUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetChargingUsed(te));
                     __result = true;
                     break;
                 case "GridConsumerDemand": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetGridConsumerDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetGridConsumerDemand(te));
                     __result = true;
                     break;
                 case "GridChargingDemand": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetGridChargingDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetGridChargingDemand(te));
                     __result = true;
                     break;
                 case "GridConsumerUsed": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetGridConsumerUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetGridConsumerUsed(te));
                     __result = true;
                     break;
                 case "GridChargingUsed": // unused
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetGridChargingUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetGridChargingUsed(te));
                     __result = true;
                     break;
                 case "LocalGridDemand": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridDemand(te));
                     __result = true;
                     break;
                 case "LocalConsumerDemand": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridConsumerDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridConsumerDemand(te));
                     __result = true;
                     break;
                 case "LocalChargingDemand": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridChargingDemand(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridChargingDemand(te));
                     __result = true;
                     break;
                 case "LocalGridUsed": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridUsed(te));
                     __result = true;
                     break;
                 case "LocalConsumerUsed": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridConsumerUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridConsumerUsed(te));
                     __result = true;
                     break;
                 case "LocalChargingUsed": // used
-                    value = te == null ? "n/a" : maxoutputFormatter.Format(GetLocalGridChargingUsed(te));
+                    value = te == null ? "n/a" : maxOutputFormatter.Format(GetLocalGridChargingUsed(te));
                     __result = true;
                     break;
 
@@ -467,13 +470,13 @@ public static class XUiPowerSourceStats
 
                 case "MaxGridProduction":
                     value = te == null ? "n/a" :
-                        maxoutputFormatter.Format(GetMaxGridProduction(te));
+                        maxOutputFormatter.Format(GetMaxGridProduction(te));
                     __result = true;
                     break;
 
                 case "Flow":
                     value = te == null ? "n/a" :
-                        maxoutputFormatter.Format((ushort)(GetLentConsumerUsed(te) + GetLentChargingUsed(te)));
+                        maxOutputFormatter.Format((ushort)(GetLentConsumerUsed(te) + GetLentChargingUsed(te)));
                     __result = true;
                     break;
 
@@ -527,5 +530,8 @@ public static class XUiPowerSourceStats
             }
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
 }

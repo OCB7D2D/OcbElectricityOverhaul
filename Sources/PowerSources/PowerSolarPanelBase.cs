@@ -11,19 +11,32 @@ using UnityEngine;
 
 public class PowerSolarPanelBase : OcbPowerSource
 {
+
+    // ####################################################################
+    // ####################################################################
+
     public ushort InputFromSun;
     private byte sunLight;
     private bool lastHasLight;
     private string runningSound = "solarpanel_idle";
     public float lightUpdateTime;
 
+    // ####################################################################
+    // ####################################################################
+
     public bool HasLight { get; private set; }
+
+    // ####################################################################
+    // ####################################################################
 
     public override PowerItem.PowerItemTypes PowerItemType => PowerItem.PowerItemTypes.SolarPanel;
 
     public override string OnSound => "solarpanel_on";
 
     public override string OffSound => "solarpanel_off";
+
+    // ####################################################################
+    // ####################################################################
 
     public void CheckLightLevel()
     {
@@ -47,12 +60,18 @@ public class PowerSolarPanelBase : OcbPowerSource
             this.SendHasLocalChangesToRoot();
     }
 
+    // ####################################################################
+    // ####################################################################
+
     protected override void TickPowerGeneration()
     {
         if (!this.HasLight)
             return;
         this.CurrentPower = this.MaxOutput;
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void HandleSendPower()
     {
@@ -95,7 +114,13 @@ public class PowerSolarPanelBase : OcbPowerSource
             this.CurrentPower -= (ushort)(uint)this.LastPowerUsed;
     }
 
+    // ####################################################################
+    // ####################################################################
+
     protected bool ShouldClearPower() => this.sunLight != (byte)15 || !GameManager.Instance.World.IsDaytime();
+
+    // ####################################################################
+    // ####################################################################
 
     protected override void HandleOnOffSound()
     {
@@ -107,11 +132,17 @@ public class PowerSolarPanelBase : OcbPowerSource
             Manager.BroadcastStop(vector3, this.runningSound);
     }
 
+    // ####################################################################
+    // ####################################################################
+
     protected override void RefreshPowerStats()
     {
         base.RefreshPowerStats();
         this.MaxPower = this.MaxOutput;
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void read(BinaryReader _br, byte _version)
     {
@@ -126,4 +157,8 @@ public class PowerSolarPanelBase : OcbPowerSource
         base.write(_bw);
         _bw.Write(this.sunLight);
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }

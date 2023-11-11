@@ -1,8 +1,15 @@
 public class XUiC_OcbPowerSourceWindowGroup : XUiC_PowerSourceWindowGroup
 {
+
+    // ####################################################################
+    // ####################################################################
+
     private XUiC_OcbPowerSourceStats PowerSourceStats = null;
 
     private XUiC_WindowNonPagingHeader header = null;
+
+    // ####################################################################
+    // ####################################################################
 
     public override void Init()
     {
@@ -14,6 +21,9 @@ public class XUiC_OcbPowerSourceWindowGroup : XUiC_PowerSourceWindowGroup
             header = GetChildByType<XUiC_WindowNonPagingHeader>();
         }
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public override void OnOpen()
     {
@@ -29,4 +39,8 @@ public class XUiC_OcbPowerSourceWindowGroup : XUiC_PowerSourceWindowGroup
                 break;
         }
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }

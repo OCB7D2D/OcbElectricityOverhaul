@@ -1,5 +1,8 @@
 ﻿public class OcbPowerBatteryBank : PowerBatteryBankBase
 {
+    // ####################################################################
+    // ####################################################################
+
     protected override void TickPowerGeneration()
     {
         OCB.ElectricityUtils.TickBatteryBankPowerGeneration(this);
@@ -9,5 +12,8 @@
     {
         OCB.ElectricityUtils.AddPowerToBatteries(this, power);
     }
+
+    // ####################################################################
+    // ####################################################################
 
 }

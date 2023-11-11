@@ -2,6 +2,6 @@
 
 	<!-- For this to work we need Electricity Overhaul Mod available -->
 	<!-- By directly embedding the code we run into the same issue -->
-	<include path="../../../ElectricityOverhaul/Config/XUi/windows.a20.xml"/>
+	<include path="../../../ElectricityOverhaul/Config/XUi/windows.a21.xml"/>
 
 </configs>

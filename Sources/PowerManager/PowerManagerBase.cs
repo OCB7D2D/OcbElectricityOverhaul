@@ -12,6 +12,10 @@ using UnityEngine;
 
 public class PowerManagerBase
 {
+
+    // ####################################################################
+    // ####################################################################
+
     private bool Loaded = false; // OCB Patched
     private const float UPDATE_TIME_SEC = 0.16f;
     private const float SAVE_TIME_SEC = 120f;
@@ -26,7 +30,13 @@ public class PowerManagerBase
     protected ThreadManager.ThreadInfo dataSaveThreadInfo;
     public List<TileEntityPoweredBlock> ClientUpdateList = new List<TileEntityPoweredBlock>();
 
+    // ####################################################################
+    // ####################################################################
+
     public byte CurrentFileVersion { get; set; }
+
+    // ####################################################################
+    // ####################################################################
 
     public static PowerManagerBase Instance
     {
@@ -40,6 +50,9 @@ public class PowerManagerBase
 
     public static bool HasInstance => PowerManagerBase.instance != null;
 
+    // ####################################################################
+    // ####################################################################
+
     public PowerManagerBase()
     {
         PowerManagerBase.instance = this;
@@ -48,6 +61,9 @@ public class PowerManagerBase
         this.PowerTriggers = new List<PowerTrigger>();
         this.Loaded = false; // OCB Patched
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public virtual void Update()
     {
@@ -75,6 +91,9 @@ public class PowerManagerBase
             this.ClientUpdateList[index].ClientUpdate();
     }
 
+    // ####################################################################
+    // ####################################################################
+
     private int savePowerDataThreaded(ThreadManager.ThreadInfo _threadInfo)
     {
         PooledExpandableMemoryStream parameter = (PooledExpandableMemoryStream)_threadInfo.parameter;
@@ -86,6 +105,9 @@ public class PowerManagerBase
         MemoryPools.poolMemoryStream.FreeSync(parameter);
         return -1;
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public virtual void LoadPowerManager()
     {
@@ -130,6 +152,9 @@ public class PowerManagerBase
         }
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public void SavePowerManager()
     {
         if (Loaded == false) return; // OCB Patched
@@ -143,6 +168,9 @@ public class PowerManagerBase
         }
         this.dataSaveThreadInfo = ThreadManager.StartThread("silent_powerDataSave", (ThreadManager.ThreadFunctionDelegate)null, new ThreadManager.ThreadFunctionLoopDelegate(this.savePowerDataThreaded), (ThreadManager.ThreadFunctionEndDelegate)null, _parameter: ((object)expandableMemoryStream));
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public void Write(BinaryWriter bw)
     {
@@ -170,6 +198,9 @@ public class PowerManagerBase
         this.Loaded = true;
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public void Cleanup()
     {
         if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
@@ -181,6 +212,9 @@ public class PowerManagerBase
         this.dataSaveThreadInfo.WaitForEnd();
         this.dataSaveThreadInfo = (ThreadManager.ThreadInfo)null;
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public void AddPowerNode(PowerItem node, PowerItem parent = null)
     {
@@ -207,6 +241,9 @@ public class PowerManagerBase
             return;
         this.PowerItemDictionary.Remove(node.Position);
     }
+
+    // ####################################################################
+    // ####################################################################
 
     public virtual void SetParent(PowerItem child, PowerItem parent)
     {
@@ -247,6 +284,9 @@ public class PowerManagerBase
         node.HandleDisconnect();
     }
 
+    // ####################################################################
+    // ####################################################################
+
     public void RemoveChild(PowerItem child)
     {
         child.Parent.Children.Remove(child);
@@ -260,7 +300,14 @@ public class PowerManagerBase
         this.SetParent(this.GetPowerItemByWorldPos(childPos), powerItemByWorldPos);
     }
 
-    public PowerItem GetPowerItemByWorldPos(Vector3i position) => this.PowerItemDictionary.ContainsKey(position) ? this.PowerItemDictionary[position] : (PowerItem)null;
+    // ####################################################################
+    // ####################################################################
+
+    public PowerItem GetPowerItemByWorldPos(Vector3i position) => PowerItemDictionary
+        .ContainsKey(position) ? this.PowerItemDictionary[position] : (PowerItem)null;
+
+    // ####################################################################
+    // ####################################################################
 
     public void LogPowerManager()
     {
@@ -283,5 +330,9 @@ public class PowerManagerBase
             Log.Exception(ex);
         }
     }
+
+    // ####################################################################
+    // ####################################################################
+
 }
 
