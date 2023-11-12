@@ -5,7 +5,7 @@
 		<!-- You only need to add the ones you want to change from the default -->
 		<electricity-overhaul>
 			<!--
-			<property name="LoadVanillaMap" value="false" />
+			<property name="DegradationFactor" value="100" />
 			<property name="BatteryPowerPerUse" value="25" />
 			<property name="MinPowerForCharging" value="20" />
 			<property name="FuelPowerPerUse" value="750" />

@@ -146,4 +146,19 @@ public class ElectricityOverhaulPatch : IModApi
     // ####################################################################
     // ####################################################################
 
+    [HarmonyPatch(typeof(PowerManager), MethodType.Constructor)]
+    class PowerManagerPatchToDenyIt
+    {
+        static void Postfix(PowerManager __instance)
+        {
+            Log.Error("Something is trying to create old power manager!");
+            Log.Error("This means there is a fatal error bound to happen.");
+            Log.Error("Please report this with a full log to the developers.");
+            throw new Exception("Suspicious old PowerManager instantiation");
+        }
+    }
+
+    // ####################################################################
+    // ####################################################################
+
 }

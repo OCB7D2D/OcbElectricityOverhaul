@@ -3,6 +3,9 @@
 		<append xpath="/blocks/block[@name='solarbank']">
 			<property name="OutputPerStack" value="30"/>
 			<property name="MaxPower" value="300"/>
+			<!-- Level 1 (2000 uses) in approx 3.5 days -->
+			<!-- Level 6 (9000 uses) in approx 17 days -->
+			<property name="WearFactor" value="1.25"/>
 		</append>
 		<append xpath="/blocks/block[@name='batterybank']">
 			<property name="OutputPerStack" value="50"/>

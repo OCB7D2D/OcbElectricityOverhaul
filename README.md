@@ -176,6 +176,13 @@ from which power source a specific bank should take power for charging. This
 allows to have diesel generators as true backups only in the night, while
 batteries are only charged during the day via solar panels.
 
+### Slot item degradation (for solar/wind)
+
+Items will degrade slowly in solar and wind power generators, since there
+is no power source that doesn't need maintenance in real life. By default,
+the items should need repair after around 10 in game days. You can tweak
+this under power game settings and also fully disable it.
+
 ## Implementation details (devs only)
 
 Here I will go a bit more into the implementation details.
@@ -241,6 +248,11 @@ basic information about all grids (most notably the average update time):
 
 - Refactor and Update for first A21 compatibility
 - Removed BepInEx requirement for easier deployment
+- Implement automatic vanilla map loading
+- Make global `DegradationFactor` configurable
+- Make local `WearFactor` configurable per block
+- Add safe-guard in case patching is not correct
+- Unify solar-panel and windmill code parts
 
 ### Version 1.1.0
 

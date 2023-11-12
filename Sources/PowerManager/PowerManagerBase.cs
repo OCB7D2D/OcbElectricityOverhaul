@@ -172,7 +172,7 @@ public class PowerManagerBase
     // ####################################################################
     // ####################################################################
 
-    public void Write(BinaryWriter bw)
+    public virtual void Write(BinaryWriter bw)
     {
         bw.Write(PowerManagerBase.FileVersion);
         bw.Write(this.Circuits.Count);
@@ -183,9 +183,13 @@ public class PowerManagerBase
         }
     }
 
-    public void Read(BinaryReader br)
+    public virtual void Read(BinaryReader br) => Read(br, br.ReadByte());
+
+    public void Read(BinaryReader br, byte header)
     {
-        this.CurrentFileVersion = br.ReadByte();
+        // Also set legacy FileVersion (play safe)
+        PowerManager.FileVersion = header;
+        this.CurrentFileVersion = header;
         this.Circuits.Clear();
         int num = br.ReadInt32();
         for (int index = 0; index < num; ++index)

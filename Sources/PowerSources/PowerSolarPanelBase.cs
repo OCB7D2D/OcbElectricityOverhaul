@@ -9,22 +9,43 @@ using UnityEngine;
 // This should allow us to update vanilla code more easily.
 // ####################################################################
 
-public class PowerSolarPanelBase : OcbPowerSource
+public abstract class PowerSolarPanelBase : OcbPowerSource
 {
 
     // ####################################################################
     // ####################################################################
 
     public ushort InputFromSun;
-    private byte sunLight;
-    private bool lastHasLight;
-    private string runningSound = "solarpanel_idle";
+    protected byte sunLight;
+    protected bool lastHasLight;
+    protected string runningSound = "solarpanel_idle";
     public float lightUpdateTime;
+    public bool isWindMill;
 
     // ####################################################################
     // ####################################################################
 
-    public bool HasLight { get; private set; }
+    public override void SetValuesFromBlock()
+    {
+        base.SetValuesFromBlock();
+        var props = Block.list[this.BlockID].Properties;
+        isWindMill = props.GetBool("IsWindmill");
+    }
+
+    // ####################################################################
+    // ####################################################################
+
+    bool hasLight = false;
+    public bool HasLight
+    {
+        get {
+            if (isWindMill) return true;
+            return hasLight;
+        }
+        private set {
+            hasLight = value;
+        }
+    }
 
     // ####################################################################
     // ####################################################################
@@ -35,40 +56,13 @@ public class PowerSolarPanelBase : OcbPowerSource
 
     public override string OffSound => "solarpanel_off";
 
-    // ####################################################################
-    // ####################################################################
-
-    public void CheckLightLevel()
-    {
-        if (this.TileEntity != null)
-        {
-            Chunk chunk = this.TileEntity.GetChunk();
-            Vector3i localChunkPos = this.TileEntity.localChunkPos;
-            this.sunLight = chunk.GetLight(localChunkPos.x, localChunkPos.y, localChunkPos.z, Chunk.LIGHT_TYPE.SUN);
-        }
-        this.lastHasLight = this.HasLight;
-        this.HasLight = this.sunLight == (byte)15 && GameManager.Instance.World.IsDaytime();
-        if (this.lastHasLight == this.HasLight)
-            return;
-        this.HandleOnOffSound();
-        if (!this.HasLight)
-        {
-            this.CurrentPower = (ushort)0;
-            this.HandleDisconnect();
-        }
-        else
-            this.SendHasLocalChangesToRoot();
-    }
-
-    // ####################################################################
-    // ####################################################################
 
     protected override void TickPowerGeneration()
     {
-        if (!this.HasLight)
-            return;
         this.CurrentPower = this.MaxOutput;
     }
+
+    public abstract void CheckLightLevel();
 
     // ####################################################################
     // ####################################################################
@@ -147,8 +141,8 @@ public class PowerSolarPanelBase : OcbPowerSource
     public override void read(BinaryReader _br, byte _version)
     {
         base.read(_br, _version);
-        if (PowerManager.Instance.CurrentFileVersion < (byte)2)
-            return;
+        if (OcbPowerManager.Instance.
+            CurrentFileVersion < 2) return;
         this.sunLight = _br.ReadByte();
     }
 

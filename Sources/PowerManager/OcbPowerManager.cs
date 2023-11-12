@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using XMLData.Parsers;
 using static OCB.ElectricityUtils;
@@ -49,10 +50,48 @@ public class OcbPowerManager : PowerManagerBase
     // ####################################################################
     // ####################################################################
 
+    public static bool LoadVanillaMap { get; protected set; } = false;
+    public static bool StoreVanillaMap { get; protected set; } = false;
+
+    private static readonly byte OcbHeader = 'O' + 'C' + 'B'; // 212
+
+    // ####################################################################
+    // ####################################################################
+
+    public override void Read(BinaryReader br)
+    {
+        // Note: we can't use `PeekChar`, as it is unicode aware
+        // This implementation also works on non-seekable streams
+        byte header = br.ReadByte();
+        LoadVanillaMap = header != OcbHeader;
+        if (LoadVanillaMap == true)
+        {
+            Log.Warning("EO: Detected vanilla save without prior OCB Electricity Overhaul mod!");
+            Log.Warning("EO: Some values will be added and initialized with default values!");
+            Log.Warning("EO: The save file will not be compatible with vanilla anymore!");
+        }
+        else
+        {
+            // Read actual header to pass
+            header = br.ReadByte();
+        }
+        base.Read(br, header);
+    }
+
+    public override void Write(BinaryWriter bw)
+    {
+        if (StoreVanillaMap == false)
+        {
+            bw.Write(OcbHeader);
+        }
+        base.Write(bw);
+    }
+
+    // ####################################################################
+    // ####################################################################
+
     public override void LoadPowerManager()
     {
-        // Call base implementation
-        base.LoadPowerManager();
 
         // Update configuration once when loaded from game preferences
         // Shouldn't change during runtime (unsure if this is the right spot?)
@@ -61,8 +100,8 @@ public class OcbPowerManager : PowerManagerBase
         // hard-code a specific value into our own runtime. This allows
         // compatibility even if game dll alters the enum between version.
 
-        IsLoadVanillaMap = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap"));
-        IsPreferFuelOverBattery = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("PreferFuelOverBattery"));
+        DegradationFactor = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("DegradationFactor"));
+        PreferFuelOverBattery = GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("PreferFuelOverBattery"));
         BatteryPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryPowerPerUse"));
         MinPowerForCharging = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("MinPowerForCharging"));
         FuelPowerPerUse = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("FuelPowerPerUse"));
@@ -72,12 +111,20 @@ public class OcbPowerManager : PowerManagerBase
         BatteryChargePercentFull = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargePercentFull"));
         BatteryChargePercentEmpty = GamePrefs.GetInt(EnumParser.Parse<EnumGamePrefs>("BatteryChargePercentEmpty"));
 
+        // Set static configs
+        LoadVanillaMap = false;
+        StoreVanillaMap = false;
+
+        // Call base implementation
+        base.LoadPowerManager();
+
         // Give one debug message for now (just to be sure we are running)
         Log.Out("Loaded OCB PowerManager (" +
-                IsLoadVanillaMap + "/" + IsPreferFuelOverBattery + "/" +
+                LoadVanillaMap + "/" + PreferFuelOverBattery + "/" +
                 BatteryPowerPerUse + "/" + MinPowerForCharging + ")");
         Log.Out("  Factors " + FuelPowerPerUse + "/" + PowerPerPanel +
                 "/" + PowerPerEngine + "/" + PowerPerBattery);
+        Log.Out("  Degradation: {0}%", DegradationFactor);
     }
 
     // ####################################################################
@@ -296,10 +343,11 @@ public class OcbPowerManager : PowerManagerBase
             source.RequiredPower = 0;
             if (source.OutputPerStack == 0) source
                 .OutputPerStack = (ushort)PowerPerPanel;
-            if (Time.time > solar.wearUpdateTime)
+            // Wear the slots down and update if one is broken
+            if (solar.IsOn && solar.WearFactor > 0 && Time.time > solar.wearUpdateTime)
             {
-                solar.wearUpdateTime = Time.time + Random
-                    .Range(WearMinInterval, WearMaxInterval);
+                solar.wearUpdateTime = Time.time + Random.
+                    Range(WearMinInterval, WearMaxInterval);
                 foreach (var slot in source.Stacks)
                 {
                     if (slot.IsEmpty()) continue;
@@ -312,8 +360,9 @@ public class OcbPowerManager : PowerManagerBase
                             // Add more randomness to it
                             if (Random.Range(0f, 1f) < WearThreshold)
                             {
-                                // Slightly damage the item
-                                slot.itemValue.UseTimes += Random.Range(1f, WearFactor);
+                                var wear = Random.value * solar.WearFactor;
+                                wear *= DegradationFactor * 0.01f * 20f;
+                                slot.itemValue.UseTimes += wear;
                                 // Slot has newly reached the max use times
                                 if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
                                 {
@@ -327,8 +376,7 @@ public class OcbPowerManager : PowerManagerBase
                                 }
                             }
                         }
-
-                        if (slot.itemValue.UseTimes >= slot.itemValue.MaxUseTimes)
+                        else if (slot.itemValue.UseTimes != slot.itemValue.MaxUseTimes)
                             slot.itemValue.UseTimes = slot.itemValue.MaxUseTimes;
                     }
                 }
@@ -336,20 +384,11 @@ public class OcbPowerManager : PowerManagerBase
                 if (solar.StackPower <= 0)
                     solar.IsOn = false;
             }
+            // Re-calculate the light/wind value
             if (Time.time > solar.lightUpdateTime)
             {
-                solar.lightUpdateTime = Time.time + 2f;
-                // ToDo: maybe add a bit more elaborate sun-light detection
-                // Currently it will simply switch on/off between day/night
-                // HasLight should probably be a float to achieve this
-                solar.CheckLightLevel();
-            }
-
-            var props = Block.list[source.BlockID].Properties;
-            if (!props.Values.ContainsKey("IsWindmill"))
-            {
-                solar.LightLevel = (ushort)(GlobalLight * ushort.MaxValue);
-                if (!solar.HasLight) solar.LightLevel = 0;
+                solar.lightUpdateTime = Time.time + Random.Range(1.75f, 2.25f);
+                solar.CheckLightLevel(); // Update light/wind levels with time
             }
 
             float factor = (float)solar.LightLevel / ushort.MaxValue;
@@ -549,7 +588,7 @@ public class OcbPowerManager : PowerManagerBase
             if (distribute == 0) break;
         }
 
-        if (IsPreferFuelOverBattery)
+        if (PreferFuelOverBattery)
         {
 
             enumerator = lenders.GetEnumerator();

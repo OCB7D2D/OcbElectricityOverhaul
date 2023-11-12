@@ -47,9 +47,9 @@ static public class CustomGamePrefsPatch
 
     static readonly GamePrefs.PropertyDecl[] CustomPrefs = new GamePrefs.PropertyDecl[]
     {
-        NewBoolean("LoadVanillaMap", ElectricityUtils.LoadVanillaMapDefault),
         NewBoolean("PreferFuelOverBattery", ElectricityUtils.PreferFuelOverBatteryDefault),
         NewInteger("BatteryPowerPerUse", ElectricityUtils.BatteryPowerPerUseDefault),
+        NewInteger("DegradationFactor", ElectricityUtils.DegradationFactor),
         NewInteger("FuelPowerPerUse", ElectricityUtils.FuelPowerPerUseDefault),
         NewInteger("PowerPerPanel", ElectricityUtils.PowerPerPanelDefault),
         NewInteger("PowerPerEngine", ElectricityUtils.PowerPerEngineDefault),

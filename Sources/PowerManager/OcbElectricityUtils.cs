@@ -12,10 +12,10 @@ namespace OCB
         // ####################################################################
 
         // Default values for configurable options
-        public const bool LoadVanillaMapDefault = false;
         public const bool PreferFuelOverBatteryDefault = false;
         public const int BatteryPowerPerUseDefault = 25;
         public const int MinPowerForChargingDefault = 20;
+        public const int DegradationFactorDefault = 100;
         public const int FuelPowerPerUseDefault = 750;
         public const int PowerPerPanelDefault = 30;
         public const int PowerPerEngineDefault = 100;
@@ -26,12 +26,14 @@ namespace OCB
         // ####################################################################
         // ####################################################################
 
-        // Should we try to load a vanilla map (initialize with defaults)
-        public static bool IsLoadVanillaMap = LoadVanillaMapDefault;
-        public static bool IsPreferFuelOverBattery = PreferFuelOverBatteryDefault;
+        // Should we prefer burning fuel to fill up batteries or use those up first
+        public static bool PreferFuelOverBattery = PreferFuelOverBatteryDefault;
 
         // Coefficient to exchange battery uses and watts
         public static int BatteryPowerPerUse = BatteryPowerPerUseDefault;
+
+        // How fast should items in power sources degrade (wind/solar)
+        public static int DegradationFactor = DegradationFactorDefault;
 
         // Coefficient to exchange fuel into watts
         public static int FuelPowerPerUse = FuelPowerPerUseDefault;
@@ -43,10 +45,9 @@ namespace OCB
         public static int BatteryChargePercentEmpty = BatteryChargePercentEmptyDefault;
 
         // Property not yet configurable via regular game options (or xml config)
-        public static float WearMinInterval = 5f;
+        public static float WearMinInterval = 10f;
         public static float WearMaxInterval = 20f;
         public static float WearThreshold = 0.15f;
-        public static float WearFactor = 3f;
 
         // Minimum excess power before we start charging batteries
         // This avoids too much charge/discharge ping-pong

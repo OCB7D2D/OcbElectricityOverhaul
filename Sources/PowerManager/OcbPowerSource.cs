@@ -47,15 +47,6 @@ public class OcbPowerSource : PowerSource
     public bool ShouldItAutoTurnOff()
         => ShouldAutoTurnOff();
 
-    public override void write(BinaryWriter _bw)
-    {
-        base.write(_bw);
-        _bw.Write(ChargeFromSolar);
-        _bw.Write(ChargeFromGenerator);
-        _bw.Write(ChargeFromBattery);
-
-    }
-
     // ####################################################################
     // ####################################################################
 
@@ -65,23 +56,36 @@ public class OcbPowerSource : PowerSource
         // We resolve enum dynamically on runtime, since we don't want to
         // hard-code a specific value into our own runtime. This allows
         // compatibility even if game dll alters the enum between version.
-        if (GamePrefs.GetBool(EnumParser.Parse<EnumGamePrefs>("LoadVanillaMap")))
+        if (OcbPowerManager.LoadVanillaMap)
         {
             ChargeFromSolar = true;
             ChargeFromGenerator = true;
             ChargeFromBattery = false;
-            UpdateSlots();
-            return;
         }
-        ChargeFromSolar = _br.ReadBoolean();
-        ChargeFromGenerator = _br.ReadBoolean();
-        ChargeFromBattery = _br.ReadBoolean();
+        else
+        {
+            ChargeFromSolar = _br.ReadBoolean();
+            ChargeFromGenerator = _br.ReadBoolean();
+            ChargeFromBattery = _br.ReadBoolean();
+        }
         UpdateSlots();
     }
 
     // ####################################################################
     // ####################################################################
-    
+
+    public override void write(BinaryWriter _bw)
+    {
+        base.write(_bw);
+        if (OcbPowerManager.StoreVanillaMap) return;
+        _bw.Write(ChargeFromSolar);
+        _bw.Write(ChargeFromGenerator);
+        _bw.Write(ChargeFromBattery);
+    }
+
+    // ####################################################################
+    // ####################################################################
+
     private static void RecalcChargingDemand(OcbPowerBatteryBank bank)
     {
         bank.ChargingDemand = 0;
@@ -225,11 +229,11 @@ public class OcbPowerSource : PowerSource
                     string value = el.GetAttribute("value");
                     switch (name)
                     {
-                        case "IsPreferFuelOverBattery": SetBool("LoadVanillaMap", value); break;
+                        case "DegradationFactor": SetInt("DegradationFactor", value); break;
                         case "PreferFuelOverBattery": SetBool("PreferFuelOverBattery", value); break;
                         case "BatteryPowerPerUse": SetInt("BatteryPowerPerUse", value); break;
                         case "FuelPowerPerUse": SetInt("FuelPowerPerUse", value); break;
-                        case "PowerPerPanel": SetInt("FuelPowerPerUse", value); break;
+                        case "PowerPerPanel": SetInt("PowerPerPanel", value); break;
                         case "PowerPerEngine": SetInt("PowerPerEngine", value); break;
                         case "PowerPerBattery": SetInt("PowerPerBattery", value); break;
                         case "MinPowerForCharging": SetInt("MinPowerForCharging", value); break;

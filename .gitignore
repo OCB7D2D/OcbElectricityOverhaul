@@ -4,3 +4,4 @@
 *.pdb
 /node_modules
 /package*.json*
+/translate.*
