@@ -42,7 +42,7 @@ exit /B %RV%
 :MAIN
 
 SET FOLDER=.
-SET NAME=ElectricityOverhaul
+SET NAME=OcbElectricityOverhaul
 call :BUILD 
 
 REM SET FOLDER=Addons\ZMXuiCPOCBEO

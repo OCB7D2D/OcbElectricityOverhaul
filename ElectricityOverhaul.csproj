@@ -106,6 +106,7 @@
     <Content Include="Config\XUi\xui.a20.ulm.xml" />
     <Content Include="Config\XUi\xui.a20.xml" />
     <Content Include="Config\XUi\xui.xml" />
+    <Content Include="Config\XUi_Menu\windows.a21.df.xml" />
     <Content Include="Config\XUi_Menu\windows.a21.xml" />
     <Content Include="Config\XUi_Menu\windows.a20.df.xml" />
     <Content Include="Config\XUi_Menu\windows.a20.xml" />
