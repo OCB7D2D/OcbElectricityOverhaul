@@ -57,7 +57,7 @@ public abstract class PowerSolarPanelBase : OcbPowerSource
     public override string OffSound => "solarpanel_off";
 
 
-    protected override void TickPowerGeneration()
+    public override void TickPowerGeneration()
     {
         this.CurrentPower = this.MaxOutput;
     }
@@ -116,7 +116,7 @@ public abstract class PowerSolarPanelBase : OcbPowerSource
     // ####################################################################
     // ####################################################################
 
-    protected override void HandleOnOffSound()
+    public override void HandleOnOffSound()
     {
         Vector3 vector3 = this.Position.ToVector3();
         Manager.BroadcastPlay(vector3, !this.isOn || !this.HasLight ? this.OffSound : this.OnSound);
@@ -129,7 +129,7 @@ public abstract class PowerSolarPanelBase : OcbPowerSource
     // ####################################################################
     // ####################################################################
 
-    protected override void RefreshPowerStats()
+    public override void RefreshPowerStats()
     {
         base.RefreshPowerStats();
         this.MaxPower = this.MaxOutput;

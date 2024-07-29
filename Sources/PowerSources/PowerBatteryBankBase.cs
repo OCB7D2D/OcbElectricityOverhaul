@@ -173,7 +173,7 @@ public class PowerBatteryBankBase : OcbPowerSource
     // ####################################################################
     // ####################################################################
 
-    protected override void TickPowerGeneration()
+    public override void TickPowerGeneration()
     {
         base.TickPowerGeneration();
         int num1 = (int)(ushort)((uint)this.MaxPower - (uint)this.CurrentPower);

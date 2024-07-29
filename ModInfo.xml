@@ -2,8 +2,8 @@
 <xml>
 	<Name value="OcbElectricityOverhaul" />
 	<DisplayName value="OCB Electricity Overhaul" />
-	<Description value="Electricity done right, connect multiple power sources to form a grid." />
+	<Description value="Electricity done better, connect multiple power sources to form a grid." />
 	<Website value="https://github.com/OCB7D2D/ElectricityOverhaul" />
 	<Author value="ocbMaurice" />
-	<Version value="2.0.0" />
+	<Version value="2.1.0" />
 </xml>

@@ -6,7 +6,7 @@ public class OcbPowerGenerator : PowerGeneratorBase
     // ####################################################################
     // ####################################################################
 
-    protected override void TickPowerGeneration()
+    public override void TickPowerGeneration()
     {
         TickBatteryDieselPowerGeneration(this);
     }

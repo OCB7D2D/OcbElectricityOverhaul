@@ -1,4 +1,4 @@
-﻿<configs patcher-version="4">
+﻿<configs patcher-version="7">
 	<modif condition="UndeadLegacy_CoreModule">
 		<setattribute xpath="/items/item[@name='ulmResourceEngineV1']/effect_group/passive_effect[@name='PowerOutput']" name="value">25</setattribute>
 		<setattribute xpath="/items/item[@name='ulmResourceEngineV4']/effect_group/passive_effect[@name='PowerOutput']" name="value">75</setattribute>

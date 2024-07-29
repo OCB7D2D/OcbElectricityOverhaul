@@ -62,21 +62,16 @@ static public class CustomGamePrefsPatch
     // ####################################################################
     // ####################################################################
 
-    // Get some private methods via reflection to mess with vanilla internals
-    static readonly HarmonyFieldProxy<GamePrefs.PropertyDecl[]> GamePrefsPropList = new
-        HarmonyFieldProxy<GamePrefs.PropertyDecl[]>(typeof(GamePrefs), "propertyList");
-    static readonly HarmonyFieldProxy<object[]> GamePrefsPropValues = new
-        HarmonyFieldProxy<object[]>(typeof(GamePrefs), "propertyValues");
-
     static public void InitCustomGamePrefs()
     {
-        object[] defaults = GamePrefsPropValues.Get(GamePrefs.Instance);
-        GamePrefs.PropertyDecl[] prefs = GamePrefs.Instance.GetPropertyList();
+        
+        object[] defaults = GamePrefs.Instance.propertyValues;
+        GamePrefs.PropertyDecl[] prefs = GamePrefs.s_propertyList;
         prefs = prefs.AddRangeToArray(CustomPrefs);
         defaults = defaults.AddRangeToArray(Array.
             ConvertAll(CustomPrefs, x => x.defaultValue));
-        GamePrefsPropList.Set(GamePrefs.Instance, prefs);
-        GamePrefsPropValues.Set(GamePrefs.Instance, defaults);
+        GamePrefs.s_propertyList = prefs;
+        GamePrefs.Instance.propertyValues = defaults;
     }
 
     // ####################################################################

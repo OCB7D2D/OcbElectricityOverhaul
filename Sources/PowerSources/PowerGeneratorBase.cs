@@ -44,12 +44,12 @@ public class PowerGeneratorBase : OcbPowerSource
     // ####################################################################
     // ####################################################################
 
-    protected override bool ShouldAutoTurnOff() => this.CurrentFuel <= (ushort)0;
+    public override bool ShouldAutoTurnOff() => this.CurrentFuel <= (ushort)0;
 
     // ####################################################################
     // ####################################################################
 
-    protected override void TickPowerGeneration()
+    public override void TickPowerGeneration()
     {
         if ((double)((int)this.MaxPower - (int)this.CurrentPower) < (double)this.OutputPerFuel || this.CurrentFuel <= (ushort)0)
             return;

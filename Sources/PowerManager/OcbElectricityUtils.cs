@@ -79,8 +79,8 @@ namespace OCB
             if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
             {
                 return (ushort)(powerPerSlot / defaultPower * EffectManager.GetValue(
-                    effect, item, 0.0f, null, null, new FastTags(),
-                    false, false, false, false, 1, false));
+                    effect, item, 0.0f, null, null, new FastTags<TagGroup.Global>(),
+                    false, false, false, false, false, 1, false));
             }
             // Support for vanilla (just lerping the power for quality)
             return (ushort)(powerPerSlot * Mathf.Lerp(0.5f, 1f, item.Quality / 6f));

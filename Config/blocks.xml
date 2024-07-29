@@ -1,4 +1,4 @@
-﻿<configs patcher-version="4">
+﻿<configs patcher-version="7">
 	<modif condition="UndeadLegacy_CoreModule">
 		<append xpath="/blocks/block[@name='solarbank']">
 			<property name="OutputPerStack" value="30"/>

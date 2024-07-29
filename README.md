@@ -1,4 +1,4 @@
-# OCB Electricity Overhaul Mod - 7 Days to Die (A21) Addon
+# OCB Electricity Overhaul Mod - 7 Days to Die (V1.0) Addon
 
 Electricity done better! Enables to connect multiple power sources to
 each other. Every power item can still only have one parent connection
@@ -60,6 +60,14 @@ fields are transferred between server and client for every power source.
 So far I hope the thing will scale well enough already, but that needs
 more testing. For that I included a check that will emit a warning
 when the update call takes longer than 20ms.
+
+## Download and Install
+
+End-Users are encouraged to download my mods from [NexusMods][5].  
+Every download there helps me to buy stuff for mod development.
+
+Otherwise please use one of the [official releases][6] here.  
+Only clone or download the repo if you know what you do!
 
 ## Multi-player (Dedicated Server) support
 
@@ -244,6 +252,12 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 2.1.0
+
+- Fix XML-Patcher for V1 compatibility
+- First compatibility with V1.0 (exp)
+- Verified compatibility with V1.0 (b333)
+
 ### Version 2.0.0
 
 - Refactor and Update for first A21 compatibility
@@ -377,3 +391,5 @@ Developed initially for version A19.6(b8), updated through A21.1(b16).
 [2]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml
 [3]: https://github.com/OCB7D2D/ElectricityOverhaul/actions/workflows/ci.yml/badge.svg
 [4]: https://github.com/OCB7D2D/OcbRemoteDescription
+[5]: https://www.nexusmods.com/7daystodie/mods/1713
+[6]: https://github.com/OCB7D2D/ElectricityOverhaul/releases

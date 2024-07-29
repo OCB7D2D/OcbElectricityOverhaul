@@ -18,10 +18,11 @@ jobs:
 
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2
-    - name: Call 7D2D compiler action
-      uses: OCB7D2D/A20BepInExPreloader@master
+      uses: actions/checkout@v4
+    - name: Call OCB7D2D compiler action
+      uses: OCB7D2D/OcbModCompiler@master
       with:
+        v7d2d: 'V1.0'
         name: "OcbElectricityOverhaul"
         version: "${{ github.ref_name }}"
         token: "${{ secrets.GITHUB_TOKEN }}"

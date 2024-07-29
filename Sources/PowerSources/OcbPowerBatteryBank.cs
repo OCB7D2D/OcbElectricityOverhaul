@@ -3,7 +3,7 @@
     // ####################################################################
     // ####################################################################
 
-    protected override void TickPowerGeneration()
+    public override void TickPowerGeneration()
     {
         OCB.ElectricityUtils.TickBatteryBankPowerGeneration(this);
     }

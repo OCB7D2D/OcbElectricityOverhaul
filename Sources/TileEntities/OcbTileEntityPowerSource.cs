@@ -39,7 +39,7 @@
     // ####################################################################
     // ####################################################################
 
-    private OcbTileEntityPowerSource(OcbTileEntityPowerSource _other) : base(null)
+    private OcbTileEntityPowerSource(OcbTileEntityPowerSource _other, Chunk _chunk) : base(_chunk)
     {
         SetOwner(_other.GetOwner());
         PowerItem = _other.PowerItem;
@@ -48,7 +48,7 @@
     // ####################################################################
     // ####################################################################
 
-    public override TileEntity Clone() => new OcbTileEntityPowerSource(this);
+    public override TileEntity Clone() => new OcbTileEntityPowerSource(this, chunk);
 
     // ####################################################################
     // ####################################################################
