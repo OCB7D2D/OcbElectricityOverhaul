@@ -252,6 +252,10 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 2.1.1
+
+- Recompile for 7D2D V1.1 stable
+
 ### Version 2.1.0
 
 - Fix XML-Patcher for V1 compatibility
