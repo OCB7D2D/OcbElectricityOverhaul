@@ -22,7 +22,7 @@ jobs:
     - name: Call OCB7D2D compiler action
       uses: OCB7D2D/OcbModCompiler@master
       with:
-        v7d2d: 'V1.2'
+        v7d2d: 'V1.4'
         name: "OcbElectricityOverhaul"
         version: "${{ github.ref_name }}"
         token: "${{ secrets.GITHUB_TOKEN }}"
