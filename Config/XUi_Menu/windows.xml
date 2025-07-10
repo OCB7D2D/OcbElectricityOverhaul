@@ -28,6 +28,6 @@
 		<modinc path="windows.a20.rh.xml"/>
 	</modelsif>
 	<modelse>
-		<modinc path="windows.v1.xml"/>
+		<modinc path="windows.v2.xml"/>
 	</modelse>
 </configs>

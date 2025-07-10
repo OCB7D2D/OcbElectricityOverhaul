@@ -1,4 +1,4 @@
-# OCB Electricity Overhaul Mod - 7 Days to Die (V1.0) Addon
+# OCB Electricity Overhaul Mod - 7 Days to Die (V2.0) Addon
 
 Electricity done better! Enables to connect multiple power sources to
 each other. Every power item can still only have one parent connection
@@ -251,6 +251,10 @@ basic information about all grids (most notably the average update time):
 - https://github.com/OCB7D2D/ElectricityOverhaulAdmin
 
 ## Changelog
+
+### Version 2.2.0
+
+- Recompile for 7D2D V2.0 stable
 
 ### Version 2.1.2
 
