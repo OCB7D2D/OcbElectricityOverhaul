@@ -917,6 +917,8 @@ public class OcbPowerManager : PowerManagerBase
         base.RemoveParent(node);
         // ResetGrids();
         IsDirty = true;
+        node.TileEntity.parentPosition =
+            new Vector3i(-9999, -9999, -9999);
     }
 
     public override void SetParent(PowerItem child, PowerItem parent)
@@ -924,6 +926,11 @@ public class OcbPowerManager : PowerManagerBase
         base.SetParent(child, parent);
         // ResetGrids();
         IsDirty = true;
+
+        if (child.TileEntity == null) return;
+        Vector3i position = new Vector3i(-9999, -9999, -9999);
+        if (parent != null) position = parent.Position;
+        child.TileEntity.parentPosition = position;
     }
 
     // ####################################################################
