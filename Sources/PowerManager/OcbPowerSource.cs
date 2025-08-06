@@ -12,6 +12,21 @@ public class OcbPowerSource : PowerSource
     // ####################################################################
     // ####################################################################
 
+    // Output per inserted item in the slots
+    // Note that this gets scaled with quality
+    // Engines have quality 0 thus give 50 for 100
+    // public ushort OutputPerStack;
+
+    // public ushort SlotCount;
+    // public ushort MaxOutput;
+    // public ushort MaxPower = 60000;
+    // public ushort LastPowerUsed;
+    // public ushort CurrentPower;
+    // public ushort LastCurrentPower;
+
+    // ####################################################################
+    // ####################################################################
+
     public ushort StackPower;
     public ushort MaxProduction;
     public ushort MaxGridProduction;
@@ -114,8 +129,8 @@ public class OcbPowerSource : PowerSource
         }
         else if (this is OcbPowerGenerator)
         {
-            defaultPower = PowerPerEngineDefault;
-            powerPerSlot = PowerPerEngine;
+            defaultPower = PowerPerEngineDefault * 2;
+            powerPerSlot = PowerPerEngine * 2;
         }
         else if (this is OcbPowerBatteryBank bank)
         {
@@ -124,19 +139,20 @@ public class OcbPowerSource : PowerSource
             RecalcChargingDemand(bank);
         }
         this.StackPower = 0;
-        float factor = this.OutputPerStack / powerPerSlot;
         foreach (var stack in this.Stacks)
         {
             if (stack.IsEmpty()) continue;
             if (stack.itemValue.MaxUseTimes > 0
                 && stack.itemValue.UseTimes >=
                 stack.itemValue.MaxUseTimes) continue;
-            this.StackPower += (ushort)(factor *
+            this.StackPower += (ushort)(
                 GetSlotPowerByQuality(stack.itemValue,
                     powerPerSlot, defaultPower));
         }
         this.StackPower = (ushort)Mathf.Min(
             this.StackPower, this.MaxPower);
+        this.MaxOutput = this.StackPower;
+
         // Turn off when all is defect
         if (this.StackPower <= 0)
             this.IsOn = false;

@@ -112,6 +112,7 @@
     <Content Include="Config\XUi_Menu\windows.a20.xml" />
     <Content Include="Config\XUi_Menu\windows.a20.rh.xml" />
     <Content Include="Config\XUi_Menu\windows.a20.ulm.xml" />
+    <Content Include="Config\XUi_Menu\windows.v2.xml" />
     <Content Include="Config\XUi_Menu\windows.xml" />
     <Content Include="Config\blocks.xml" />
     <Content Include="ModInfo.xml" />

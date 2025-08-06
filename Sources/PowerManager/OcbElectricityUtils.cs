@@ -78,7 +78,7 @@ namespace OCB
             // Support for Undead Legacy (adds a passive effect for power)
             if (PowerOutputEffect?.GetValue(null) is PassiveEffects effect)
             {
-                return (ushort)(powerPerSlot / defaultPower * EffectManager.GetValue(
+                return (ushort)(powerPerSlot * EffectManager.GetValue(
                     effect, item, 0.0f, null, null, new FastTags<TagGroup.Global>(),
                     false, false, false, false, false, 1, false));
             }

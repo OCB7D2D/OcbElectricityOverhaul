@@ -368,7 +368,6 @@ public class OcbPowerManager : PowerManagerBase
                                 {
                                     slot.itemValue.UseTimes = slot.itemValue.MaxUseTimes;
                                     solar.StackPower -= (ushort)(
-                                        source.OutputPerStack / PowerPerPanel *
                                         GetSlotPowerByQuality(slot.itemValue,
                                             PowerPerPanel, PowerPerPanelDefault));
                                     solar.TileEntity?.MarkChanged();
@@ -390,7 +389,7 @@ public class OcbPowerManager : PowerManagerBase
                 solar.lightUpdateTime = Time.time + Random.Range(1.75f, 2.25f);
                 solar.CheckLightLevel(); // Update light/wind levels with time
             }
-
+            
             float factor = (float)solar.LightLevel / ushort.MaxValue;
             float production = !source.IsOn ? 0 : solar.StackPower;
             source.MaxOutput = solar.StackPower;
@@ -466,16 +465,8 @@ public class OcbPowerManager : PowerManagerBase
         }
         else if (source is OcbPowerGenerator)
         {
-            // Calculate the maximum power will all the filled engine slots
-            if (source.OutputPerStack == 0) source
-                .OutputPerStack = (ushort)PowerPerEngine;
-            float factor = source.OutputPerStack / (float)PowerPerEngine;
-            float power = source.StackPower * factor;
-            source.RequiredPower = 0;
             source.MaxProduction = (ushort)
-                (source.IsOn ? power : 0);
-            source.MaxOutput = (ushort)power;
-
+                (source.IsOn ? source.MaxOutput : 0);
         }
 
         // Limit MaxOutput according to MaxPower
