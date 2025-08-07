@@ -32,7 +32,7 @@ xcopy %FOLDER%\UIAtlases build\%NAME%\UIAtlases\ /S
 
 cd build
 echo Packaging %NAME%-%VERSION%.zip
-powershell Compress-Archive %NAME% %NAME%-%VERSION%-V2.0.zip -Force
+powershell Compress-Archive %NAME% %NAME%-%VERSION%-V2.1.zip -Force
 cd ..
 
 SET RV=%ERRORLEVEL%
