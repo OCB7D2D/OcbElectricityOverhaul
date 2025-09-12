@@ -195,7 +195,7 @@ public static class XUiPowerSourceStats
                 {
                     foreach (MethodInfo method in vanilla.GetMethods())
                     {
-                        if (method.Name != "GetBindingValue") continue;
+                        if (method.Name != "GetBindingValueInternal") continue;
                         targets.Add(method);
                         break;
                     }
