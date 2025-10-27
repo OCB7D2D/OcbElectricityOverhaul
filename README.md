@@ -252,6 +252,11 @@ basic information about all grids (most notably the average update time):
 
 ## Changelog
 
+### Version 2.2.3
+
+- Add patch for newly added method
+- Fixes `RemovePersistentDataForChunks`
+
 ### Version 2.2.2
 
 - Update for 7D2D V2.3 stable

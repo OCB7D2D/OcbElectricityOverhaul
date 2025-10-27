@@ -75,6 +75,7 @@ public class ElectricityOverhaulPatch : IModApi
             yield return AccessTools.Method(typeof(BlockSolarPanel), "CreateTileEntity");
             yield return AccessTools.Method(typeof(TileEntity), "Instantiate");
             yield return AccessTools.Method(typeof(XUiC_PowerSourceStats), "BtnRefuel_OnPress");
+            yield return AccessTools.Method(typeof(RegionFileManager), "RemovePersistentDataForChunks");
         }
 
         static IEnumerable<CodeInstruction> Transpiler(

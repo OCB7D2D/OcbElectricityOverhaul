@@ -246,6 +246,28 @@ public class PowerManagerBase
         this.PowerItemDictionary.Remove(node.Position);
     }
 
+    public void RemoveUnloadedPowerNodes(ICollection<long> _chunks)
+    {
+        int num1 = 0;
+        int count = this.PowerItemDictionary.Count;
+        List<Vector3i> span = new List<Vector3i>(count);
+        foreach (KeyValuePair<Vector3i, PowerItem> powerItem in this.PowerItemDictionary)
+        {
+            long num2 = WorldChunkCache.MakeChunkKey(World.toChunkXZ(powerItem.Key.x), World.toChunkXZ(powerItem.Key.z));
+            foreach (long chunk in (IEnumerable<long>)_chunks)
+            {
+                if (chunk == num2)
+                    span[num1++] = powerItem.Key;
+            }
+        }
+        for (int index = 0; index < num1; ++index)
+        {
+            PowerItem node;
+            if (this.PowerItemDictionary.TryGetValue(span[index], out node))
+                this.RemovePowerNode(node);
+        }
+    }
+
     // ####################################################################
     // ####################################################################
 
